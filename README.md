@@ -46,3 +46,13 @@ npm run build
 ```sh
 npm run lint
 ```
+
+
+### Problems with tailwind v4 (this project) compared to tailwind v3 (shadcn-vue docs)
+
+# Find every instance of w-[--sidebar-width] and change them to w-(--sidebar-width)
+[] notations needs to be replaced with () 
+
+# CSS Imports like in main.css are a bit different
+-
+

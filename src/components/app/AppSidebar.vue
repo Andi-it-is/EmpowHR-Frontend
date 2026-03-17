@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SidebarProps } from "@/components/ui/sidebar"
 import { GalleryVerticalEnd, Minus, Plus } from "lucide-vue-next"
+import SearchForm from "@/components/app/SearchForm.vue"
 import {
   Collapsible,
   CollapsibleContent,
@@ -165,7 +166,7 @@ const data = {
 </script>
 
 <template>
-  <Sidebar v-bind="props" variant="sidebar" side="left">
+  <Sidebar v-bind="props">
     <SidebarHeader>
       <SidebarMenu>
         <SidebarMenuItem>
@@ -182,6 +183,7 @@ const data = {
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
+      <SearchForm />
     </SidebarHeader>
     <SidebarContent>
       <SidebarGroup>
