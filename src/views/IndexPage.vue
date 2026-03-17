@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import Button from '@/components/ui/button/Button.vue';
-import ThemeToggle from '@/components/ThemeToggle.vue';
+import ThemeToggle from '@/components/app/ThemeToggle.vue';
 import { ArrowUpIcon } from 'lucide-vue-next'
 
 
