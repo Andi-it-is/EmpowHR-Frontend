@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
-import PageSidebar from './components/app/PageSidebar.vue';
+import { computed } from 'vue'
+import AppLayout from '@/layouts/AppLayout.vue'
+import GuestLayout from '@/layouts/GuestLayout.vue'
+
+/** 
+ * TODO placeholder for now, replace with real auth logic later 
+ */ 
+const isLoggedIn = computed(() => true)
+
+const layout = computed(() => isLoggedIn.value ? AppLayout : GuestLayout)
 </script>
 
 <template>
-  <PageSidebar />
+  <component :is="layout" />
 </template>
-
-<style scoped>
-
-</style>
