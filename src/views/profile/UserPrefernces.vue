@@ -1,6 +1,6 @@
 <template lang="pug">
 
-div(class="flex-1 bg-amber-600") hellow world
+pre Ich bin die UserPreferences.vue Datei
 //- Button(variant="outline") Nested Page
 
 </template>
