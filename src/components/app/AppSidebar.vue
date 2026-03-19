@@ -2,6 +2,7 @@
 import type { SidebarProps } from "@/components/ui/sidebar"
 import { GalleryVerticalEnd, Minus, Plus } from "lucide-vue-next"
 import SearchForm from "@/components/app/SearchForm.vue"
+import NavUser from "./NavUser.vue"
 import {
   Collapsible,
   CollapsibleContent,
@@ -19,6 +20,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
+  SidebarFooter
 } from "@/components/ui/sidebar"
 
 const props = defineProps<SidebarProps>()
@@ -163,6 +165,12 @@ const data = {
     },
   ],
 }
+
+const userData = {
+  name: "shadcn",
+  email: "m@example.com",
+  avatar: "/avatars/shadcn.jpg",
+}
 </script>
 
 <template>
@@ -219,6 +227,9 @@ const data = {
         </SidebarMenu>
       </SidebarGroup>
     </SidebarContent>
+    <SidebarFooter>
+      <NavUser :user="userData" />
+    </SidebarFooter>
     <SidebarRail />
   </Sidebar>
 </template>
