@@ -25,145 +25,88 @@ import {
 
 const props = defineProps<SidebarProps>()
 
-// This is sample data.
+// Routing Object, that defines the sidebar's options to navigate to
 const data = {
   navMain: [
     {
-      title: "Getting Started",
+      title: "Für mich",
       url: "#",
       items: [
         {
-          title: "Installation",
+          title: "Dokumente",   // Docs wie Krankmeldungen, Lohnabrechnungen, Zertifikate.
           url: "#",
         },
         {
-          title: "Project Structure",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Building Your Application",
-      url: "#",
-      items: [
-        {
-          title: "Routing",
-          url: "#",
-        },
-        {
-          title: "Data Fetching",
+          title: "Stammdaten",  // Stammdaten wie Anschrift, Bankverbindungen.
           url: "#",
           isActive: true,
         },
         {
-          title: "Rendering",
-          url: "#",
-        },
-        {
-          title: "Caching",
-          url: "#",
-        },
-        {
-          title: "Styling",
-          url: "#",
-        },
-        {
-          title: "Optimizing",
-          url: "#",
-        },
-        {
-          title: "Configuring",
-          url: "#",
-        },
-        {
-          title: "Testing",
-          url: "#",
-        },
-        {
-          title: "Authentication",
-          url: "#",
-        },
-        {
-          title: "Deploying",
-          url: "#",
-        },
-        {
-          title: "Upgrading",
-          url: "#",
-        },
-        {
-          title: "Examples",
+          title: "Zertifikate",   // Docs wie Krankmeldungen, Lohnabrechnungen, Zertifikate.
           url: "#",
         },
       ],
     },
     {
-      title: "API Reference",
+      title: "Organisation",
       url: "#",
       items: [
         {
-          title: "Components",
+          title: "Organigramm",     // Bigass Grafik mit Unternehmensstruktur
           url: "#",
         },
         {
-          title: "File Conventions",
-          url: "#",
+          title: "Personenregister",    // Suche von einzelnen Mitarbeitern
+          url: "#"
         },
         {
-          title: "Functions",
-          url: "#",
+          title: "Desk Sharing",    // Sitzplatzbuchung
+          url: "#"
         },
         {
-          title: "next.config.js Options",
-          url: "#",
-        },
-        {
-          title: "CLI",
-          url: "#",
-        },
-        {
-          title: "Edge Runtime",
-          url: "#",
-        },
+          title: "Teamkalender",    // Geteilter Kalender für alle Mitglieder. ähnlich zu MyTView
+          url: "#"
+        }
       ],
     },
     {
-      title: "Architecture",
+      title: "Zeitverwaltung",
       url: "#",
       items: [
         {
-          title: "Accessibility",
+          title: "Abwesenheiten",   // Urlaube und Shit
           url: "#",
         },
         {
-          title: "Fast Refresh",
+          title: "Zeitbuchung",     // Zeitbuchung
           url: "#",
         },
         {
-          title: "Next.js Compiler",
-          url: "#",
-        },
-        {
-          title: "Supported Browsers",
-          url: "#",
-        },
-        {
-          title: "Turbopack",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Community",
-      url: "#",
-      items: [
-        {
-          title: "Contribution Guide",
-          url: "#",
-        },
+          title: "Home Office Tracker",   // Variant von der Zeitbuchung
+          url: "#"
+        }
       ],
     },
   ],
+
+  supervisorNavOptions: [ 
+    {
+      title: "Manager Self Service (MSS)",
+      url: "#",
+      items: [
+        {
+          title: "Urlaubsplanungen",    // Board oder so für den Chef, zum Urlaub verwalten und planen
+          url: "#",
+          isActive: false
+        },
+        {
+          title: "Sonstiges",
+          url: "#",
+          isActive: true
+        }
+      ],
+    },
+  ]
 }
 
 const userData = {
@@ -201,6 +144,34 @@ const userData = {
             :key="item.title"
             :default-open="index === 1"
             class="group/collapsible"
+          >
+            <SidebarMenuItem>
+              <CollapsibleTrigger as-child>
+                <SidebarMenuButton>
+                  {{ item.title }}
+                  <Plus class="ml-auto group-data-[state=open]/collapsible:hidden" />
+                  <Minus class="ml-auto group-data-[state=closed]/collapsible:hidden" />
+                </SidebarMenuButton>
+              </CollapsibleTrigger>
+              <CollapsibleContent v-if="item.items.length">
+                <SidebarMenuSub>
+                  <SidebarMenuSubItem v-for="childItem in item.items" :key="childItem.title">
+                    <SidebarMenuSubButton
+                      as-child
+                      :is-active="childItem.isActive"
+                    >
+                      <a :href="childItem.url">{{ childItem.title }}</a>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                </SidebarMenuSub>
+              </CollapsibleContent>
+            </SidebarMenuItem>
+          </Collapsible>
+          <Collapsible
+            v-for="(item, index) in data.supervisorNavOptions"
+            :key="item.title"
+            :default-open="index === 1"
+            class="group/collapsible border-t border-t-primary mt-4 pt-1"
           >
             <SidebarMenuItem>
               <CollapsibleTrigger as-child>

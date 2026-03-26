@@ -10,14 +10,14 @@ import {
 
 <template>
   <form>
-    <SidebarGroup class="py-0">
+    <SidebarGroup class="py-1">
       <SidebarGroupContent class="relative">
         <Label for="search" class="sr-only">
           Search
         </Label>
         <SidebarInput
           id="search"
-          placeholder="KI Feature fragen ??"
+          placeholder="Suchen..."
           class="pl-8"
         />
         <Search class="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
