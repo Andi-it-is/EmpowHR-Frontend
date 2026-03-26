@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SidebarProps } from "@/components/ui/sidebar"
-import { GalleryVerticalEnd, Minus, Plus } from "lucide-vue-next"
+import { IdCardLanyard, Minus, Plus } from "lucide-vue-next"
 import SearchForm from "@/components/app/SearchForm.vue"
 import NavUser from "./NavUser.vue"
 import {
@@ -180,11 +180,11 @@ const userData = {
         <SidebarMenuItem>
           <SidebarMenuButton size="lg" as-child>
             <a href="#">
-              <div class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <GalleryVerticalEnd class="size-4" />
+              <div class="flex aspect-square size-10 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <IdCardLanyard class="size-6" />
               </div>
               <div class="flex flex-col gap-0.5 leading-none">
-                <span class="font-medium">Documentation</span>
+                <span class="font-medium">EmpowHR</span>
                 <span class="">v1.0.0</span>
               </div>
             </a>
