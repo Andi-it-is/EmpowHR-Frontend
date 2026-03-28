@@ -36,8 +36,27 @@ const router = createRouter({
               meta: { title: 'Präferenzen' }
             }
           ]
+        },
+        {
+          path: 'profile',
+          component: PassThroughRouterview,
+          meta: {
+            title: 'Profil'
+          },
+          children: [
+            {
+              path: '',
+              name: 'Stammdaten',
+              component: () => import('../views/profile/OriginData.vue'),
+            },
+          ]
         }
       ]
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: () => import('@/views/CustomNotFound.vue'),
     },
   ],
 })

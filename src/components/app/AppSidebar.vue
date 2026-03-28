@@ -22,8 +22,18 @@ import {
   SidebarRail,
   SidebarFooter
 } from "@/components/ui/sidebar"
+import {
+  FileText, Database, Award, GitFork, Users,
+  CalendarDays, Armchair, UmbrellaOff, Clock, Home,
+  CalendarCheck, Ellipsis, UserRound, Building2, Timer, ShieldCheck
+} from 'lucide-vue-next'
+
+import { useRoute, useRouter } from "vue-router"
+
 
 const props = defineProps<SidebarProps>()
+const router = useRouter()
+const route = useRoute()
 
 // Routing Object, that defines the sidebar's options to navigate to
 const data = {
@@ -31,88 +41,81 @@ const data = {
     {
       title: "Für mich",
       url: "#",
+      icon: UserRound,
+      color: "text-blue-500",
       items: [
-        {
-          title: "Dokumente",   // Docs wie Krankmeldungen, Lohnabrechnungen, Zertifikate.
-          url: "#",
-        },
-        {
-          title: "Stammdaten",  // Stammdaten wie Anschrift, Bankverbindungen.
-          url: "#",
-          isActive: true,
-        },
-        {
-          title: "Zertifikate",   // Docs wie Krankmeldungen, Lohnabrechnungen, Zertifikate.
-          url: "#",
-        },
+        { title: "Dokumente", url: "#", icon: FileText },
+        { title: "Stammdaten", url: "profile", icon: Database },
+        { title: "Zertifikate", url: "#", icon: Award },
       ],
     },
     {
       title: "Organisation",
       url: "#",
+      icon: Building2,
+      color: "text-violet-500",
       items: [
-        {
-          title: "Organigramm",     // Bigass Grafik mit Unternehmensstruktur
-          url: "#",
-        },
-        {
-          title: "Personenregister",    // Suche von einzelnen Mitarbeitern
-          url: "#"
-        },
-        {
-          title: "Desk Sharing",    // Sitzplatzbuchung
-          url: "#"
-        },
-        {
-          title: "Teamkalender",    // Geteilter Kalender für alle Mitglieder. ähnlich zu MyTView
-          url: "#"
-        }
+        { title: "Organigramm", url: "#", icon: GitFork },
+        { title: "Personenregister", url: "#", icon: Users },
+        { title: "Desk Sharing", url: "#", icon: Armchair },
+        { title: "Teamkalender", url: "#", icon: CalendarDays },
       ],
     },
     {
       title: "Zeitverwaltung",
       url: "#",
+      icon: Timer,
+      color: "text-emerald-500",
       items: [
-        {
-          title: "Abwesenheiten",   // Urlaube und Shit
-          url: "#",
-        },
-        {
-          title: "Zeitbuchung",     // Zeitbuchung
-          url: "#",
-        },
-        {
-          title: "Home Office Tracker",   // Variant von der Zeitbuchung
-          url: "#"
-        }
+        { title: "Abwesenheiten", url: "#", icon: UmbrellaOff },
+        { title: "Zeitbuchung", url: "#", icon: Clock },
+        { title: "Home Office Tracker", url: "#", icon: Home },
       ],
     },
-  ],
-
-  supervisorNavOptions: [ 
     {
       title: "Manager Self Service (MSS)",
       url: "#",
+      icon: ShieldCheck,
+      color: "text-amber-500",
       items: [
-        {
-          title: "Urlaubsplanungen",    // Board oder so für den Chef, zum Urlaub verwalten und planen
-          url: "#",
-          isActive: false
-        },
-        {
-          title: "Sonstiges",
-          url: "#",
-          isActive: true
-        }
+        { title: "Urlaubsplanungen", url: "#", icon: CalendarCheck },
+        { title: "Sonstiges", url: "#", icon: Ellipsis },
       ],
     },
   ]
+}
+
+import { ref, watch, type Ref } from 'vue'
+
+function usePersistentSidebarState(key: string, defaultOpen: boolean) {
+  const stored = localStorage.getItem(key)
+  const isOpen = ref(stored !== null ? stored === 'true' : defaultOpen)
+
+  watch(isOpen, (val) => {
+    localStorage.setItem(key, String(val))
+  })
+
+  return isOpen
+}
+
+// Open-States für navMain
+const navMainStates = ref(
+  data.navMain.map((item, index) =>
+    usePersistentSidebarState(`sidebar-nav-${item.title}`, index === 1)
+  )
+)
+function getNavState(states: Ref<boolean>[], index: number): Ref<boolean> {
+  return states[index] ?? ref(false)
 }
 
 const userData = {
   name: "shadcn",
   email: "m@example.com",
   avatar: "/avatars/shadcn.jpg",
+}
+
+function navToIndex() {
+  return router.push("/")
 }
 </script>
 
@@ -121,7 +124,7 @@ const userData = {
     <SidebarHeader>
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton size="lg" as-child>
+          <SidebarMenuButton size="lg" as-child @click="navToIndex()">
             <a href="#">
               <div class="flex aspect-square size-10 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                 <IdCardLanyard class="size-6" />
@@ -142,12 +145,13 @@ const userData = {
           <Collapsible
             v-for="(item, index) in data.navMain"
             :key="item.title"
-            :default-open="index === 1"
+            v-model:open="getNavState(navMainStates, index).value"
             class="group/collapsible"
           >
             <SidebarMenuItem>
               <CollapsibleTrigger as-child>
                 <SidebarMenuButton>
+                  <component :is="item.icon" :class="['size-4 shrink-0', item.color]" />
                   {{ item.title }}
                   <Plus class="ml-auto group-data-[state=open]/collapsible:hidden" />
                   <Minus class="ml-auto group-data-[state=closed]/collapsible:hidden" />
@@ -156,39 +160,11 @@ const userData = {
               <CollapsibleContent v-if="item.items.length">
                 <SidebarMenuSub>
                   <SidebarMenuSubItem v-for="childItem in item.items" :key="childItem.title">
-                    <SidebarMenuSubButton
-                      as-child
-                      :is-active="childItem.isActive"
-                    >
-                      <a :href="childItem.url">{{ childItem.title }}</a>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-          <Collapsible
-            v-for="(item, index) in data.supervisorNavOptions"
-            :key="item.title"
-            :default-open="index === 1"
-            class="group/collapsible border-t border-t-primary mt-4 pt-1"
-          >
-            <SidebarMenuItem>
-              <CollapsibleTrigger as-child>
-                <SidebarMenuButton>
-                  {{ item.title }}
-                  <Plus class="ml-auto group-data-[state=open]/collapsible:hidden" />
-                  <Minus class="ml-auto group-data-[state=closed]/collapsible:hidden" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent v-if="item.items.length">
-                <SidebarMenuSub>
-                  <SidebarMenuSubItem v-for="childItem in item.items" :key="childItem.title">
-                    <SidebarMenuSubButton
-                      as-child
-                      :is-active="childItem.isActive"
-                    >
-                      <a :href="childItem.url">{{ childItem.title }}</a>
+                    <SidebarMenuSubButton as-child :is-active="route.path === '/' + childItem.url">
+                      <a :href="childItem.url">
+                        <component :is="childItem.icon" class="size-4 shrink-0" />
+                        <span>{{ childItem.title }}</span>
+                      </a>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                 </SidebarMenuSub>
