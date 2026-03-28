@@ -2,14 +2,14 @@
 h2 {{ greeting }} Max Mustermann
 p(class="text-muted-foreground") Hier kannst du deine Stammdaten einsehen und bearbeiten.
 
+//- Section with the CompanyBanner
+div(class="grid xl:grid-cols-10 grid-cols-1 gap-8")
+  CompanyBanner(:user="userData" class="xl:col-span-3 xl:col-start-4 xl:col-end-7") 
+
 div(class="grid xl:grid-cols-10 grid-cols-1 gap-8")
 
-  //- Section with the CompanyBanner
-  div(class="flex flex-col col-span-2 gap-4")
-    CompanyBanner(:user="userData")
-
   //- Section with the DescriptionsList
-  Card(class="col-span-4")
+  Card(class="xl:col-span-6")
     CardHeader
       div(class="flex items-center justify-between")
         div(class="flex flex-col gap-2")
@@ -22,7 +22,7 @@ div(class="grid xl:grid-cols-10 grid-cols-1 gap-8")
       DescriptionList(:data="personalData" :labels="personalLabels")
 
   //- Section with the Acitivty Log
-  ActivityLog(:activity-log="activityLog" class="col-span-4")
+  ActivityLog(:activity-log="activityLog" class="xl:col-span-4")
 
 </template>
 

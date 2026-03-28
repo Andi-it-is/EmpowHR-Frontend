@@ -1,7 +1,7 @@
 <template lang="pug">
 
-Card
-  CardContent(class="flex flex-col items-center gap-3 pt-6 text-center")
+Card()
+  CardContent(class="flex flex-col items-center gap-3 p-8 text-center")
     Avatar(class="size-20")
       AvatarImage(:src="user.avatar" :alt="user.fullName")
       AvatarFallback(class="text-xl font-semibold") {{ initials(user.fullName) }}

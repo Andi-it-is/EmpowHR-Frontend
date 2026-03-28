@@ -1,6 +1,6 @@
 <template lang="pug">
 Card
-  CardHeader(class="flex flex-row items-center gap-2 py-4 border border-b border-muted")
+  CardHeader(class="flex flex-row items-center gap-2 py-4 border-0 border-b border-muted")
     History(:size="15")
     CardTitle(class="text-sm font-semibold") Letzte Änderungen
   CardContent(class="p-0")
