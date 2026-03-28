@@ -18,6 +18,14 @@ const router = createRouter({
           component: IndexPage,
         },
         {
+          path: 'login',
+          name: 'Login',
+          component: () => import('../views/LoginPage.vue'),
+          meta: {
+            layout: 'GuestLayout'
+          }
+        },
+        {
           path: 'settings',
           component: PassThroughRouterview,
           meta: {

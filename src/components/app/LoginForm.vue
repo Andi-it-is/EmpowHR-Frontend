@@ -18,10 +18,17 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { IdCard } from "lucide-vue-next"
+import { useRouter } from "vue-router"
 
 const props = defineProps<{
   class?: HTMLAttributes["class"]
 }>()
+
+const router = useRouter()
+
+function navToIndex() {
+  return router.push("/")
+}
 </script>
 
 <template>
@@ -91,5 +98,13 @@ const props = defineProps<{
       By clicking continue, you agree to our <a href="#">Terms of Service</a>
       and <a href="#">Privacy Policy</a>.
     </FieldDescription>
+  </div>
+
+  <div class="bg-green-800 flex flex-col content-center p-4 mt-16">
+
+    <pre>
+      Nur der Button hier funktioniert
+    </pre>
+    <Button variant="outline" @click="navToIndex()"> Zur IndexPage </Button>
   </div>
 </template>

@@ -1,7 +1,11 @@
 <template>
   <div class="content-wrapper">
     
-    <div class="flex flex-wrap items-center gap-2 md:flex-row">
+    <pre>
+      relevant ist die Seite Für Mich > Stammdaten. Und Profilsektion > Einstellungen
+    </pre>
+      <Button variant="outline" @click="navToLogin()"> Zur Login Seite </Button>
+    <div class="flex flex-wrap items-center gap-2 mt-16 md:flex-row">
       <ThemeToggle/>
       <Button variant="default">
         Button
@@ -26,8 +30,13 @@
 import Button from '@/components/ui/button/Button.vue';
 import ThemeToggle from '@/components/app/ThemeToggle.vue';
 import { ArrowUpIcon } from 'lucide-vue-next'
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 
+function navToLogin() {
+  return router.push("/login")  
+}
 </script>
 
 

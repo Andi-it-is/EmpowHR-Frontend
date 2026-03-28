@@ -30,7 +30,10 @@ div(class="grid xl:grid-cols-10 grid-cols-1 gap-8")
       DescriptionList(:data="dlContact" :labels="contactLabels" title="Kontakt")
       DescriptionList(:data="dlPayment" :labels="paymentLabels" title="Zahlung")
     CardContent(class="flex flex-col gap-4" v-if="editView")
-      pre TODO
+      pre TODO. Hier wären jetzt die selben Felder aus der Leseansicht, aber zum Bearbeiten
+      Input
+      Input
+      Input
       Input
       Input
 
