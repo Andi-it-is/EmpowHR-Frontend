@@ -20,10 +20,9 @@ Card()
         span {{ user.location }}
       div(class="flex items-center gap-2 text-muted-foreground")
         CalendarDays(:size="14" class="shrink-0")
-        span Seit {{ formatDate(user.startDate) }}
+        span Seit {{ formatDate(user.startDate) }} im Unternehmen
 
 </template>
-
 
 <script setup lang="ts">
 import { Mail, MapPin, CalendarDays, History } from 'lucide-vue-next'

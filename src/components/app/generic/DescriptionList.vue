@@ -1,4 +1,5 @@
 <template lang="pug">
+h4.pt-4 {{ title }}
 div(class="flex flex-col gap-4 border p-4 rounded-md lg:w-full")
   template(v-for="(value, key, index) in data" :key="key")
     div(class="flex flex-col sm:flex-row justify-between xl:gap-8 gap-2 text-sm")
@@ -13,6 +14,7 @@ import { Separator } from '@/components/ui/separator'
 const props = defineProps<{
   data: Record<string, string | number | null | undefined>
   labels?: Record<string, string>
+  title: string
 }>()
 
 function formatKey(key: string): string {
