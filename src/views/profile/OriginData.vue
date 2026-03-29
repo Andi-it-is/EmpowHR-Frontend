@@ -30,12 +30,10 @@ div(class="grid xl:grid-cols-10 grid-cols-1 gap-8")
       DescriptionList(:data="dlContact" :labels="contactLabels" title="Kontakt")
       DescriptionList(:data="dlPayment" :labels="paymentLabels" title="Zahlung")
     CardContent(class="flex flex-col gap-4" v-if="editView")
-      pre TODO. Hier wären jetzt die selben Felder aus der Leseansicht, aber zum Bearbeiten
-      Input
-      Input
-      Input
-      Input
-      Input
+      InputList(:data="dlName" :labels="nameLabels" title="Name")
+      InputList(:data="dlAdress" :labels="adressLabels" title="Anschrift")
+      InputList(:data="dlContact" :labels="contactLabels" title="Kontakt")
+      InputList(:data="dlPayment" :labels="paymentLabels" title="Zahlung")
 
   //- Section with the Acitivty Log
   ActivityLog(:activity-log="activityLog" class="xl:col-span-4 h-fit")
@@ -48,6 +46,7 @@ import Button from '@/components/ui/button/Button.vue';
 import ActivityLog from '@/components/app/profile/ActivityLog.vue';
 import CompanyBanner from '@/components/app/profile/CompanyBanner.vue';
 import DescriptionList from '@/components/app/generic/DescriptionList.vue';
+import InputList from '@/components/app/generic/InputList.vue';
 import {
   Item,
   ItemActions,
