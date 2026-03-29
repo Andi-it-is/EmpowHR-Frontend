@@ -45,6 +45,9 @@ const router = useRouter()
 function navToSettings() {
   return router.push("settings")
 }
+function navToLogin() {
+  return router.push("login")
+}
 </script>
 
 <template>
@@ -109,7 +112,7 @@ function navToSettings() {
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem @click="navToLogin">
             <LogOut />
             Log out
           </DropdownMenuItem>

@@ -80,6 +80,9 @@ function navToIndex() {
               </a>
             </Field>
             <Field>
+              <Button variant="positiveish" @click="navToIndex()">
+                Demo Login
+              </Button>
               <Button variant="positive" type="submit">
                 Login
               </Button>
@@ -100,11 +103,4 @@ function navToIndex() {
     </FieldDescription>
   </div>
 
-  <div class="bg-green-800 flex flex-col content-center p-4 mt-16">
-
-    <pre>
-      Nur der Button hier funktioniert
-    </pre>
-    <Button variant="outline" @click="navToIndex()"> Zur IndexPage </Button>
-  </div>
 </template>

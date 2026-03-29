@@ -29,63 +29,15 @@ import {
 } from 'lucide-vue-next'
 
 import { useRoute, useRouter } from "vue-router"
+import { ref, watch, type Ref } from 'vue'
+import { getIconColor, navigationData } from "@/constants/navigation"
 
 
 const props = defineProps<SidebarProps>()
 const router = useRouter()
 const route = useRoute()
 
-// Routing Object, that defines the sidebar's options to navigate to
-const data = {
-  navMain: [
-    {
-      title: "Für mich",
-      url: "#",
-      icon: UserRound,
-      color: "text-blue-500",
-      items: [
-        { title: "Dokumente", url: "#", icon: FileText },
-        { title: "Stammdaten", url: "profile", icon: Database },
-        { title: "Zertifikate", url: "#", icon: Award },
-      ],
-    },
-    {
-      title: "Organisation",
-      url: "#",
-      icon: Building2,
-      color: "text-violet-500",
-      items: [
-        { title: "Organigramm", url: "#", icon: GitFork },
-        { title: "Personenregister", url: "#", icon: Users },
-        { title: "Desk Sharing", url: "#", icon: Armchair },
-        { title: "Teamkalender", url: "#", icon: CalendarDays },
-      ],
-    },
-    {
-      title: "Zeitverwaltung",
-      url: "#",
-      icon: Timer,
-      color: "text-emerald-500",
-      items: [
-        { title: "Abwesenheiten", url: "#", icon: UmbrellaOff },
-        { title: "Zeitbuchung", url: "#", icon: Clock },
-        { title: "Home Office Tracker", url: "#", icon: Home },
-      ],
-    },
-    {
-      title: "Manager Self Service (MSS)",
-      url: "#",
-      icon: ShieldCheck,
-      color: "text-amber-500",
-      items: [
-        { title: "Urlaubsplanungen", url: "#", icon: CalendarCheck },
-        { title: "Sonstiges", url: "#", icon: Ellipsis },
-      ],
-    },
-  ]
-}
-
-import { ref, watch, type Ref } from 'vue'
+const data = navigationData
 
 function usePersistentSidebarState(key: string, defaultOpen: boolean) {
   const stored = localStorage.getItem(key)
@@ -100,7 +52,7 @@ function usePersistentSidebarState(key: string, defaultOpen: boolean) {
 
 // Open-States für navMain
 const navMainStates = ref(
-  data.navMain.map((item, index) =>
+  data.map((item, index) =>
     usePersistentSidebarState(`sidebar-nav-${item.title}`, index === 1)
   )
 )
@@ -131,7 +83,7 @@ function navToIndex() {
               </div>
               <div class="flex flex-col gap-0.5 leading-none">
                 <span class="font-medium">EmpowHR</span>
-                <span class="">v1.0.0</span>
+                <span class="">Prototyp Nr.0</span>
               </div>
             </a>
           </SidebarMenuButton>
@@ -143,7 +95,7 @@ function navToIndex() {
       <SidebarGroup>
         <SidebarMenu>
           <Collapsible
-            v-for="(item, index) in data.navMain"
+            v-for="(item, index) in data"
             :key="item.title"
             v-model:open="getNavState(navMainStates, index).value"
             class="group/collapsible"
@@ -151,7 +103,7 @@ function navToIndex() {
             <SidebarMenuItem>
               <CollapsibleTrigger as-child>
                 <SidebarMenuButton>
-                  <component :is="item.icon" :class="['size-4 shrink-0', item.color]" />
+                <component :is="item.icon" :class="['size-4 shrink-0', getIconColor(item.color)]" />
                   {{ item.title }}
                   <Plus class="ml-auto group-data-[state=open]/collapsible:hidden" />
                   <Minus class="ml-auto group-data-[state=closed]/collapsible:hidden" />

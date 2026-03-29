@@ -1,29 +1,24 @@
-<template>
-  <div class="content-wrapper">
-    
-    <pre>
-      relevant ist die Seite Für Mich > Stammdaten. Und Profilsektion > Einstellungen
-    </pre>
-      <Button variant="outline" @click="navToLogin()"> Zur Login Seite </Button>
-    <div class="flex flex-wrap items-center gap-2 mt-16 md:flex-row">
-      <ThemeToggle/>
-      <Button variant="default">
-        Button
-      </Button>
-      <Button class="outline">
-        Button
-      </Button>
-      <Button variant="destructive">
-        Button
-      </Button>
-      <Button variant="positive">
-        Button
-      </Button>
-      <Button variant="outline" size="icon" aria-label="Submit">
-        <ArrowUpIcon />
-      </Button>
-    </div>
-  </div>
+<template lang="pug">
+
+h1(class="mb-2") Willkommen bei EmpowHR
+p(class="text-muted-foreground max-w-200") EmpowHR ist deine zentrale Anlaufstelle für alle personalrelevanten Themen.
+  |  Von deinen persönlichen Stammdaten bis zur Zeitverwaltung. Alles was dein Arbeitsleben benötigt, an einem Ort.
+
+div(class="flex flex-col gap-8 mt-8")
+  div(v-for="group in navigationData" :key="group.title")
+    h3(class="mb-4") {{ group.title }}
+    div(class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4")
+      Card(
+        v-for="item in group.items"
+        :key="item.title"
+        class="cursor-pointer hover:border-primary transition-colors"
+        @click="router.push(item.url)"
+      )
+        CardContent(class="flex flex-col items-center justify-center gap-3 pt-6 pb-6 text-center")
+          div(:class="[getColorClasses(item.color), 'p-3 rounded-lg']")
+            component(:is="item.icon" :size="22")
+          span(class="text-md font-medium") {{ item.title }}
+          span(class="text-sm text-muted-foreground") {{ item.description }}
 </template>
 
 <script setup lang="ts">
@@ -31,23 +26,23 @@ import Button from '@/components/ui/button/Button.vue';
 import ThemeToggle from '@/components/app/ThemeToggle.vue';
 import { ArrowUpIcon } from 'lucide-vue-next'
 import { useRouter } from 'vue-router';
+import {
+  FileText, Database, Award, GitFork, Users,
+  CalendarDays, Armchair, UmbrellaOff, Clock, Home,
+  CalendarCheck, Ellipsis, UserRound, Building2, Timer, ShieldCheck
+} from 'lucide-vue-next'
+import { Card, CardContent } from '@/components/ui/card'
+import { getColorClasses, navigationData } from '@/constants/navigation';
 
 const router = useRouter();
 
 function navToLogin() {
   return router.push("/login")  
 }
+
 </script>
 
 
 <style scoped>
-
-.content-wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 4em;
-}
 
 </style>
