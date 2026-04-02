@@ -36,7 +36,7 @@ function navToIndex() {
     <Card>
       <CardHeader class="text-center">
         <CardTitle class="text-xl">
-          Willkommen zurück
+          Willkommen
         </CardTitle>
         <CardDescription>
           Login mit der Konzern Auth Lösung
@@ -80,17 +80,14 @@ function navToIndex() {
               </a>
             </Field>
             <Field>
-              <Button variant="positiveish" @click="navToIndex()">
-                Demo Login
-              </Button>
               <Button variant="positive" type="submit">
                 Login
               </Button>
+              <Button variant="positiveish" @click="navToIndex()">
+                Demo Login
+              </Button>
               <FieldDescription class="text-center">
-                Zugang gesperrt? Kontaktiere den
-                <a href="#">
-                  Administrator
-                </a>
+                Zugang gesperrt? Kontaktiere den Administrator
               </FieldDescription>
             </Field>
           </FieldGroup>
@@ -98,8 +95,8 @@ function navToIndex() {
       </CardContent>
     </Card>
     <FieldDescription class="px-6 text-center">
-      By clicking continue, you agree to our <a href="#">Terms of Service</a>
-      and <a href="#">Privacy Policy</a>.
+      Wenn Sie auf "Login" klicken, erklären Sie sich mit unseren Nutzungsbedingungen
+      und unserer Datenschutzerklärung einverstanden.
     </FieldDescription>
   </div>
 

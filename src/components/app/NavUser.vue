@@ -3,7 +3,9 @@ import {
   BadgeCheck,
   Bell,
   ChevronsUpDown,
+  CircleUser,
   CreditCard,
+  Info,
   LogOut,
   Settings,
   Sparkles,
@@ -95,20 +97,16 @@ function navToLogin() {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem>
-              <BadgeCheck />
+              <CircleUser />
               Account
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <CreditCard />
-              Billing
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Bell />
-              Notifications
             </DropdownMenuItem>
             <DropdownMenuItem @click="navToSettings">
               <Settings />
                 Einstellungen
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Info />
+              Hilfe
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />

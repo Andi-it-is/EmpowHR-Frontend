@@ -1,7 +1,7 @@
 import {
   FileText, Database, Award, GitFork, Users,
   CalendarDays, Armchair, UmbrellaOff, Clock, Home,
-  CalendarCheck, Ellipsis, UserRound, Building2, Timer, ShieldCheck
+  CalendarCheck, UserRound, Building2, Timer, ShieldCheck, UserRoundKey
 } from 'lucide-vue-next'
 
 export function getColorClasses(color: string) {
@@ -35,8 +35,8 @@ export const navigationData = [
     icon: UserRound,
     color: "group-emerald",
     items: [
-      { title: "Dokumente", url: "#", icon: FileText, description: "Lohnabrechnungen und vieles Mehr", color: "emerald" },
       { title: "Stammdaten", url: "profile", icon: Database, description: "Persönliche Angaben", color: "emerald" },
+      { title: "Dokumente", url: "#", icon: FileText, description: "Lohnabrechnungen und vieles Mehr", color: "emerald" },
       { title: "Zertifikate", url: "#", icon: Award, description: "Deine Nachweise für Schulungen", color: "emerald" },
     ],
   },
@@ -48,8 +48,8 @@ export const navigationData = [
     items: [
       { title: "Organigramm", url: "#", icon: GitFork, description: "Unternehmensstruktur", color: "blue" },
       { title: "Personenregister", url: "#", icon: Users, description: "Mitarbeiter finden", color: "blue" },
+      { title: "Teamkalender", url: "#", icon: CalendarDays, description: "Geteilter Kalender deiner Abteilung", color: "blue" },
       { title: "Desk Sharing", url: "#", icon: Armchair, description: "Sitzplatz buchen", color: "blue" },
-      { title: "Teamkalender", url: "#", icon: CalendarDays, description: "Geteilter Kalender", color: "blue" },
     ],
   },
   {
@@ -70,7 +70,8 @@ export const navigationData = [
     color: "group-rose",
     items: [
       { title: "Urlaubsplanungen", url: "#", icon: CalendarCheck, description: "Abwesenheiten planen und genehmigen", color: "rose" },
-      { title: "Sonstiges", url: "#", icon: Ellipsis, description: "Weitere Beschreibung", color: "rose" },
+      { title: "Zugriff", url: "#", icon: UserRoundKey, description: "Rollen und Berechtigungen verwalten", color: "rose" },
+      // { title: "Sonstiges", url: "#", icon: Ellipsis, description: "Weitere Beschreibung", color: "rose" },
     ],
   },
 ]
