@@ -45,7 +45,7 @@ const { isMobile } = useSidebar()
 
 const router = useRouter()
 function navToSettings() {
-  return router.push("settings")
+  return router.push("/settings")
 }
 function navToLogin() {
   return router.push("login")
@@ -98,7 +98,7 @@ function navToLogin() {
           <DropdownMenuGroup>
             <DropdownMenuItem>
               <CircleUser />
-              Account
+              Profil
             </DropdownMenuItem>
             <DropdownMenuItem @click="navToSettings">
               <Settings />

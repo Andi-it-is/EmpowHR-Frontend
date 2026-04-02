@@ -35,8 +35,8 @@ export const navigationData = [
     icon: UserRound,
     color: "group-emerald",
     items: [
-      { title: "Stammdaten", url: "profile", icon: Database, description: "Persönliche Angaben", color: "emerald" },
-      { title: "Dokumente", url: "#", icon: FileText, description: "Lohnabrechnungen und vieles Mehr", color: "emerald" },
+      { title: "Stammdaten", url: "profile/master-data", icon: Database, description: "Persönliche Angaben", color: "emerald" },
+      { title: "Dokumente", url: "profile/documents", icon: FileText, description: "Lohnabrechnungen und vieles Mehr", color: "emerald" },
       { title: "Zertifikate", url: "#", icon: Award, description: "Deine Nachweise für Schulungen", color: "emerald" },
     ],
   },

@@ -83,7 +83,7 @@ function navToIndex() {
               </div>
               <div class="flex flex-col gap-0.5 leading-none">
                 <span class="font-medium">EmpowHR</span>
-                <span class="">Prototyp Nr.0</span>
+                <span class="">Prototyp Nr. 1</span>  
               </div>
             </a>
           </SidebarMenuButton>

@@ -36,10 +36,6 @@ import { getColorClasses, navigationData } from '@/constants/navigation';
 
 const router = useRouter();
 
-function navToLogin() {
-  return router.push("/login")  
-}
-
 </script>
 
 

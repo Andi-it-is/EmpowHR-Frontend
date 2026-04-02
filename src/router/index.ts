@@ -47,16 +47,25 @@ const router = createRouter({
         },
         {
           path: 'profile',
-          component: PassThroughRouterview,
-          meta: {
-            title: 'Profil'
-          },
+          component: () => PassThroughRouterview,
+          meta: { title: 'Profil' },
           children: [
             {
               path: '',
+              component: () => import('../views/profile/ProfileIndex.vue'),
+            },
+            {
+              path: 'master-data',
               name: 'Stammdaten',
               component: () => import('../views/profile/OriginData.vue'),
+              meta: { title: 'Stammdaten' }
             },
+            {
+              path: 'documents',
+              name: 'Dokumente',
+              component: () => import('../views/profile/DocumentOverview.vue'),
+                meta: { title: 'Dokumente' }
+            }
           ]
         }
       ]

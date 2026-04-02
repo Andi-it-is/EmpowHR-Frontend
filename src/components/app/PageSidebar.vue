@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar"
 
 import { useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 
 const route = useRoute()
 
@@ -30,10 +30,29 @@ const breadcrumbs = computed(() =>
     .filter(r => r.meta?.title)
     .map(r => ({ title: r.meta.title as string, path: r.path }))
 )
+
+const STORAGE_KEY = 'main-navbar-state'
+
+const getInitialSidebarState = () => {
+  // WICHTIG: Prüfen ob wir im Browser sind (wegen SSR/Nuxt)
+  if (typeof window === 'undefined') return false 
+
+  const saved = localStorage.getItem(STORAGE_KEY)
+  if (saved === null) return false
+
+  return saved === 'true'
+}
+
+const isDocSidebarOpen = ref(getInitialSidebarState())
+
+watch(isDocSidebarOpen, (newVal) => {
+  localStorage.setItem(STORAGE_KEY, String(newVal))
+})
+
 </script>
 
 <template>
-  <SidebarProvider>
+  <SidebarProvider :open="isDocSidebarOpen" @update:open="isDocSidebarOpen = $event">
     <AppSidebar />
     <SidebarInset>
       <header class="flex h-16 shrink-0 items-center gap-2 border-b px-4">
