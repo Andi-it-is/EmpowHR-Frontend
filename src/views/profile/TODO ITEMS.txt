@@ -1,9 +1,0 @@
-//-   Item(variant="outline")
-//-     ItemMedia(variant="icon")
-//-       ShieldAlertIcon
-//-     ItemContent
-//-       ItemTitle Mein Titel
-//-       ItemDescription Meine Beschreibung
-//-     ItemActions
-//-       Button(size="sm" variant="outline") Aktion
-//-   Item(variant="outline")

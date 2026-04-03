@@ -80,7 +80,7 @@ watch(isDocSidebarOpen, (newVal) => {
           </BreadcrumbList>
         </Breadcrumb>
       </header>
-      <main class="flex flex-1 flex-col gap-2 p-4 pt-8 h-fit">
+      <main class="flex flex-1 flex-col gap-2 p-4 md:p-8 h-fit">
         <RouterView /> 
       </main>
     </SidebarInset>

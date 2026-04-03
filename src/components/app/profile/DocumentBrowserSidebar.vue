@@ -12,11 +12,23 @@
     <SidebarContent class="p-0">
       <ScrollArea class="h-full w-full">
         <div class="py-4 px-2 space-y-2">
-          <div v-for="i in 25" :key="i">
-            <Item variant="outline" class="bg-muted">
+          <Button variant="outline" @click="nullifySelectedDoc()"> Auswahl leeren </Button>
+          <div v-for="doc in documents" :key="doc.id">
+            <Item 
+              @click="selectDoc(doc.id)"
+              class="cursor-pointer mb-2 transition-all duration-200 border-2"
+              :class="[
+                selectedId === doc.id 
+                  ? 'bg-accent border-primary shadow-sm' 
+                  : 'bg-muted border-transparent hover:bg-accent/50 hover:border-muted-foreground/20'
+              ]"
+            >
+              <ItemMedia variant="icon">
+                <FileIcon />
+              </ItemMedia>
               <ItemContent>
-                <ItemTitle class="break-all"> Mein ultra cooles und super langes Dokument {{ i }}</ItemTitle>
-                <ItemDescription>Beschreibung</ItemDescription>
+                <ItemTitle> Mein ultra cooles und super langes Dokument {{ doc.id }} {{ doc.name }} </ItemTitle>
+                <ItemDescription> Hochgeladen am: {{ doc.date }}</ItemDescription>
               </ItemContent>
             </Item>
           </div>
@@ -29,7 +41,6 @@
 </template>
 
 <script setup lang="ts">
-import Button from "@/components/ui/button/Button.vue";
 import {
   Sidebar,
   SidebarContent,
@@ -50,7 +61,8 @@ import {
   Calendar,
   FileSearch,
   ShieldAlertIcon,
-  FileTextIcon
+  FileTextIcon,
+  FileIcon
 } from 'lucide-vue-next'
 import {
   Item,
@@ -62,6 +74,7 @@ import {
 } from '@/components/ui/item/';
 import { GalleryVerticalEnd, GalleryVertical } from "lucide-vue-next";
 import { ref, onMounted, watch } from 'vue'
+import Button from "@/components/ui/button/Button.vue";
 
 // 1. Custom Ref für den Status (Standardmäßig offen: true)
 const isDocSidebarOpen = ref(true)
@@ -78,5 +91,20 @@ onMounted(() => {
 watch(isDocSidebarOpen, (newVal) => {
   localStorage.setItem(STORAGE_KEY, String(newVal))
 })
+
+
+// Wir definieren das Model für die Dokumentenliste
+const documents = defineModel<any[]>('documents', { default: () => [] })
+
+// Optional: Ein zweites Model für das aktuell ausgewählte Dokument
+const selectedId = defineModel<string | null>('selectedId', { default: null })
+
+const selectDoc = (id: string) => {
+  selectedId.value = id
+}
+
+function nullifySelectedDoc() {
+  selectedId.value = null
+}
 
 </script>
