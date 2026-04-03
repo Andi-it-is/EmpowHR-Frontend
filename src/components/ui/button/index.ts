@@ -21,6 +21,8 @@ export const buttonVariants = cva(
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        multiselect:
+          "border border-input bg-transparent dark:bg-input/30 shadow-sm px-3 font-normal text-left",
       },
       size: {
         "default": "h-9 px-4 py-2",

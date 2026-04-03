@@ -12,7 +12,11 @@
     <SidebarContent class="p-0">
       <ScrollArea class="h-full w-full">
         <div class="py-4 px-2 space-y-2">
-          <Button variant="outline" @click="nullifySelectedDoc()"> Auswahl leeren </Button>
+          <Button variant="outline" @click="nullifySelectedDoc()">
+            <SquareDashed />
+            Auswahl leeren 
+          </Button>
+
           <div v-for="doc in documents" :key="doc.id">
             <Item 
               @click="selectDoc(doc.id)"
@@ -62,7 +66,9 @@ import {
   FileSearch,
   ShieldAlertIcon,
   FileTextIcon,
-  FileIcon
+  FileIcon,
+  Square,
+  SquareDashedBottom
 } from 'lucide-vue-next'
 import {
   Item,
@@ -72,7 +78,7 @@ import {
   ItemTitle,
   ItemDescription,
 } from '@/components/ui/item/';
-import { GalleryVerticalEnd, GalleryVertical } from "lucide-vue-next";
+import { GalleryVerticalEnd, GalleryVertical, SquareDashed } from "lucide-vue-next";
 import { ref, onMounted, watch } from 'vue'
 import Button from "@/components/ui/button/Button.vue";
 

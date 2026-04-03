@@ -14,46 +14,56 @@
 
         Separator(class="my-4")
 
-        h3 Filter
-        p(class="text-muted-foreground max-w-200") Setze Filter um nach speziellen Dokumenten zu suchen.
-        //- Container mit Hintergrund und Padding für einen "Bar"-Look
-        div(class="flex flex-wrap justify-center gap-4 p-4 bg-muted/30 rounded-xl border mb-8 shadow-sm w-fit mt-2")
-          
-          //- Gruppe: Datums-Zeitraum 
-          div(class="flex items-center gap-4 bg-background border rounded-lg px-3 py-1 focus-within:ring-2 focus-within:ring-primary/20 transition-all")
-            CalendarIcon(class="w-4 h-4 text-muted-foreground")
-            Input(
-              type="text" 
-              placeholder="Startdatum" 
-              class="w-24 bg-transparent border-none text-sm focus:outline-none placeholder:text-muted-foreground/60"
-            )
-            Input(
-              type="text" 
-              placeholder="Enddatum" 
-              class="w-24 bg-transparent border-none text-sm focus:outline-none placeholder:text-muted-foreground/60"
-            )
-            CalendarIcon(class="w-4 h-4 text-muted-foreground")
+        Card
+          CardHeader
+            CardTitle Filter
+            CardDescription Setze Filter um nach speziellen Dokumenten zu suchen.
+          CardContent
+            div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4")
 
-          //- Trenner (optional, nur für Desktop)
-          div(class="hidden md:block w-px h-6 bg-border mx-2")
+              CalendarInput(id="startdate" label="Startdatum" v-model="startdate")
+              CalendarInput(id="enddate" label="Enddatum" v-model="enddate")
 
-          //- Der Select-Filter
-          Select
-            SelectTrigger(class="w-50 bg-background focus:ring-2 focus:ring-primary/20")
-              div(class="flex items-center gap-2")
-                FilterIcon(class="w-4 h-4 text-muted-foreground")
-                SelectValue(placeholder='Dokumententyp')
-            SelectContent
-              SelectItem(value='all') Alle Dokumente
-              SelectItem(value='contract') Verträge
-              SelectItem(value='salary') Gehaltsabrechnungen
-              SelectItem(value='cert') Zertifikate
+              MultiSelect(
+                id="securitylevel"
+                label="Vertraulichkeit"
+                :options="securityLevels"
+                v-model="selectedSecurityLevels"
+              )
 
-          //- Reset Button (Immer gut für die UX)
-          Button(variant="ghost" size="sm" class="text-muted-foreground hover:text-foreground")
-            XIcon(class="w-4 h-4 mr-2")
-            | Filter zurücksetzen
+              MultiSelect(
+                id="kategorie"
+                label="Kategorie"
+                :options="kategorien"
+                v-model="selectedKategorien"
+              )
 
+            Separator(class="my-4")
+
+            div(class="sm:grid sm:grid-cols-2 mt-4 flex flex-wrap")
+              div(class="flex justify-start pr-2")
+                Button(variant="ghost" class="flex items-center gap-2 text-muted-foreground hover:text-foreground" @click="resetFilter()")
+                  X(class="w-4 h-4")
+                  | Filter zurücksetzen
+              div(class="flex flex-wrap justify-end pl-2 gap-2")
+                Popover(:open="isHovered")
+                  PopoverTrigger(as-child)
+                    Button(
+                      variant="ghost"
+                      class="flex items-center gap-2 text-muted-foreground hover:text-foreground text-xs"
+                      @mouseenter="isHovered = true"
+                      @mouseleave="isHovered = false"
+                      @click="searchAll()"
+                    )
+                      FileSearch2Icon(class="w-4 h-4")
+                      | Alle Dokumente durchsuchen
+                  PopoverContent(class="w-auto text-sm text-muted-foreground" side="bottom")
+                    | Ignoriert alle gesetzten Filter und gibt alle dir zustehenden Dokumente zurück.
+                Button(variant="outline" class="flex items-center gap-2 px-8" @click="applyFilterAndSearch()")
+                  Search(class="w-4 h-4")
+                  | Suchen
+
+            div(class="flex justify-center mt-2")
 
         Separator(class="my-4")
 
@@ -64,7 +74,7 @@
               p(class="text-sm text-muted-foreground") Hochgeladen am: 02.04.2026
             
             div(class="flex gap-2 items-center")
-              p(class="text-sm hidden sm:block") Dokument auswählen
+              p(class="text-sm hidden sm:block") Dokumentenleiste
               SidebarTrigger(side="right")
 
           //- PDF-Container
@@ -122,7 +132,7 @@ import {
   ItemTitle,
   ItemDescription,
 } from '@/components/ui/item/';
-import { ShieldIcon, FileSearch2Icon,XIcon, CalendarIcon } from 'lucide-vue-next';
+import { ShieldIcon, FileSearch2Icon, XIcon, CalendarIcon, Search, RotateCcw, Check, ChevronsUpDown, X } from 'lucide-vue-next';
 import Separator from '@/components/ui/separator/Separator.vue';
 import DocumentBrowserSidebar from '@/components/app/profile/DocumentBrowserSidebar.vue';
 import Input from '@/components/ui/input/Input.vue';
@@ -133,6 +143,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { 
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card/'
+import { Label } from '@/components/ui/label'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from '@/components/ui/command'
+import MultiSelect from '@/components/app/generic/MultiSelect.vue';
+import { toast } from 'vue-sonner'
+import CalendarInput from '@/components/app/generic/CalendarInput.vue';
+
 const router = useRouter()
 
 const pdfFileUrl = ref('/Beispiel-Lohnabrechnung.pdf')
@@ -174,6 +213,50 @@ const currentPdf = computed(() => {
   const doc = myFiles.value.find(f => f.id === activeDocId.value)
   return doc ? doc.url : null
 })
+
+
+const kategorien = [
+  { value: 'CONTRACT', label: 'Vertrag' },
+  { value: 'FINANCE', label: 'Finanzen' },
+  { value: 'ABSENCE', label: 'Abwesenheit' },
+  { value: 'QUALIFICATION', label: 'Qualifikation' },
+  { value: 'COMPLIANCE', label: 'Compliance' },
+]
+const selectedKategorien = ref<string[]>([])
+
+const securityLevels = [
+  { value: '1', label: 'Dienstgebrauch' },
+  { value: '2', label: 'Geschäftlich' },
+  { value: '3', label: 'Geheim' },
+  { value: '4', label: 'Sehr Geheim' },
+]
+const selectedSecurityLevels = ref<string[]>([])
+
+
+function resetFilter() {
+  startdate.value = null
+  enddate.value = null
+  selectedSecurityLevels.value = []
+  selectedKategorien.value = []
+}
+// every doc, no filters anymore
+function searchAll() {
+  toast.success('Suche für alle Elemente getätigt', {
+    description: 'Der Text kommt weg.',
+  })
+  isDocSidebarOpen.value = true
+}
+function applyFilterAndSearch() {
+
+  toast.success('Suche wurde getätigt', {
+    description: 'Der Text kommt weg.',
+  })
+  isDocSidebarOpen.value = true
+  
+}
+const startdate = ref()
+const enddate = ref()
+const isHovered = ref(false)
 
 onMounted(() => {
 
