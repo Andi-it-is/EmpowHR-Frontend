@@ -6,7 +6,7 @@ import {
 
 export function getColorClasses(color: string) {
   const map: Record<string, string> = {
-  'teal': 'bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-200',
+  'green': 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200',
   'blue':    'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200',
   'amber':   'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200',
   'rose':    'bg-rose-100 dark:bg-rose-900/30 text-rose-800 dark:text-rose-200',
@@ -16,7 +16,7 @@ export function getColorClasses(color: string) {
 
 export function getIconColor(color: string) {
   const map: Record<string, string> = {
-    'group-teal': 'text-teal-700 dark:text-teal-300',
+    'group-green': 'text-green-700 dark:text-green-300',
     'group-blue':    'text-blue-700 dark:text-blue-300',
     'group-amber':   'text-amber-700 dark:text-amber-300',
     'group-rose':    'text-rose-700 dark:text-rose-300',
@@ -33,11 +33,11 @@ export const navigationData = [
     title: "Für mich",
     url: "#",
     icon: UserRound,
-    color: "group-teal",
+    color: "group-green",
     items: [
-      { title: "Stammdaten", url: "/profile/master-data", icon: Database, description: "Persönliche Angaben", color: "teal" },
-      { title: "Dokumente", url: "/profile/documents", icon: FileText, description: "Lohnabrechnungen und vieles Mehr", color: "teal" },
-      { title: "Zertifikate", url: "#", icon: Award, description: "Deine Nachweise für Schulungen", color: "teal" },
+      { title: "Stammdaten", url: "/profile/master-data", icon: Database, description: "Persönliche Angaben", color: "green" },
+      { title: "Dokumente", url: "/profile/documents", icon: FileText, description: "Lohnabrechnungen und vieles Mehr", color: "green" },
+      { title: "Zertifikate", url: "#", icon: Award, description: "Deine Nachweise für Schulungen", color: "green" },
     ],
   },
   {
