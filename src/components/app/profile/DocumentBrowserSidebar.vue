@@ -4,18 +4,28 @@
       <SidebarMenu>
 
         <SidebarMenuItem class="py-4 px-2">
-          <h3> 25 Dokumente </h3>
-          <p class="text-muted-foreground"> Im Jahr 2026 </p>
+          <div class="flex items-start justify-between">
+            <div>
+              <h3> {{ documents.length }} Dokumente </h3>
+              <p class="text-muted-foreground"> Zeitraum: Jahr - Jahr  </p>
+            </div>
+              <Button
+                v-if="selectedId"
+                variant="ghost"
+                class="text-muted-foreground hover:text-foreground mt-1 flex items-center gap-2"
+                @click="nullifySelectedDoc()"
+              >
+                <SquareDashed class="w-5 h-5" />
+                Auswahl leeren
+              </Button>
+          </div>
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarHeader>
+    <Separator />
     <SidebarContent class="p-0">
       <ScrollArea class="h-full w-full">
         <div class="py-4 px-2 space-y-2">
-          <Button variant="outline" @click="nullifySelectedDoc()">
-            <SquareDashed />
-            Auswahl leeren 
-          </Button>
 
           <div v-for="doc in documents" :key="doc.id">
             <Item 
@@ -81,6 +91,7 @@ import {
 import { GalleryVerticalEnd, GalleryVertical, SquareDashed } from "lucide-vue-next";
 import { ref, onMounted, watch } from 'vue'
 import Button from "@/components/ui/button/Button.vue";
+import Separator from "@/components/ui/separator/Separator.vue";
 
 // 1. Custom Ref für den Status (Standardmäßig offen: true)
 const isDocSidebarOpen = ref(true)

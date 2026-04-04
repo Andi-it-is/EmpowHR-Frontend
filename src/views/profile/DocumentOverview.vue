@@ -40,30 +40,30 @@
 
             Separator(class="my-4")
 
-            div(class="sm:grid sm:grid-cols-2 mt-4 flex flex-wrap")
-              div(class="flex justify-start pr-2")
+            //- Buttons
+            div(class="mt-4 flex flex-col sm:grid sm:grid-cols-2 gap-2")
+              div(class="flex justify-center sm:justify-start pr-2")
                 Button(variant="ghost" class="flex items-center gap-2 text-muted-foreground hover:text-foreground" @click="resetFilter()")
                   X(class="w-4 h-4")
                   | Filter zurücksetzen
-              div(class="flex flex-wrap justify-end pl-2 gap-2")
+              div(class="flex flex-wrap justify-center sm:justify-end pl-2 gap-2")
                 Popover(:open="isHovered")
                   PopoverTrigger(as-child)
                     Button(
-                      variant="ghost"
-                      class="flex items-center gap-2 text-muted-foreground hover:text-foreground text-xs"
+                      variant="brand-outline"
+                      class="flex items-center gap-2 hover:text-foreground text-xs"
                       @mouseenter="isHovered = true"
                       @mouseleave="isHovered = false"
                       @click="searchAll()"
                     )
                       FileSearch2Icon(class="w-4 h-4")
                       | Alle Dokumente durchsuchen
-                  PopoverContent(class="w-auto text-sm text-muted-foreground" side="bottom")
+                  PopoverContent(class="w-auto text-sm text-muted-foreground max-w-50 sm:max-w-100" side="bottom")
                     | Ignoriert alle gesetzten Filter und gibt alle dir zustehenden Dokumente zurück.
-                Button(variant="outline" class="flex items-center gap-2 px-8" @click="applyFilterAndSearch()")
+                Button(variant="brand" class="flex items-center gap-2 px-8" @click="applyFilterAndSearch()")
                   Search(class="w-4 h-4")
                   | Suchen
 
-            div(class="flex justify-center mt-2")
 
         Separator(class="my-4")
 

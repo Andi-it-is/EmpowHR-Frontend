@@ -6,7 +6,7 @@
     // Extra safety for array and object lookups, but may have false positives.
     "noUncheckedIndexedAccess": true,
 
-    "baseUrl": ".",
+    // "baseUrl": ".",
     // Path mapping for cleaner imports.
     "paths": {
       "@/*": ["./src/*"]
@@ -17,3 +17,4 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo"
   }
 }
+  

@@ -23,6 +23,12 @@ export const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         multiselect:
           "border border-input bg-transparent dark:bg-input/30 shadow-sm px-3 font-normal text-left",
+        brand:
+          "bg-brand text-white shadow hover:bg-brand/70",
+        "brand-ghost":
+          "text-brand dark:text-white/80 hover:bg-brand/10 hover:text-brand dark:hover:text-white",
+        "brand-outline":
+          "border border-brand text-brand dark:text-white/80 bg-transparent shadow-sm hover:bg-brand/10",
       },
       size: {
         "default": "h-9 px-4 py-2",
