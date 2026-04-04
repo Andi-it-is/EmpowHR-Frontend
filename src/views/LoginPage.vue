@@ -36,7 +36,7 @@ import ThemeToggle from '@/components/app/ThemeToggle.vue';
             </div>
             <div class="flex flex-col">
               <h2 class="text-white font-bold text-xl">EmpowHR</h2>
-              <h3 class="text-gray-400">Mein Unternehmen GmbH</h3>
+              <h3 class="text-gray-300">Mein Unternehmen GmbH</h3>
             </div>
           </div>
 

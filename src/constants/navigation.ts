@@ -6,7 +6,7 @@ import {
 
 export function getColorClasses(color: string) {
   const map: Record<string, string> = {
-  'green': 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200',
+  'green':   'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200',
   'blue':    'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200',
   'amber':   'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200',
   'rose':    'bg-rose-100 dark:bg-rose-900/30 text-rose-800 dark:text-rose-200',
@@ -16,7 +16,7 @@ export function getColorClasses(color: string) {
 
 export function getIconColor(color: string) {
   const map: Record<string, string> = {
-    'group-green': 'text-green-700 dark:text-green-300',
+    'group-green':   'text-green-700 dark:text-green-300',
     'group-blue':    'text-blue-700 dark:text-blue-300',
     'group-amber':   'text-amber-700 dark:text-amber-300',
     'group-rose':    'text-rose-700 dark:text-rose-300',
@@ -64,7 +64,7 @@ export const navigationData = [
     ],
   },
   {
-    title: "Manager Self Service (MSS)",
+    title: "Management",
     url: "#",
     icon: ShieldCheck,
     color: "group-rose",
