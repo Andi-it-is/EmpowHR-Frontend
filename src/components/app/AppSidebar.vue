@@ -112,11 +112,11 @@ function navToIndex() {
               <CollapsibleContent v-if="item.items.length">
                 <SidebarMenuSub>
                   <SidebarMenuSubItem v-for="childItem in item.items" :key="childItem.title">
-                    <SidebarMenuSubButton as-child :is-active="route.path === '/' + childItem.url">
-                      <a :href="childItem.url">
+                    <SidebarMenuSubButton as-child :is-active="route.path === childItem.url">
+                      <RouterLink :to="childItem.url">
                         <component :is="childItem.icon" class="size-4 shrink-0" />
                         <span>{{ childItem.title }}</span>
-                      </a>
+                      </RouterLink>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                 </SidebarMenuSub>
