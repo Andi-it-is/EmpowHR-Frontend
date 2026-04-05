@@ -1,9 +1,9 @@
 <template lang="pug">
-div.not-found
+div(class="flex flex-col gap-2 w-fit")
   h1 404
   h2 Seite nicht gefunden
   p Die aufgerufene Seite existiert nicht.
-  Button(@click="$router.push('/')") Zurück zur Startseite
+  Button(variant="brand" @click="$router.push('/')") Zurück zur Startseite
 </template>
 
 <script setup lang="ts">

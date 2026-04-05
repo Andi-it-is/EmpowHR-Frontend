@@ -44,12 +44,20 @@ const props = defineProps<{
 const { isMobile } = useSidebar()
 
 const router = useRouter()
+
 function navToSettings() {
   return router.push("/settings")
 }
 function navToLogin() {
-  return router.push("login")
+  return router.push("/login")
 }
+function navToProfile() {
+  return router.push("/profile")
+}
+function navToHelp() {
+  return router.push("/help")
+}
+
 </script>
 
 <template>
@@ -96,7 +104,7 @@ function navToLogin() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <DropdownMenuItem @click="navToProfile">
               <CircleUser />
               Profil
             </DropdownMenuItem>
@@ -104,7 +112,7 @@ function navToLogin() {
               <Settings />
                 Einstellungen
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem @click="navToHelp">
               <Info />
               Hilfe
             </DropdownMenuItem>
