@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { SidebarProps } from "@/components/ui/sidebar"
 import { IdCardLanyard, Minus, Plus } from "lucide-vue-next"
-import SearchForm from "@/components/app/SearchForm.vue"
 import NavUser from "./NavUser.vue"
 import {
   Collapsible,
@@ -25,12 +24,13 @@ import {
 import {
   FileText, Database, Award, GitFork, Users,
   CalendarDays, Armchair, UmbrellaOff, Clock, Home,
-  CalendarCheck, Ellipsis, UserRound, Building2, Timer, ShieldCheck
+  CalendarCheck, Ellipsis, UserRound, Building2, Timer, ShieldCheck, Upload
 } from 'lucide-vue-next'
 
 import { useRoute, useRouter } from "vue-router"
 import { ref, watch, type Ref } from 'vue'
 import { getIconColor, navigationData } from "@/constants/navigation"
+import Separator from "../ui/separator/Separator.vue"
 
 
 const props = defineProps<SidebarProps>()
@@ -89,8 +89,34 @@ function navToIndex() {
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
-      <SearchForm />
     </SidebarHeader>
+
+    <!-- Schnellaktionen -->
+    <SidebarGroup class="mt-2">
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton @click="router.push('/desk-sharing/book')">
+            <Armchair class="size-4 text-muted-foreground" />
+            <span> Jetzt Sitzplatz buchen</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton @click="router.push('/time/absence/new')">
+            <UmbrellaOff class="size-4 text-muted-foreground" />
+            <span> Neue Abwesenheit einreichen</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton @click="router.push('/time/booking/today')">
+            <Clock class="size-4 text-muted-foreground" />
+            <span> Aktuellen Arbeitstag erfassen</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    </SidebarGroup>
+
+    <Separator class="my-1" />
+
     <SidebarContent>
       <SidebarGroup>
         <SidebarMenu>

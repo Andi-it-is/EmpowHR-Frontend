@@ -1,7 +1,7 @@
 <template lang="pug">
 
-h1 Profil
-p(class="text-muted-foreground max-w-200") Verwalte hier deine persönlichen Informationen, Verträge und beruflichen Stammdaten. 
+h1(tabindex="0") Profil
+p(class="text-muted-foreground max-w-200" tabindex="0") Verwalte hier deine persönlichen Informationen, Verträge und beruflichen Stammdaten. 
   | Halte dein Profil aktuell, um eine reibungslose Zusammenarbeit zu ermöglichen.
 
 div(class="flex flex-col gap-8 mt-8")

@@ -1,7 +1,7 @@
 <template lang="pug">
 
-  h1 Dokumente
-  p(class="text-muted-foreground max-w-200")
+  h1(tabindex="0") Dokumente
+  p(class="text-muted-foreground max-w-200" tabindex="0")
     | Hier findest du alle relevanten Unterlagen zu deinem Beschäftigungsverhältnis. 
     | Greife jederzeit auf deine Verträge Gehaltsdokumente und sonstigen Dokumenten zu.
   

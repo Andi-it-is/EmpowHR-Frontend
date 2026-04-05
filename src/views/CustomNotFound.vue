@@ -1,8 +1,8 @@
 <template lang="pug">
 div(class="flex flex-col gap-2 w-fit")
-  h1 404
-  h2 Seite nicht gefunden
-  p Die aufgerufene Seite existiert nicht.
+  h1(tabindex="0") 404
+  h2(tabindex="0") Seite nicht gefunden
+  p(tabindex="0") Die aufgerufene Seite existiert nicht.
   Button(variant="brand" @click="$router.push('/')") Zurück zur Startseite
 </template>
 

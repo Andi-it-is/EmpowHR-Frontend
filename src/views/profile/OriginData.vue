@@ -1,6 +1,6 @@
 <template lang="pug">
-h2 {{ greeting }} Max Mustermann
-p(class="text-muted-foreground") Hier kannst du deine Stammdaten einsehen und bearbeiten.
+h1(tabindex="0") {{ greeting }} Max Mustermann
+p(class="text-muted-foreground" tabindex="0") Hier kannst du deine Stammdaten einsehen und bearbeiten.
 
 //- Section with the CompanyBanner
 div(class="grid xl:grid-cols-10 grid-cols-1 gap-8")

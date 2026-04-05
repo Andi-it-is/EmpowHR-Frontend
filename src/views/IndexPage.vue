@@ -1,18 +1,19 @@
 <template lang="pug">
 
-h1(class="mb-2") Willkommen bei EmpowHR
-p(class="text-muted-foreground max-w-200") EmpowHR ist deine zentrale Anlaufstelle für alle personalrelevanten Themen.
+h1(tabindex="0") Willkommen bei EmpowHR
+p(class="text-muted-foreground max-w-200" tabindex="0") EmpowHR ist deine zentrale Anlaufstelle für alle personalrelevanten Themen.
   |  Von deinen persönlichen Stammdaten bis zur Zeitverwaltung. Alles was dein Arbeitsleben benötigt, an einem Ort.
 
 div(class="flex flex-col gap-8 mt-8")
   div(v-for="group in navigationData" :key="group.title")
-    h3(class="mb-4") {{ group.title }}
+    h3(class="mb-4 w-fit" tabindex="0") {{ group.title }}
     div(class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4")
       Card(
         v-for="item in group.items"
         :key="item.title"
         class="cursor-pointer hover:border-primary transition-colors"
         @click="router.push(item.url)"
+        tabindex="0"
       )
         CardContent(class="flex flex-col items-center justify-center gap-3 pt-6 pb-6 text-center")
           div(:class="[getColorClasses(item.color), 'p-3 rounded-lg']")

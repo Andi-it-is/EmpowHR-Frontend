@@ -24,8 +24,8 @@ const showRegisterPasswordConfirm = ref(false)
 
 function navToIndex() { return router.push("/") }
 function registerUser() {
-  toast.success('Konto erstellt', {
-    description: 'Du wirst in Kürze weitergeleitet.',
+  toast.warning('Konto kann nicht erstellt werden.', {
+    description: 'Die Route zum Registrieren ist derzeit bewusst deaktiviert.',
   })
 }
 
@@ -92,7 +92,7 @@ watch(isLoginCard, () => {
         <form @submit.prevent="onLogin" class="flex flex-col flex-1">
           <FieldGroup class="gap-2 flex flex-col flex-1">
             <Field>
-              <Button variant="outline" type="button">
+              <Button variant="brand-outline" type="button">
                 <IdCard />
                 Login with SSO
               </Button>
