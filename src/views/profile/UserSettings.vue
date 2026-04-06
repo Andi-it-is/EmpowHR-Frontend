@@ -68,7 +68,6 @@ function navToPreferences() {
 
 onMounted(() => {
 
-  console.log("mounted the UserSettings.vue file yay")
 })
 
 </script>

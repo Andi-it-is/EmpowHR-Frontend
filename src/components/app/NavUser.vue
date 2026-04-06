@@ -32,14 +32,10 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useRouter } from "vue-router";
+import { authService } from "@/services/auth.service";
+import { useUserStore } from "@/stores/user.store";
+import { computed } from "vue";
 
-const props = defineProps<{
-  user: {
-    name: string
-    email: string
-    avatar: string
-  }
-}>()
 
 const { isMobile } = useSidebar()
 
@@ -48,8 +44,10 @@ const router = useRouter()
 function navToSettings() {
   return router.push("/settings")
 }
-function navToLogin() {
-  return router.push("/login")
+async function logout() {
+  await authService.logout()
+  userStore.clearUser()
+  router.push("/login")
 }
 function navToProfile() {
   return router.push("/profile")
@@ -57,6 +55,14 @@ function navToProfile() {
 function navToHelp() {
   return router.push("/help")
 }
+
+const userStore = useUserStore()
+
+const user = computed(() => ({
+  name: `${userStore.user?.firstname ?? ''} ${userStore.user?.lastname ?? ''}`.trim(),
+  email: userStore.user?.email ?? '',
+  avatar: ''
+}))
 
 </script>
 
@@ -118,7 +124,7 @@ function navToHelp() {
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem @click="navToLogin">
+          <DropdownMenuItem @click="logout">
             <LogOut />
             Log out
           </DropdownMenuItem>

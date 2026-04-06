@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, type HTMLAttributes } from "vue"
+import { ref, nextTick, watch, type HTMLAttributes } from "vue"
 import { cn } from "@/lib/utils"
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
@@ -11,7 +11,10 @@ import { Input } from "@/components/ui/input"
 import { IdCard, Eye, EyeOff } from "lucide-vue-next"
 import { useRouter } from "vue-router"
 import { toast } from 'vue-sonner'
-
+import { authService, type LoginObject, type RegisterObject } from "@/services/auth.service"
+import { useUserStore } from "@/stores/user.store"
+import Cookies from "js-cookie"
+import api from "@/lib/axios"
 
 const props = defineProps<{ class?: HTMLAttributes["class"] }>()
 
@@ -23,16 +26,41 @@ const showRegisterPassword = ref(false)
 const showRegisterPasswordConfirm = ref(false)
 
 function navToIndex() { return router.push("/") }
-function registerUser() {
-  toast.warning('Konto kann nicht erstellt werden.', {
-    description: 'Die Route zum Registrieren ist derzeit bewusst deaktiviert.',
+
+async function registerUser() {
+
+  let registerObj: RegisterObject = {
+    email: registerEmail.value!,
+    password: registerPassword.value!,
+    passwordConfirm: registerPasswordConfirm.value!
+  }
+  const result = await authService.register(registerObj)
+  toast.success('Konto registriert!', {
+    description: 'Melde dich nun an mit dem Konto.',
   })
 }
 
-function loginUser() {
-  toast.success('Erfolgreich angemeldet', {
-    description: 'Willkommen zurück!',
-  })
+const userStore = useUserStore()
+
+async function loginUser() {
+
+  let loginObj: LoginObject = {
+    email: loginEmail.value!,
+    password: loginPassword.value!
+  }
+  const authResponse = await authService.login(loginObj)
+  const access_token = authResponse.access_token;
+
+  Cookies.set("access_token", access_token, {
+    expires: 7, // 7 Tage
+    path: "/",
+    sameSite: "Lax",
+  });
+
+  await nextTick()
+  await userStore.fetchUser()
+  await nextTick()
+  router.push("/")
 }
 
 const loginSchema = toTypedSchema(z.object({

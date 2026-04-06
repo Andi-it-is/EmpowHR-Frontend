@@ -60,12 +60,6 @@ function getNavState(states: Ref<boolean>[], index: number): Ref<boolean> {
   return states[index] ?? ref(false)
 }
 
-const userData = {
-  name: "shadcn",
-  email: "m@example.com",
-  avatar: "/avatars/shadcn.jpg",
-}
-
 function navToIndex() {
   return router.push("/")
 }
@@ -95,19 +89,19 @@ function navToIndex() {
     <SidebarGroup class="mt-2">
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton @click="router.push('/desk-sharing/book')">
+          <SidebarMenuButton>
             <Armchair class="size-4 text-muted-foreground" />
             <span> Jetzt Sitzplatz buchen</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton @click="router.push('/time/absence/new')">
+          <SidebarMenuButton>
             <UmbrellaOff class="size-4 text-muted-foreground" />
             <span> Neue Abwesenheit einreichen</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton @click="router.push('/time/booking/today')">
+          <SidebarMenuButton>
             <Clock class="size-4 text-muted-foreground" />
             <span> Aktuellen Arbeitstag erfassen</span>
           </SidebarMenuButton>
@@ -153,7 +147,7 @@ function navToIndex() {
       </SidebarGroup>
     </SidebarContent>
     <SidebarFooter>
-      <NavUser :user="userData" />
+      <NavUser />
     </SidebarFooter>
     <SidebarRail />
   </Sidebar>

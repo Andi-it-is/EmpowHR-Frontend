@@ -137,7 +137,6 @@
     line-height: 1.25;
     letter-spacing: -0.02em;
     color: var(--foreground);
-    max-width: fit-content;
   }
 
   h1 { font-size: 2rem; }
