@@ -59,7 +59,7 @@ const router = createRouter({
             {
               path: 'master-data',
               name: 'Stammdaten',
-              component: () => import('../views/profile/OriginData.vue'),
+              component: () => import('../views/profile/MasterData.vue'),
               meta: { title: 'Stammdaten' }
             },
             {

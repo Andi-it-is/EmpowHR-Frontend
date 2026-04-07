@@ -11,6 +11,8 @@
     div(class="flex min-h-svh mb-16 w-full overflow-hidden")
       
       div(class="flex-1 flex flex-col")
+        Button(variant="brand-outline" class="ml-auto flex justify-end max-w-50") Hochladen
+          Upload(class="w-4 h-4")
 
         Separator(class="my-4")
 
@@ -132,7 +134,7 @@ import {
   ItemTitle,
   ItemDescription,
 } from '@/components/ui/item/';
-import { ShieldIcon, FileSearch2Icon, XIcon, CalendarIcon, Search, RotateCcw, Check, ChevronsUpDown, X } from 'lucide-vue-next';
+import { ShieldIcon, FileSearch2Icon, XIcon, CalendarIcon, Search, RotateCcw, Check, ChevronsUpDown, X, Upload } from 'lucide-vue-next';
 import Separator from '@/components/ui/separator/Separator.vue';
 import DocumentBrowserSidebar from '@/components/app/profile/DocumentBrowserSidebar.vue';
 import Input from '@/components/ui/input/Input.vue';
