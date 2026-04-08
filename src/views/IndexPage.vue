@@ -1,8 +1,8 @@
 <template lang="pug">
 
 h1(tabindex="0") Willkommen bei EmpowHR
-p(class="text-muted-foreground max-w-200" tabindex="0") EmpowHR ist deine zentrale Anlaufstelle für alle personalrelevanten Themen.
-  |  Von deinen persönlichen Stammdaten bis zur Zeitverwaltung. Alles was dein Arbeitsleben benötigt, an einem Ort.
+p(class="text-muted-foreground max-w-175" tabindex="0") EmpowHR ist deine zentrale Anlaufstelle für alle personalrelevanten Themen.
+  |  Alles was dein Arbeitsleben benötigt, an einem Ort.
 
 div(class="flex flex-col gap-8 mt-8")
   div(v-for="group in navigationData" :key="group.title")

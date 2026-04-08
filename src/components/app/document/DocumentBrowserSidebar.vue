@@ -41,7 +41,7 @@
                 <FileIcon />
               </ItemMedia>
               <ItemContent>
-                <ItemTitle> Mein ultra cooles und super langes Dokument {{ doc.id }} {{ doc.name }} </ItemTitle>
+                <ItemTitle> {{ doc.name }} </ItemTitle>
                 <ItemDescription> Hochgeladen am: {{ doc.date }}</ItemDescription>
               </ItemContent>
             </Item>

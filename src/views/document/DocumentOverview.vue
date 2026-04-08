@@ -1,17 +1,51 @@
 <template lang="pug">
 
+div(v-if="!isLoaded" class="flex flex-col gap-4 w-full")
+  
+  //- Upload Button Skeleton
+  Skeleton(class="h-9 w-36 ml-auto bg-muted-foreground/20")
+  Separator(class="my-4")
+
+  //- Filter Card Skeleton
+  div(class="border rounded-xl p-6 flex flex-col gap-4")
+    Skeleton(class="h-5 w-24 bg-muted-foreground/20")
+    Skeleton(class="h-3 w-64 bg-muted-foreground/20")
+    div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-2")
+      Skeleton(class="h-9 w-full bg-muted-foreground/20")
+      Skeleton(class="h-9 w-full bg-muted-foreground/20")
+      Skeleton(class="h-9 w-full bg-muted-foreground/20")
+      Skeleton(class="h-9 w-full bg-muted-foreground/20")
+    Separator(class="my-4")
+    div(class="flex justify-between")
+      Skeleton(class="h-9 w-36 bg-muted-foreground/20")
+      div(class="flex gap-2")
+        Skeleton(class="h-9 w-48 bg-muted-foreground/20")
+        Skeleton(class="h-9 w-28 bg-muted-foreground/20")
+
+  Separator(class="my-4")
+
+  //- PDF Viewer Skeleton
+  div(class="flex flex-col gap-3")
+    div(class="flex justify-between items-center py-4")
+      div(class="flex flex-col gap-2")
+        Skeleton(class="h-5 w-48 bg-muted-foreground/20")
+        Skeleton(class="h-3 w-32 bg-muted-foreground/20")
+      Skeleton(class="h-8 w-8 bg-muted-foreground/20")
+    Skeleton(class="h-150 w-full rounded-xl bg-muted-foreground/20")
+    
+div(v-else)
   h1(tabindex="0") Dokumente
-  p(class="text-muted-foreground max-w-200" tabindex="0")
+  p(class="text-muted-foreground max-w-175" tabindex="0")
     | Hier findest du alle relevanten Unterlagen zu deinem Beschäftigungsverhältnis. 
     | Greife jederzeit auf deine Verträge Gehaltsdokumente und sonstigen Dokumenten zu.
   
   //- SidebarProvider is responsible for determining spacing based on the sidebar's open/closed state
   //- setting inline styles to a custom sidebar width variable to determine the space the sidebar is pushing
-  SidebarProvider(:open="isDocSidebarOpen" @update:open="isDocSidebarOpen = $event" style="--sidebar-width: 25rem;")
+  SidebarProvider(:open="isDocSidebarOpen" @update:open="isDocSidebarOpen = $event" :style="sidebarStyle")
     div(class="flex min-h-svh mb-16 w-full overflow-hidden")
       
       div(class="flex-1 flex flex-col")
-        Button(variant="brand-outline" class="ml-auto flex justify-end max-w-50") Hochladen
+        Button(variant="brand-outline" class="ml-auto flex justify-end max-w-50" disabled) Hochladen
           Upload(class="w-4 h-4")
 
         Separator(class="my-4")
@@ -36,8 +70,8 @@
               MultiSelect(
                 id="kategorie"
                 label="Kategorie"
-                :options="kategorien"
-                v-model="selectedKategorien"
+                :options="documentTypes"
+                v-model="selectedTypes"
               )
 
             Separator(class="my-4")
@@ -72,8 +106,9 @@
         div(class="flex flex-col flex-1 min-h-0 mx-1")
           header(class="py-4 flex justify-between items-center")
             div(class="flex flex-col")
-              h2(class="text-xl font-bold") document.title
-              p(class="text-sm text-muted-foreground") Hochgeladen am: 02.04.2026
+              h2(class="text-xl font-bold") {{ activeDocument?.name }}
+              p(v-if="availableDocuments.find(d => d.id === activeDocId)?.date" class="text-sm text-muted-foreground") 
+                | Hochgeladen am: {{ availableDocuments.find(d => d.id === activeDocId)?.date }}
             
             div(class="flex gap-2 items-center")
               p(class="text-sm hidden sm:block") Dokumentenleiste
@@ -103,7 +138,7 @@
       //- 3. Die Sidebar (bleibt rechts und reserviert Platz)
       DocumentBrowserSidebar(
         side="right"
-        v-model:documents="myFiles"
+        v-model:documents="availableDocuments"
         v-model:selectedId="activeDocId"
       )
 
@@ -136,7 +171,7 @@ import {
 } from '@/components/ui/item/';
 import { ShieldIcon, FileSearch2Icon, XIcon, CalendarIcon, Search, RotateCcw, Check, ChevronsUpDown, X, Upload } from 'lucide-vue-next';
 import Separator from '@/components/ui/separator/Separator.vue';
-import DocumentBrowserSidebar from '@/components/app/profile/DocumentBrowserSidebar.vue';
+import DocumentBrowserSidebar from '@/components/app/document/DocumentBrowserSidebar.vue';
 import Input from '@/components/ui/input/Input.vue';
 import {
   Select,
@@ -173,9 +208,21 @@ import {
 import MultiSelect from '@/components/app/generic/MultiSelect.vue';
 import { toast } from 'vue-sonner'
 import CalendarInput from '@/components/app/generic/CalendarInput.vue';
+import { useWindowSize } from '@vueuse/core'
+import { documentService } from '@/services/document.service';
+import api from '@/lib/axios';
+import { DocumentType, DocumentSecurityLevel, DocumentTypeLabels, DocumentSecurityLevelLabels, DocumentSecurityLevelApiMap } from '@/constants/enums/document.enum'
+import { calendarToIsoDate } from '@/lib/calendarToIsoDate';
+
+
+const { width } = useWindowSize()
+const sidebarStyle = computed(() => ({
+  '--sidebar-width': width.value >= 1480 ? '25rem' : '16rem'
+}))
 
 const router = useRouter()
 
+const activeDocument = computed(() => availableDocuments.value.find((d: any) => d.id === activeDocId.value))
 const pdfFileUrl = ref('/Beispiel-Lohnabrechnung.pdf')
 const selectedDocument = ref(null)
 
@@ -201,57 +248,113 @@ const toggleDocSidebar = () => {
   isDocSidebarOpen.value = !isDocSidebarOpen.value
 }
 
-// Dein zentraler State
-const myFiles = ref([
-  { id: '1', name: 'Dokumenterino.pdf', date: '01.01.2024', url: '/Beispiel-Lohnabrechnung.pdf' },
-  { id: '2', name: 'Files.pdf', date: '15.02.2024', url: '/Beispiel-Lohnsteuerbescheinigung.pdf' }
-])
+
+const availableDocuments = ref([])
 
 const activeDocId = ref<string | null>(null)
 
 // Computed für die Anzeige im Viewer
-const currentPdf = computed(() => {
+const currentPdf = ref<string | null>(null)
 
-  const doc = myFiles.value.find(f => f.id === activeDocId.value)
-  return doc ? doc.url : null
+watch(activeDocId, async (id) => {
+  if (!id) { currentPdf.value = null; return }
+  currentPdf.value = await documentService.getDocumentFile(id)
 })
 
+const documentTypes = Object.values(DocumentType).map(value => ({
+  value,
+  label: DocumentTypeLabels[value]
+}))
 
-const kategorien = [
-  { value: 'CONTRACT', label: 'Vertrag' },
-  { value: 'FINANCE', label: 'Finanzen' },
-  { value: 'ABSENCE', label: 'Abwesenheit' },
-  { value: 'QUALIFICATION', label: 'Qualifikation' },
-  { value: 'COMPLIANCE', label: 'Compliance' },
-]
-const selectedKategorien = ref<string[]>([])
+const securityLevels = Object.values(DocumentSecurityLevel).map(value => ({
+  value,
+  label: DocumentSecurityLevelLabels[value]
+}))
 
-const securityLevels = [
-  { value: '1', label: 'Dienstgebrauch' },
-  { value: '2', label: 'Geschäftlich' },
-  { value: '3', label: 'Geheim' },
-  { value: '4', label: 'Sehr Geheim' },
-]
-const selectedSecurityLevels = ref<string[]>([])
+const selectedTypes = ref<DocumentType[]>([])
+const selectedSecurityLevels = ref<DocumentSecurityLevel[]>([])
 
 
 function resetFilter() {
   startdate.value = null
   enddate.value = null
   selectedSecurityLevels.value = []
-  selectedKategorien.value = []
+  selectedTypes.value = []
 }
-// every doc, no filters anymore
-function searchAll() {
-  toast.success('Suche für alle Elemente getätigt', {
-    description: 'Der Text kommt weg.',
+
+async function searchAll() {
+
+  const docs = await documentService.getDocuments()
+
+  availableDocuments.value = docs.map((doc: any) => ({
+    id: doc.id,
+    name: doc.title,
+    date: new Date(doc.created_at).toLocaleDateString('de-DE'),
+    url: documentService.getFileUrl(doc.id)
+  }))
+
+  toast.success('Suche erfolgreich', {
+    description: `${docs.length} Ergebnisse gefunden (Filter wurden ignoriert)`,
   })
+
   isDocSidebarOpen.value = true
 }
-function applyFilterAndSearch() {
+async function applyFilterAndSearch() {
 
-  toast.success('Suche wurde getätigt', {
-    description: 'Der Text kommt weg.',
+  const hasType          = selectedTypes.value.length > 0
+  const hasSecurityLevel = selectedSecurityLevels.value.length > 0
+  const hasDateFrom      = !!startdate.value
+  const hasDateTo        = !!enddate.value
+  
+  if (!hasDateFrom && !hasDateTo) {
+    toast.warning('Zeitraum fehlt', {
+      description: 'Bitte setze ein Start- und Enddatum.',
+    })
+    return
+  }
+
+  if (hasDateFrom && !hasDateTo || !hasDateFrom && hasDateTo) {
+    toast.warning('Zeitraum unvollständig', {
+      description: 'Bitte setze sowohl ein Start- als auch ein Enddatum.',
+    })
+    return
+  }
+
+  if (!hasSecurityLevel) {
+    toast.warning('Vertraulichkeit fehlt', {
+      description: 'Bitte wähle mindestens eine Vertraulichkeitsstufe aus.',
+    })
+    return
+  }
+
+  if (!hasType) {
+    toast.warning('Kategorie fehlt', {
+      description: 'Bitte wähle mindestens eine Kategorie aus.',
+    })
+    return
+  }
+
+  const filters = {
+    type: selectedTypes.value,
+    security_level: selectedSecurityLevels.value.map(s => DocumentSecurityLevelApiMap[s]),
+    date_from: calendarToIsoDate(startdate.value)!,
+    date_to: calendarToIsoDate(enddate.value)!
+  }
+
+  const docs = await documentService.getDocumentsByFilters(filters)
+
+  availableDocuments.value = docs.map((doc: any) => ({
+    id: doc.id,
+    name: doc.title,
+    date: new Date(doc.created_at).toLocaleDateString('de-DE'),
+    url: documentService.getFileUrl(doc.id)
+  }))
+
+  activeDocId.value = null
+  currentPdf.value = null
+
+  toast.success('Suche erfolgreich', {
+    description: `${docs.length} Ergebnisse gefunden.`,
   })
   isDocSidebarOpen.value = true
   
@@ -259,9 +362,11 @@ function applyFilterAndSearch() {
 const startdate = ref()
 const enddate = ref()
 const isHovered = ref(false)
+const isLoaded = ref(false)
 
-onMounted(() => {
-
+onMounted(async () => {
+  
+  isLoaded.value = true
 })
 
 </script>

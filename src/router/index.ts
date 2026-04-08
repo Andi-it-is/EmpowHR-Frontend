@@ -65,7 +65,7 @@ const router = createRouter({
             {
               path: 'documents',
               name: 'Dokumente',
-              component: () => import('../views/profile/DocumentOverview.vue'),
+              component: () => import('../views/document/DocumentOverview.vue'),
                 meta: { title: 'Dokumente' }
             }
           ]

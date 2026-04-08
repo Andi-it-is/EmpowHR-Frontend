@@ -19,7 +19,9 @@ const emits = defineEmits<{
   "update:open": [open: boolean]
 }>()
 
-const isMobile = useMediaQuery("(max-width: 768px)")
+// const isMobile = useMediaQuery("(max-width: 768px)")
+//! Mobile is defined with a new custom breakpoint ;) MOBILE_VIEW
+const isMobile = useMediaQuery("(max-width: 1000px)")
 const openMobile = ref(false)
 
 const open = useVModel(props, "open", emits, {
