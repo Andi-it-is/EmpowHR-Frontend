@@ -16,7 +16,6 @@ async function getDocuments(): Promise<any> {
 
 async function getDocumentsByFilters(filters: DocumentFilters): Promise<any> {
 
-  console.log("FILTER DER ANS BACKEND GEHT ", filters)
   const result = await api.post(`/document/my/filter`, filters)
   return result.data.data
 }

@@ -10,7 +10,6 @@ interface SimpleUserObject {
 async function getSimpleUserInfo(): Promise<SimpleUserObject> {
 
   const result = await (await api.get("/user/simple")).data.data
-  console.log("result", result)
   return result
 }
 

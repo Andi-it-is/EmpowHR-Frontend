@@ -282,6 +282,7 @@ function resetFilter() {
   selectedTypes.value = []
 }
 
+// used to search all documents, no matter the set filters
 async function searchAll() {
 
   const docs = await documentService.getDocuments()
@@ -299,7 +300,13 @@ async function searchAll() {
 
   isDocSidebarOpen.value = true
 }
+
+// search all documents with the given filters
 async function applyFilterAndSearch() {
+
+  availableDocuments.value = []
+  activeDocId.value = null
+  currentPdf.value = null
 
   const hasType          = selectedTypes.value.length > 0
   const hasSecurityLevel = selectedSecurityLevels.value.length > 0

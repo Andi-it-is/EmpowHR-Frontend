@@ -47,6 +47,10 @@ const props = defineProps<{
   isSensitive: boolean
 }>()
 
+const emit = defineEmits<{
+  save: [patchData: Record<string, any>]
+}>()
+
 const data = defineModel<Record<string, string | number | null | undefined>>('data', { required: true })
 const labels = defineModel<Record<string, string>>('labels')
 
@@ -81,7 +85,13 @@ function getDisplayValue(str: string) {
   }
 }
 
-const listMode = ref<DynamicDataListType>( DynamicDataListType.READ )
+const listMode = ref<DynamicDataListType>(DynamicDataListType.READ)
+  
+function closeEditMode() {
+  listMode.value = DynamicDataListType.READ
+}
+
+defineExpose({ closeEditMode })
 
 function enableEditView() {
   originalData.value = JSON.stringify(data.value)
@@ -127,12 +137,6 @@ async function saveData() {
     }
   });
 
-  const result = await userMasterDataService.updateMasterData(patchData)
-  
-  toast.success('Stammdaten aktualisiert', {
-    description: 'Deine Änderungen wurden erfolgreich übernommen.',
-  })
-  
-  listMode.value = DynamicDataListType.READ
+  emit('save', patchData)
 }
 </script>

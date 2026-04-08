@@ -36,11 +36,15 @@ div(v-else)
           :data="groupedMasterDataObject.address.values" 
           :labels="groupedMasterDataObject.address.labels"
           title="Anschrift"
+          ref="addressListRef"
+          @save="(patchData) => onSave(patchData, 'address')"
         )
         DynamicDataList(
           :data="groupedMasterDataObject.payment.values" 
           :labels="groupedMasterDataObject.payment.labels" 
           title="Zahlung"
+          ref="paymentListRef"
+          @save="(patchData) => onSave(patchData, 'payment')"
           isSensitive=true
         )
         DynamicDataList(
@@ -86,7 +90,7 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { Pencil, Save } from 'lucide-vue-next'
 import dayjs from 'dayjs'
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, type Ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue-sonner'
 import Input from '@/components/ui/input/Input.vue';
@@ -101,21 +105,26 @@ const router = useRouter()
 const hour = dayjs().hour() 
 const greeting = hour <= 11 ? 'Guten Morgen' : hour <= 18 ? 'Guten Tag' : 'Guten Abend'
 
-const userData = {
-  fullName: 'Max Mustermann',
-  position: 'Software Engineer',
-  department: 'IT@EmpowHR ',
-  email: 'm.mustermann@firma.de',
-  location: 'Düsseldorf',
-  startDate: '2019-03-01',
-  status: 'active',
+const addressListRef = ref()
+const paymentListRef = ref()
+
+const refMap: Record<string, Ref> = {
+  address: addressListRef,
+  payment: paymentListRef,
 }
 
-const activityLog = [
-  { id: 1, field: 'Adresse', changedBy: 'Max Mustermann', changedAt: '2026-03-25' },
-  { id: 2, field: 'Telefonnummer (Privat)', changedBy: 'Max Mustermann', changedAt: '2026-03-20' },
-  { id: 3, field: 'Bankverbindung', changedBy: 'HR · Sandra Klein', changedAt: '2026-02-10' },
-]
+async function onSave(patchData: Record<string, any>, key: string) {
+  await userMasterDataService.updateMasterData(patchData)
+  toast.success('Aktualisiert', {
+    description: 'Deine Änderungen wurden erfolgreich übernommen.',
+  })
+  refMap[key]!.value?.closeEditMode()
+
+  // get all data
+
+  // get the loggs
+  await getChangeLogs()
+}
 
 
 const changeLogs = ref()
@@ -131,8 +140,7 @@ const activityLogsLabelMap = ref()
 
 const isLoaded = ref(false)
 
-onMounted( async() => {
-  masterDataObject.value = await userMasterDataService.getMasterData()
+function groupMasterDataForDisplay() {
 
   // sublist Person
   groupedMasterDataObject.value.name.values = {
@@ -193,11 +201,21 @@ onMounted( async() => {
     started_working_date: masterDataObject.value.started_working_date
   }
 
+}
+
+async function getChangeLogs() {
+
   changeLogs.value = await changeLogsService.getLogsById(masterDataObject.value.id)
   activityLogsLabelMap.value = Object.values(groupedMasterDataObject.value).reduce((acc, group) => {
     return { ...acc, ...(group as any).labels }
   }, {} as Record<string, string>)
+}
 
+onMounted( async() => {
+  masterDataObject.value = await userMasterDataService.getMasterData()
+
+  groupMasterDataForDisplay()
+  await getChangeLogs()
 
   isLoaded.value = true
 })

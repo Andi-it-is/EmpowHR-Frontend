@@ -13,8 +13,8 @@ Card
         div(class="flex items-center justify-between gap-2")
           div(class="flex items-center gap-1.5 text-xs text-muted-foreground")
             Clock(:size="11")
-            span {{ timeAgo(entry.created_at) }}
-          div(class="flex items-center gap-1.5 text-xs text-muted-foreground")
+            span {{ formatDateTime(entry.created_at) }}
+          div(class="flex items-center gap-1.5 mt-1 text-xs text-muted-foreground")
             UserRound(:size="11")
             span {{ entry.changed_by.first_name }} {{ entry.changed_by.last_name }}
         div(
@@ -63,13 +63,13 @@ function maskValue(key: string, value: any): string {
   return value ?? '—'
 }
 
-function timeAgo(dateStr: string) {
-  const diff = Date.now() - new Date(dateStr).getTime()
-  const days = Math.floor(diff / 86400000)
-  if (days === 0) return 'Heute'
-  if (days === 1) return 'Gestern'
-  if (days < 7) return `vor ${days} Tagen`
-  if (days < 30) return `vor ${Math.floor(days / 7)} Wo.`
-  return `vor ${Math.floor(days / 30)} Mon.`
+function formatDateTime(dateStr: string) {
+  return new Date(dateStr).toLocaleString('de-DE', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
 </script>

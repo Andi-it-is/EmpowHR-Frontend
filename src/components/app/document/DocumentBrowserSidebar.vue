@@ -6,8 +6,8 @@
         <SidebarMenuItem class="py-4 px-2">
           <div class="flex items-start justify-between">
             <div>
-              <h3> {{ documents.length }} Dokumente </h3>
-              <p class="text-muted-foreground"> Zeitraum: Jahr - Jahr  </p>
+              <h3> {{ documents.length }} Ergebnisse </h3>
+              <p class="text-muted-foreground"> </p>
             </div>
               <Button
                 v-if="selectedId"
