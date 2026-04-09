@@ -285,12 +285,20 @@ function resetFilter() {
 // used to search all documents, no matter the set filters
 async function searchAll() {
 
+  availableDocuments.value = []
+  activeDocId.value = null
+  currentPdf.value = null
+  
   const docs = await documentService.getDocuments()
 
   availableDocuments.value = docs.map((doc: any) => ({
     id: doc.id,
     name: doc.title,
-    date: new Date(doc.created_at).toLocaleDateString('de-DE'),
+    date: new Date(doc.created_at).toLocaleDateString('de-DE', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }),
     url: documentService.getFileUrl(doc.id)
   }))
 
@@ -353,7 +361,11 @@ async function applyFilterAndSearch() {
   availableDocuments.value = docs.map((doc: any) => ({
     id: doc.id,
     name: doc.title,
-    date: new Date(doc.created_at).toLocaleDateString('de-DE'),
+    date: new Date(doc.created_at).toLocaleDateString('de-DE', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }),
     url: documentService.getFileUrl(doc.id)
   }))
 
