@@ -11,7 +11,7 @@ div(v-if="!isLoaded" class="flex flex-col items-center gap-3 p-8")
     Skeleton(class="h-3 w-full bg-muted-foreground/20")
     
 div(v-else)
-  h1(tabindex="0") {{ greeting }} {{ groupedMasterDataObject.other.fullname }}
+  h1(tabindex="0" class="mb-2") {{ greeting }} {{ groupedMasterDataObject.other.fullname }}
   p(class="text-muted-foreground" tabindex="0") Hier kannst du deine Stammdaten einsehen und bearbeiten.
 
   //- pre {{ groupedMasterDataObject }}

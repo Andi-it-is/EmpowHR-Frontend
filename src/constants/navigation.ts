@@ -1,7 +1,7 @@
 import {
   FileText, Database, Award, GitFork, Users,
   CalendarDays, Armchair, UmbrellaOff, Clock, Home,
-  CalendarCheck, UserRound, Building2, Timer, ShieldCheck, UserRoundKey
+  CalendarCheck, UserRound, Building2, Timer, ShieldCheck, UserRoundKey, UserRoundCog
 } from 'lucide-vue-next'
 
 export function getColorClasses(color: string) {
@@ -37,7 +37,7 @@ export const navigationData = [
     items: [
       { title: "Stammdaten", url: "/profile/master-data", icon: Database, description: "Persönliche Angaben", color: "green" },
       { title: "Dokumente", url: "/profile/documents", icon: FileText, description: "Lohnabrechnungen und vieles Mehr", color: "green" },
-      { title: "Zertifikate", url: "#", icon: Award, description: "Deine Nachweise für Schulungen", color: "green" },
+      { title: "Zertifikate", url: "/profile/certificates", icon: Award, description: "Deine Nachweise für Schulungen", color: "green" },
     ],
   },
   {
@@ -69,6 +69,7 @@ export const navigationData = [
     icon: ShieldCheck,
     color: "group-rose",
     items: [
+      { title: "Mitarbeiterverwaltung", url: "#", icon: UserRoundCog, description: "Inhalte und Mitarbeiter konfigurieren", color: "rose" },
       { title: "Urlaubsplanungen", url: "#", icon: CalendarCheck, description: "Abwesenheiten planen und genehmigen", color: "rose" },
       { title: "Zugriff", url: "#", icon: UserRoundKey, description: "Rollen und Berechtigungen verwalten", color: "rose" },
       // { title: "Sonstiges", url: "#", icon: Ellipsis, description: "Weitere Beschreibung", color: "rose" },

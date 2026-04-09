@@ -1,0 +1,127 @@
+<script setup lang="ts" generic="T extends Record<string, any>">
+import type { Component } from "vue"
+import type { BaseChartProps } from "."
+import { Donut } from "@unovis/ts"
+import { VisDonut, VisSingleContainer } from "@unovis/vue"
+import { useMounted } from "@vueuse/core"
+import { computed, ref } from "vue"
+import { cn } from "@/lib/utils"
+import { ChartSingleTooltip, defaultColors } from '@/components/ui/chart'
+
+const props = withDefaults(defineProps<Pick<BaseChartProps<T>, "data" | "colors" | "index" | "margin" | "showLegend" | "showTooltip" | "filterOpacity"> & {
+  /**
+   * Sets the name of the key containing the quantitative chart values.
+   */
+  category: KeyOfT
+  /**
+   * Change the type of the chart
+   * @default "donut"
+   */
+  type?: "donut" | "pie"
+  /**
+   * Function to sort the segment
+   */
+  sortFunction?: (a: any, b: any) => number | undefined
+  /**
+   * Controls the formatting for the label.
+   */
+  valueFormatter?: (tick: number, i?: number, ticks?: number[]) => string
+  /**
+   * Render custom tooltip component.
+   */
+  customTooltip?: Component
+  /**
+   * Show Label
+   */
+  showLabel?: boolean
+  /**
+   * Thickness of a Ring
+   */
+  arcWidth?: number
+
+}>(), {
+  margin: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
+  sortFunction: () => undefined,
+  type: "donut",
+  filterOpacity: 0.2,
+  showTooltip: true,
+  showLegend: true,
+  showLabel: true
+})
+
+type KeyOfT = Extract<keyof T, string>
+type Data = typeof props.data[number]
+
+const valueFormatter = props.valueFormatter ?? ((tick: number) => `${tick}`)
+const category = computed(() => props.category as KeyOfT)
+const index = computed(() => props.index as KeyOfT)
+
+const isMounted = useMounted()
+const activeSegmentKey = ref<string>()
+const colors = computed(() => props.colors?.length ? props.colors : defaultColors(props.data.filter(d => d[props.category]).filter(Boolean).length))
+const legendItems = computed(() => props.data.map((item, i) => ({
+  name: item[props.index],
+  color: colors.value[i],
+  inactive: false,
+})))
+
+const totalValue = computed(() => props.data.reduce((prev, curr) => {
+  return prev + curr[props.category]
+}, 0))
+</script>
+
+<template>
+  <div :class="cn('w-full h-48 flex flex-col items-end', $attrs.class ?? '')">
+    <VisSingleContainer :style="{ height: isMounted ? '100%' : 'auto' }" :margin="{ left: 20, right: 20 }" :data="data">
+      <ChartSingleTooltip
+        :selector="Donut.selectors.segment"
+        :index="index"
+        :category="category"
+        :items="legendItems"
+        :value-formatter="valueFormatter"
+        :custom-tooltip="customTooltip"
+      />
+
+      <VisDonut
+        :value="(d: Data) => d[category]"
+        :sort-function="sortFunction"
+        :color="colors"
+        :arc-width="type === 'donut' ? arcWidth : 0"
+        :show-background="false"
+        :central-label="(type === 'donut' && showLabel) ? valueFormatter(totalValue) : ''"
+        :events="{
+          [Donut.selectors.segment]: {
+            click: (d: Data, ev: PointerEvent, i: number, elements: HTMLElement[]) => {
+              if (d?.data?.[index] === activeSegmentKey) {
+                activeSegmentKey = undefined
+                elements.forEach(el => el.style.opacity = '1')
+              }
+              else {
+                activeSegmentKey = d?.data?.[index]
+                elements.forEach(el => el.style.opacity = `${filterOpacity}`)
+                elements[i].style.opacity = '1'
+              }
+            },
+          },
+        }"
+      />
+      
+      <slot />
+    </VisSingleContainer>
+
+    <!-- Legende -->
+    <div v-if="showLegend" class="flex flex-wrap gap-x-4 gap-y-2 justify-center mt-3 w-full">
+      <div
+        v-for="(item, i) in legendItems"
+        :key="item.name"
+        class="flex items-center gap-1.5 text-sm"
+      >
+        <span
+          class="w-2.5 h-2.5 rounded-full shrink-0"
+          :style="{ backgroundColor: item.color }"
+        />
+        <span class="text-muted-foreground">{{ item.name }}</span>
+      </div>
+    </div>
+  </div>
+</template>

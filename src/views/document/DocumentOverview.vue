@@ -34,7 +34,7 @@ div(v-if="!isLoaded" class="flex flex-col gap-4 w-full")
     Skeleton(class="h-150 w-full rounded-xl bg-muted-foreground/20")
     
 div(v-else)
-  h1(tabindex="0") Dokumente
+  h1(tabindex="0" class="mb-2") Dokumente
   p(class="text-muted-foreground max-w-175" tabindex="0")
     | Hier findest du alle relevanten Unterlagen zu deinem Beschäftigungsverhältnis. 
     | Greife jederzeit auf deine Verträge Gehaltsdokumente und sonstigen Dokumenten zu.
@@ -213,6 +213,7 @@ import { documentService } from '@/services/document.service';
 import api from '@/lib/axios';
 import { DocumentType, DocumentSecurityLevel, DocumentTypeLabels, DocumentSecurityLevelLabels, DocumentSecurityLevelApiMap } from '@/constants/enums/document.enum'
 import { calendarToIsoDate } from '@/lib/calendarToIsoDate';
+import { Skeleton } from '@/components/ui/skeleton'
 
 
 const { width } = useWindowSize()

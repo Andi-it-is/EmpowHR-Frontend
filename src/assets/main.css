@@ -23,6 +23,8 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-warning: var(--warning);
+  --color-positive: var(--positive);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -59,7 +61,9 @@
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: oklch(0.51 0.19 28); /* red 700 */
+  --warning: oklch(0.88 0.15 92); /* amber 300 */
+  --positive: oklch(0.72 0.19 150); /* green 500 */
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
@@ -98,7 +102,9 @@
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
+  --destructive: oklch(0.51 0.19 28); /* red 700 */
+  --warning: oklch(0.88 0.15 92); /* amber 300 */
+  --positive: oklch(0.72 0.19 150); /* green 500 */
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
@@ -151,4 +157,35 @@
     color: var(--muted-foreground);
   }
 
+
+}
+/** Background for tooltips. Used afaik within charts */
+.unovis-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+[class*="unovis-tooltip"],
+[class*="vis-tooltip"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* global CSS, nicht scoped */
+[data-vis-tooltip] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* AUSSERHALB von @layer base – direkt in der Datei */
+[data-vis-tooltip] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }

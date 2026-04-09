@@ -7,7 +7,7 @@
           <div class="flex items-start justify-between">
             <div>
               <h3> {{ documents.length }} Ergebnisse </h3>
-              <p class="text-muted-foreground"> </p>
+              <p class="text-muted-foreground"> {{ documents.length }} Treffer mit der Suche </p>
             </div>
               <Button
                 v-if="selectedId"
@@ -29,6 +29,8 @@
 
           <div v-for="doc in documents" :key="doc.id">
             <Item 
+              tabindex="0"
+              @keypress.enter="selectDoc(doc.id)"
               @click="selectDoc(doc.id)"
               class="cursor-pointer mb-2 transition-all duration-200 border-2"
               :class="[

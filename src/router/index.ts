@@ -39,12 +39,6 @@ const router = createRouter({
               name: 'settings',
               component: () => import('../views/profile/UserSettings.vue'),
             },
-            {
-              path: 'preferences',
-              name: 'preferences',
-              component: () => import('../views/profile/UserPrefernces.vue'),
-              meta: { title: 'Präferenzen' }
-            }
           ]
         },
         {
@@ -66,7 +60,13 @@ const router = createRouter({
               path: 'documents',
               name: 'Dokumente',
               component: () => import('../views/document/DocumentOverview.vue'),
-                meta: { title: 'Dokumente' }
+              meta: { title: 'Dokumente' }
+            },
+            {
+              path: 'certificates',
+              name: 'Zertifikate',
+              component: () => import('../views/certificate/CertificateOverview.vue'),
+              meta: { title: 'Zertifikate' }
             }
           ]
         }

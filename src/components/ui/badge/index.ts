@@ -13,7 +13,11 @@ export const badgeVariants = cva(
         secondary:
           "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive:
-          "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
+          "border-transparent bg-destructive text-white shadow hover:bg-destructive/80",
+        warning:
+          "border-transparent bg-warning text-black shadow hover:bg-warning/80",
+        positive:
+          "border-transparent bg-positive text-black shadow hover:bg-positive/80",
         outline: "text-foreground",
       },
     },
