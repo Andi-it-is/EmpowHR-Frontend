@@ -118,10 +118,23 @@ div(v-else class="flex flex-col gap-6")
           Button(variant="secondary" class="w-full" @click="openCertificate(cert.id)")
             FileText(class="h-4 w-4 mr-2")
             | Zertifikat ansehen
+
+  Dialog(v-model:open="isPdfDialogOpen" @update:open="onDialogClose")
+    DialogContent(class="max-w-4xl w-full h-[90vh] flex flex-col p-0")
+      DialogHeader(class="px-6 pt-6 pb-4 border-b shrink-0")
+        DialogTitle Zertifikat
+      div(class="flex-1 overflow-hidden p-8")
+        iframe(
+          v-if="pdfUrl"
+          :src="pdfUrl"
+          class="w-full h-full border-0"
+          type="application/pdf"
+        )
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -180,8 +193,13 @@ const isExpiringSoon = (dateString: string | Date) => {
   return expiryDate <= threeMonthsFromNow
 }
 
+
+const isPdfDialogOpen = ref(false)
+const pdfUrl = ref<string | null>(null)
+
 const openCertificate = async (certId: string) => {
-  await certificateService.getCertificateById(certId)
+  pdfUrl.value = await certificateService.getCertificateById(certId)
+  isPdfDialogOpen.value = true
 }
 
 // States für Filter
@@ -232,59 +250,12 @@ const filteredCertificates = computed(() => {
   return list
 })
 
-// --- Mock Data Fetching ---
 
-onMounted(() => {
-  // Simuliere einen API Call
-  setTimeout(() => {
-    certificates.value = [
-      {
-        id: 1,
-        title: 'Erste Hilfe Kurs',
-        description: 'Grundausbildung für betriebliche Ersthelfer.',
-        file_path: '/files/erste-hilfe.pdf',
-        issued_at: '2022-01-15',
-        expires_at: '2026-10-15', // Gültig
-        created_at: '2022-01-15',
-        updated_at: '2022-01-15',
-        userId: 123
-      },
-      {
-        id: 2,
-        title: 'Zweite Hilfe Kurs',
-        description: 'Grundausbildung für betriebliche Ersthelfer.',
-        file_path: '/files/erste-hilfe.pdf',
-        issued_at: '2022-01-15',
-        expires_at: '2026-10-15', // Gültig
-        created_at: '2022-01-15',
-        updated_at: '2022-01-15',
-        userId: 123
-      },
-      {
-        id: 3,
-        title: 'Brandschutzunterweisung',
-        description: 'Jährliche Pflichtunterweisung zum Thema Brandschutz.',
-        file_path: '/files/brandschutz.pdf',
-        issued_at: '2025-05-10',
-        expires_at: '2026-05-10', // Läuft in < 3 Monaten ab (Stand April 2026)
-        created_at: '2025-05-10',
-        updated_at: '2025-05-10',
-        userId: 123
-      },
-      {
-        id: 4,
-        title: 'Staplerschein Erneuerung',
-        description: 'Nachschulung Flurförderzeuge.',
-        file_path: '/files/stapler.pdf',
-        issued_at: '2023-02-01',
-        expires_at: '2026-02-01', // Bereits abgelaufen
-        created_at: '2023-02-01',
-        updated_at: '2023-02-01',
-        userId: 123
-      }
-    ]
-    isLoaded.value = true
-  }, 100) // 1.2 Sekunden Ladezeit simulieren
+onMounted( async() => {
+
+  certificates.value = await certificateService.listCertificates()
+
+  isLoaded.value = true
 })
 </script>
 
