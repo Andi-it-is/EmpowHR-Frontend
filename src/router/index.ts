@@ -4,6 +4,7 @@ import IndexPage from '@/views/IndexPage.vue'
 import PassThroughRouterview from '@/components/app/PassThroughRouterview.vue'
 import { useUserStore } from '@/stores/user.store'
 
+//! Very Important to NOT lazy-load the PassThroug Component
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -43,7 +44,7 @@ const router = createRouter({
         },
         {
           path: 'profile',
-          component: () => PassThroughRouterview,
+          component: PassThroughRouterview,
           meta: { title: 'Profil' },
           children: [
             {

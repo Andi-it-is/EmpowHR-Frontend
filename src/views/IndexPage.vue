@@ -12,7 +12,7 @@ div(class="flex flex-col gap-8 mt-8")
         v-for="item in group.items"
         :key="item.title"
         class="cursor-pointer hover:border-primary transition-colors"
-        @click="router.push(item.url)"
+        @click="navToGivenPage(item.url)"
         tabindex="0"
       )
         CardContent(class="flex flex-col items-center justify-center gap-3 pt-6 pb-6 text-center")
@@ -37,6 +37,9 @@ import { getColorClasses, navigationData } from '@/constants/navigation';
 
 const router = useRouter();
 
+function navToGivenPage(url: string) {
+  return router.push(`${url}`)
+}
 </script>
 
 
