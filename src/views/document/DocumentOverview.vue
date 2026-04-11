@@ -212,7 +212,7 @@ import { useWindowSize } from '@vueuse/core'
 import { documentService } from '@/services/document.service';
 import api from '@/lib/axios';
 import { DocumentType, DocumentSecurityLevel, DocumentTypeLabels, DocumentSecurityLevelLabels, DocumentSecurityLevelApiMap } from '@/constants/enums/document.enum'
-import { calendarToIsoDate } from '@/lib/calendarToIsoDate';
+import { calendarToIsoDate } from '@/lib/dateHelpers';
 import { Skeleton } from '@/components/ui/skeleton'
 
 

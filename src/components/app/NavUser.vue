@@ -64,6 +64,23 @@ const user = computed(() => ({
   avatar: ''
 }))
 
+function getInitials(name: string | undefined | null): string {
+  if (!name || !name.trim()) return '??';
+
+  const parts = name.trim().split(/\s+/);
+  
+  // Wir greifen sicher auf die Indizes zu
+  const firstWord = parts[0];
+  const lastWord = parts.length > 1 ? parts[parts.length - 1] : undefined;
+
+  // Nur wenn das erste Wort wirklich existiert (charAt(0) sicherstellen)
+  const firstInitial = firstWord ? firstWord.charAt(0) : '';
+  const lastInitial = lastWord ? lastWord.charAt(0) : '';
+
+  const res = (firstInitial + lastInitial).toUpperCase();
+  
+  return res || '??';
+}
 </script>
 
 <template>
@@ -78,7 +95,7 @@ const user = computed(() => ({
             <Avatar class="h-8 w-8 rounded-lg">
               <AvatarImage :src="user.avatar" :alt="user.name" />
               <AvatarFallback class="rounded-lg">
-                CN
+                {{ getInitials(user.name) }}
               </AvatarFallback>
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
@@ -99,7 +116,7 @@ const user = computed(() => ({
               <Avatar class="h-8 w-8 rounded-lg">
                 <AvatarImage :src="user.avatar" :alt="user.name" />
                 <AvatarFallback class="rounded-lg">
-                  CN
+                  {{ getInitials(user.name) }}
                 </AvatarFallback>
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">

@@ -98,6 +98,7 @@ import { userMasterDataService } from '@/services/userMasterData.service';
 import { DynamicDataListType } from '@/constants/enums/componentHelpers.enum';
 import { changeLogsService } from '@/services/changeLogs.service';
 import { Skeleton } from '@/components/ui/skeleton'
+import { isoToGermanDate } from '@/lib/dateHelpers';
 
 const router = useRouter()
 
@@ -140,13 +141,14 @@ const activityLogsLabelMap = ref()
 
 const isLoaded = ref(false)
 
+
 function groupMasterDataForDisplay() {
 
   // sublist Person
   groupedMasterDataObject.value.name.values = {
     firstname: masterDataObject.value.user.firstname,
     lastname: masterDataObject.value.user.lastname,
-    date_of_birth: masterDataObject.value.date_of_birth,
+    date_of_birth: isoToGermanDate(masterDataObject.value.date_of_birth),
   }
   groupedMasterDataObject.value.name.labels = {
     firstname: "Vorname",
