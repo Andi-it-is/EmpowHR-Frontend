@@ -15,8 +15,8 @@ export interface Certificate {
 async function getCertificateById(certId: string): Promise<any> {
 
   const response = await api.get(`/certificate/${certId}/file`, { responseType: 'blob' })
-  const blob = new Blob([response.data], { type: 'application/pdf' })
-  return URL.createObjectURL(blob)
+  // const blob = new Blob([response.data], { type: 'application/pdf' })
+  return URL.createObjectURL(response.data)
 }
 
 async function listCertificates(): Promise<any> {

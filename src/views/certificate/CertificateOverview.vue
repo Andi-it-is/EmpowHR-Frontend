@@ -121,19 +121,38 @@ div(v-else class="flex flex-col gap-6")
 
   Dialog(v-model:open="isPdfDialogOpen" @update:open="onDialogClose")
     DialogContent(class="max-w-4xl w-full h-[90vh] flex flex-col p-0")
-      DialogHeader(class="px-6 pt-6 pb-4 border-b shrink-0")
+      DialogHeader(class="px-6 pt-6 pb-4 border-b shrink-0 flex flex-row items-center gap-8")
         DialogTitle {{ selectedCertificateName }}
-      div(class="flex-1 overflow-hidden p-8")
-        iframe(
+        Button(
           v-if="pdfUrl"
-          :src="pdfUrl"
-          class="w-full h-full border-0"
-          type="application/pdf"
+          @click="downloadPdf" 
+          class="inline-flex items-center gap-2 px-3 py-1.5 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-md transition-all text-xs font-medium border border-border"
         )
+          DownloadIcon(class="w-4 h-4")
+          span Download
+
+      //- Content-Bereich mit Scrollview
+      div(class="relative flex-1 bg-muted/30 overflow-y-auto p-4 md:p-8 custom-scrollbar")
+        
+        //- Spinner Overlay
+        transition(name="fade")
+          div(v-if="isRendering" class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background/60 backdrop-blur-sm")
+            div(class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin")
+            p(class="mt-4 text-xs font-medium text-muted-foreground") PDF wird gerendert...
+
+        //- PDF Viewer
+        div(class="w-full max-w-4xl mx-auto")
+          vue-pdf-embed( 
+            v-if="pdfUrl"
+            :source="pdfUrl" 
+            class="pdf-dialog-canvas shadow-2xl rounded-sm border border-border"
+            @rendered="onPdfRendered"
+          )
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
+import VuePdfEmbed from 'vue-pdf-embed'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
@@ -143,7 +162,7 @@ import { Separator } from '@/components/ui/separator'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DonutChart } from '@/components/ui/chart-donut'
-import { Search, ArrowUpNarrowWide, ArrowDownNarrowWide } from 'lucide-vue-next'
+import { Search, ArrowUpNarrowWide, ArrowDownNarrowWide, DownloadIcon } from 'lucide-vue-next'
 import { certificateService, type Certificate } from '@/services/certificate.service'
 
 const isLoaded = ref(false)
@@ -180,7 +199,6 @@ const isExpiringSoon = (dateString: string | Date) => {
   return expiryDate <= threeMonthsFromNow
 }
 
-
 const isPdfDialogOpen = ref(false)
 const selectedCertificateName = ref()
 const pdfUrl = ref<string | null>(null)
@@ -189,6 +207,31 @@ const openCertificate = async (cert: Certificate) => {
   pdfUrl.value = await certificateService.getCertificateById(String(cert.id))
   selectedCertificateName.value = cert.title
   isPdfDialogOpen.value = true
+}
+
+const isRendering = ref(false)
+
+// Wenn der Dialog öffnet (pdfUrl wird gesetzt), Spinner starten
+watch(() => pdfUrl.value, (newUrl) => {
+  if (newUrl) isRendering.value = true
+})
+
+const onPdfRendered = () => {
+  isRendering.value = false
+}
+
+const onDialogClose = () => {
+  isRendering.value = false
+  // Hier ggf. pdfUrl = null setzen, falls nötig
+}
+
+const downloadPdf = () => {
+  if (!pdfUrl.value) return
+  const link = document.createElement('a')
+  link.href = pdfUrl.value
+  // Nutze den Namen aus dem Dialog-Titel
+  link.download = `${selectedCertificateName.value.replace(/\s+/g, '_')}.pdf`
+  link.click()
 }
 
 // States für Filter
@@ -250,5 +293,42 @@ onMounted( async() => {
 
 
 <style scoped>
+/* PDF Canvas responsive bändigen */
+:deep(.pdf-dialog-canvas) {
+  width: 100% !important;
+  display: flex;
+  justify-content: center;
+}
 
+:deep(.pdf-dialog-canvas canvas) {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block;
+}
+
+/* Spinner Animation */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Transition */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+/* Scrollbar für den Dialog-Content */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 10px;
+}
 </style>

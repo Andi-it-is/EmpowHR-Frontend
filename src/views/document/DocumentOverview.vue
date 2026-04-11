@@ -114,26 +114,47 @@ div(v-else)
               p(class="text-sm hidden sm:block") Dokumentenleiste
               SidebarTrigger(side="right")
 
-          //- PDF-Container
-          div(class="border-2 border-dotted border-muted rounded-xl bg-muted/30 p-4 justify-center shadow-lg flex flex-1 min-h-150")
-            iframe(
-              v-if="currentPdf"
-              :src="currentPdf" 
-              class="w-full max-w-5xl h-full min-h-250 border-none rounded-md"
-              title="PDF Viewer"
-            )
-            div(v-else class="flex flex-col items-center justify-center w-full max-w-md mx-auto text-center gap-6")
+          //- PDF-Vorschau Bereich: 'min-w-0' verhindert das Sprengen des Layouts
+          div(class="flex-1 flex flex-col min-w-0 min-h-0 bg-muted rounded-md border border-border overflow-hidden")
+            
+            //- Top-Bar: 'shrink-0' damit sie nicht zusammengedrückt wird
+            div(class="flex items-center justify-between px-6 py-3 rounded-t-md bg-background/50 border-b border-border backdrop-blur-md shrink-0")
+              div(class="flex items-center gap-3 min-w-0")
+                div(class="p-2 bg-primary/10 rounded-lg shrink-0")
+                  FileTextIcon(class="w-5 h-5 text-primary")
+                //- 'truncate' verhindert, dass langer Text die Bar verbreitert
+                span(class="font-medium text-sm text-foreground truncate") Vorschau
               
-              div(class="relative p-6 bg-muted/30 rounded-full border-2 border-dashed border-muted-foreground/20")
-                FileSearch2Icon(class="w-16 h-16 text-muted-foreground/40")
-                div(class="absolute -bottom-1 -right-1 bg-primary text-primary-foreground rounded-full p-1 shadow-sm")
-                  PlusIcon(class="w-4 h-4")
+              div(class="flex items-center gap-2 shrink-0")
+                button(
+                  @click="downloadPdf" 
+                  class="inline-flex items-center gap-2 px-3 py-1.5 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-md transition-all text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed border border-border"
+                  :disabled="!currentPdf || isLoading"
+                )
+                  DownloadIcon(class="w-4 h-4")
+                  span(class="hidden sm:inline") Download
 
-              div(class="space-y-2")
-                h3(class="text-xl font-semibold tracking-tight text-foreground") 
-                  | Kein Dokument ausgewählt
-                p(class="text-muted-foreground text-sm") 
-                  | Bitte wähle ein Dokument aus der rechten Seitenleiste aus, um das Dokument zu sehen.
+            //- Scroll-Container: 'min-h-0' ist wichtig für Flex-Scrolling
+            div(class="flex-1 overflow-auto p-4 md:p-8 custom-scrollbar scroll-smooth min-h-0" ref="pdfScrollContainer")
+              
+              //- PDF Wrapper: Sorgt dafür, dass das PDF niemals breiter als der Container wird
+              div(class="w-full max-w-4xl mx-auto")
+                vue-pdf-embed( 
+                  v-if="currentPdf"
+                  :source="currentPdf" 
+                  class="pdf-canvas-container shadow-lg"
+                  @rendered="onPdfRendered"
+                )
+
+                //- Empty State
+                div(v-else class="flex flex-col items-center justify-center min-h-100 text-center space-y-6")
+                  div(class="relative p-8 bg-muted/20 rounded-full border-2 border-dashed border-muted-foreground/20 animate-pulse")
+                    FileSearch2Icon(class="w-20 h-20 text-muted-foreground/30")
+
+                  div(class="max-w-xs space-y-2")
+                    h3(class="text-xl font-bold tracking-tight text-foreground") Kein Dokument ausgewählt
+                    p(class="text-muted-foreground text-sm leading-relaxed") 
+                      | Wähle ein Dokument aus der Liste aus.
 
       //- 3. Die Sidebar (bleibt rechts und reserviert Platz)
       DocumentBrowserSidebar(
@@ -146,6 +167,7 @@ div(v-else)
 
 
 <script setup lang="ts">
+import VuePdfEmbed from 'vue-pdf-embed'
 import Button from '@/components/ui/button/Button.vue'
 import { onMounted, ref, watch, computed } from 'vue';
 import { useRouter } from 'vue-router';
@@ -169,7 +191,7 @@ import {
   ItemTitle,
   ItemDescription,
 } from '@/components/ui/item/';
-import { ShieldIcon, FileSearch2Icon, XIcon, CalendarIcon, Search, RotateCcw, Check, ChevronsUpDown, X, Upload } from 'lucide-vue-next';
+import { ShieldIcon, FileSearch2Icon, XIcon, CalendarIcon, Search, RotateCcw, Check, ChevronsUpDown, X, Upload, DownloadIcon, FileTextIcon } from 'lucide-vue-next';
 import Separator from '@/components/ui/separator/Separator.vue';
 import DocumentBrowserSidebar from '@/components/app/document/DocumentBrowserSidebar.vue';
 import Input from '@/components/ui/input/Input.vue';
@@ -209,7 +231,7 @@ import MultiSelect from '@/components/app/generic/MultiSelect.vue';
 import { toast } from 'vue-sonner'
 import CalendarInput from '@/components/app/generic/CalendarInput.vue';
 import { useWindowSize } from '@vueuse/core'
-import { documentService } from '@/services/document.service';
+import { documentService, type Document } from '@/services/document.service';
 import api from '@/lib/axios';
 import { DocumentType, DocumentSecurityLevel, DocumentTypeLabels, DocumentSecurityLevelLabels, DocumentSecurityLevelApiMap } from '@/constants/enums/document.enum'
 import { calendarToIsoDate } from '@/lib/dateHelpers';
@@ -250,7 +272,29 @@ const toggleDocSidebar = () => {
 }
 
 
-const availableDocuments = ref([])
+const availableDocuments = ref<Document[]>([])
+const isRendering = ref(false)
+const onPdfRendered = () => {
+  isRendering.value = false
+}
+
+const downloadPdf = () => {
+  if (!currentPdf.value || !activeDocId.value) return;
+
+  const doc: Document | undefined = availableDocuments.value.find((d: Document) => d.id === activeDocId.value);
+  
+  if (!doc) {
+    return;
+  }
+  const cleanTitle = `${doc.name}_${doc.date}`
+
+  const fileName = `${cleanTitle}.pdf`;
+
+  const link = document.createElement('a');
+  link.href = currentPdf.value;
+  link.download = fileName;
+  link.click();
+};
 
 const activeDocId = ref<string | null>(null)
 
@@ -258,7 +302,11 @@ const activeDocId = ref<string | null>(null)
 const currentPdf = ref<string | null>(null)
 
 watch(activeDocId, async (id) => {
-  if (!id) { currentPdf.value = null; return }
+  if (!id) {
+    currentPdf.value = null
+    return
+  }
+  isRendering.value = true // Startet optionalen Ladezustand
   currentPdf.value = await documentService.getDocumentFile(id)
 })
 
@@ -393,4 +441,55 @@ onMounted(async () => {
 
 <style lang="css" scoped>
 
+.pdf-container {
+  overflow-y: auto;
+  height: 80vh; /* Festlegen, damit man scrollen kann */
+  background: #333;
+}
+/* Sorgt dafür, dass das PDF immer glatt gerendert wird */
+:deep(.vue-pdf-embed > canvas) {
+  width: 100% !important;
+  height: auto !important;
+  display: block;
+}
+
+/* Schicke Scrollbar für den Dark-Mode Look */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.pdf-canvas-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Das Canvas-Element bändigen */
+:deep(.pdf-canvas-container canvas) {
+  /* Verhindert das Ausbrechen aus dem Container */
+  max-width: 100% !important;
+  
+  /* Behält das Seitenverhältnis bei */
+  height: auto !important;
+  
+  /* Sorgt für scharfe Kanten bei Skalierung */
+  image-rendering: high-quality;
+}
+
+/* Verhindert horizontalen Scroll im Eltern-Element */
+.flex-1.overflow-auto {
+  overflow-x: hidden;
+}
 </style>
