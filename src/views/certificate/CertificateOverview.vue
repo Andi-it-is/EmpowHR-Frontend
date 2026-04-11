@@ -115,14 +115,14 @@ div(v-else class="flex flex-col gap-6")
               ) {{ formatDate(cert.expires_at) }}
 
         CardFooter(class="pt-4 border-t")
-          Button(variant="secondary" class="w-full" @click="openCertificate(cert.id)")
+          Button(variant="secondary" class="w-full" @click="openCertificate(cert)")
             FileText(class="h-4 w-4 mr-2")
             | Zertifikat ansehen
 
   Dialog(v-model:open="isPdfDialogOpen" @update:open="onDialogClose")
     DialogContent(class="max-w-4xl w-full h-[90vh] flex flex-col p-0")
       DialogHeader(class="px-6 pt-6 pb-4 border-b shrink-0")
-        DialogTitle Zertifikat
+        DialogTitle {{ selectedCertificateName }}
       div(class="flex-1 overflow-hidden p-8")
         iframe(
           v-if="pdfUrl"
@@ -144,20 +144,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DonutChart } from '@/components/ui/chart-donut'
 import { Search, ArrowUpNarrowWide, ArrowDownNarrowWide } from 'lucide-vue-next'
-import { certificateService } from '@/services/certificate.service'
-
-// Typisierung basierend auf deinem DB Schema
-interface Certificate {
-  id: string | number
-  title: string
-  description: string
-  file_path: string
-  issued_at: string | Date
-  expires_at: string | Date
-  created_at: string | Date
-  updated_at: string | Date
-  userId: string | number
-}
+import { certificateService, type Certificate } from '@/services/certificate.service'
 
 const isLoaded = ref(false)
 const certificates = ref<Certificate[]>([])
@@ -195,10 +182,12 @@ const isExpiringSoon = (dateString: string | Date) => {
 
 
 const isPdfDialogOpen = ref(false)
+const selectedCertificateName = ref()
 const pdfUrl = ref<string | null>(null)
 
-const openCertificate = async (certId: string) => {
-  pdfUrl.value = await certificateService.getCertificateById(certId)
+const openCertificate = async (cert: Certificate) => {
+  pdfUrl.value = await certificateService.getCertificateById(String(cert.id))
+  selectedCertificateName.value = cert.title
   isPdfDialogOpen.value = true
 }
 
