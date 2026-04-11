@@ -40,7 +40,7 @@ function template(d: any, i: number, elements: (HTMLElement | SVGElement)[]) {
   else {
     // Donut-Segment Pfad – kein WeakMap Cache (Farbe ändert sich pro Segment)
     const data = d.data
-    const style = getComputedStyle(elements[i])
+    const style = getComputedStyle(elements[i]!)
     const color = style.fill
     const categoryKey = props.category ?? props.index
   

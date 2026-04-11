@@ -10,6 +10,7 @@ import { CalendarCell, CalendarCellTrigger, CalendarGrid, CalendarGridBody, Cale
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ref } from "vue"
+import type { DateValue } from '@internationalized/date'
 
 const props = defineProps<CalendarRootProps & { class?: HTMLAttributes["class"] }>()
 const emits = defineEmits<CalendarRootEmits>()
@@ -17,7 +18,8 @@ const delegatedProps = reactiveOmit(props, "class")
 const forwarded = useForwardPropsEmits(delegatedProps, emits)
 
 const modelValue = defineModel<any>()
-const placeholder = ref(today(getLocalTimeZone()))
+
+const placeholder = ref<DateValue | any>(today(getLocalTimeZone()))
 
 const currentYear = today(getLocalTimeZone()).year
 const years = Array.from({ length: 102 }, (_, i) => currentYear - 100 + i)
@@ -27,7 +29,7 @@ function goToToday() {
   placeholder.value = today(getLocalTimeZone())
 }
 
-function onYearChange(year: string) {
+function onYearChange(year: string | any) {
   placeholder.value = new CalendarDate(Number(year), placeholder.value.month, 1)
 }
 </script>

@@ -12,7 +12,7 @@ const { config } = useChart()
 
 const colorConfig = computed(() => {
   return Object.entries(config.value).filter(
-    ([, config]) => config.theme || config.color,
+    ( [, config] ) => config.theme || config.color,
   )
 })
 </script>
