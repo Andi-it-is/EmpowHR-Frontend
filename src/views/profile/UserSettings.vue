@@ -25,7 +25,7 @@ div(class="flex flex-col gap-6")
         div
           p(class="text-sm font-medium") Anzeigesprache
           p(class="text-xs text-muted-foreground") Sprache der Benutzeroberfläche.
-        Select(default-value="de")
+        Select(default-value="de" disabled)
           SelectTrigger(class="w-40")
             SelectValue
           SelectContent
