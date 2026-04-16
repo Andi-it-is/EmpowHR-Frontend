@@ -6,7 +6,8 @@ import { VisDonut, VisSingleContainer } from "@unovis/vue"
 import { useMounted } from "@vueuse/core"
 import { computed, ref } from "vue"
 import { cn } from "@/lib/utils"
-import { ChartSingleTooltip, defaultColors } from '@/components/ui/chart'
+import { ChartSingleTooltip, defaultColors, type ChartConfig } from '@/components/ui/chart'
+import ChartContainer from "../chart/ChartContainer.vue"
 
 const props = withDefaults(defineProps<Pick<BaseChartProps<T>, "data" | "colors" | "index" | "margin" | "showLegend" | "showTooltip" | "filterOpacity"> & {
   /**
@@ -65,13 +66,22 @@ const legendItems = computed(() => props.data.map((item, i) => ({
   inactive: false,
 })))
 
+const chartConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "var(--chart-1)",
+  },
+} satisfies ChartConfig
+
 const totalValue = computed(() => props.data.reduce((prev, curr) => {
   return prev + curr[props.category]
 }, 0))
 </script>
 
+
 <template>
   <div :class="cn('w-full h-48 flex flex-col items-end', $attrs.class ?? '')">
+    <ChartContainer :config="chartConfig">
     <VisSingleContainer :style="{ height: isMounted ? '100%' : 'auto' }" :margin="{ left: 20, right: 20 }" :data="data">
       <ChartSingleTooltip
         :selector="Donut.selectors.segment"
@@ -108,6 +118,7 @@ const totalValue = computed(() => props.data.reduce((prev, curr) => {
       
       <slot />
     </VisSingleContainer>
+    </ChartContainer>
 
     <!-- Legende -->
     <div v-if="showLegend" class="flex flex-wrap gap-x-4 gap-y-2 justify-center mt-3 w-full">

@@ -26,3 +26,19 @@ export function isoToGermanDate(dateInput: string | Date): string {
     year: 'numeric'
   }).format(new Date(dateInput));
 }
+
+/**
+ * 
+ * @returns Wochentag und formattierten Tagesaktuellen String.
+ * @example Donnerstag, den 16.04.2026
+ */
+export function getFormattedTodayDate(): string {
+  const now = new Date();
+
+  const weekday = now.toLocaleDateString('de-DE', { weekday: 'long' });
+  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const year = now.getFullYear();
+
+  return `${weekday}, den ${day}.${month}.${year}`;
+}

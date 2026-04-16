@@ -70,6 +70,29 @@ const router = createRouter({
               meta: { title: 'Zertifikate' }
             }
           ]
+        },
+        {
+          path: 'management',
+          component: PassThroughRouterview,
+          meta: { title: "Management" },
+          children: [
+            {
+              path: '',
+              component: () => import('../views/management/ManagementIndex.vue')
+            },
+            {
+              path: 'reportings',
+              name: 'Report',
+              component: () => import('../views/management/ReportingDashboard.vue'),
+              meta: { title: 'Report' }
+            },
+            {
+              path: 'inspiration',
+              name: 'inspiration',
+              component: () => import('../views/management/inspirationBoard.vue'),
+              meta: { title: 'inspiration' }
+            }
+          ]
         }
       ]
     },
