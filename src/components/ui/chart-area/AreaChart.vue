@@ -70,9 +70,9 @@ const chartConfig = {
 </script>
 
 <template>
-  <div :class="cn('w-full h-[400px] flex flex-col items-end', $attrs.class ?? '')">
+  <div :class="cn('w-full h-100 flex flex-col items-end', $attrs.class ?? '')">
     <ChartContainer :config="chartConfig">
-    <ChartLegend v-if="showLegend" v-model:items="legendItems" @legend-item-click="handleLegendItemClick" class="mb-4 ml-4" />
+    <ChartLegend v-if="showLegend" v-model:items="legendItems" @legend-item-click="handleLegendItemClick" class="mb-4 ml-4 flex flex-wrap" id="HURENSOHN" />
 
     <VisXYContainer :style="{ height: isMounted ? '100%' : 'auto' }" :margin="{ left: 20, right: 20 }" :data="data">
       <svg width="0" height="0">
@@ -119,8 +119,6 @@ const chartConfig = {
           }"
         />
       </template>
-
-      <!-- <pre> {{ data[5] }}</pre> -->
 
       <VisAxis
         v-if="showXAxis"

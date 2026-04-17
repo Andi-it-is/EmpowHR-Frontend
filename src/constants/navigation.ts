@@ -31,7 +31,7 @@ export function getIconColor(color: string) {
  */
 export const navigationData = [
   {
-    title: "Für mich",
+    title: "Persönlich",
     url: "#",
     icon: UserRound,
     color: "group-green",

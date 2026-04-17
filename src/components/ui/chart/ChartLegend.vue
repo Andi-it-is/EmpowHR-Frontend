@@ -48,13 +48,27 @@ function onLegendItemClick(d: BulletLegendItemInterface, i: number) {
 
 <template>
   <div
-    ref="elRef" class="w-max" :style="{
-      '--vis-legend-bullet-size': '16px',
-    }"
+    ref="elRef"
+    class="flex flex-wrap"
+    :style="{ '--vis-legend-bullet-size': '16px' }"
   >
-    <VisBulletLegend
-      :items="items"
-      :on-legend-item-click="onLegendItemClick"
-    />
+    <button
+      v-for="(item, i) in items"
+      :key="item.name"
+      :class="buttonVariants({ variant: 'ghost', size: 'xs' })"
+      class="inline-flex! mr-2! mb-1"
+      @click="onLegendItemClick(item, i)"
+    >
+      <span
+        class="inline-block rounded-full shrink-0"
+        :style="{
+          width: 'var(--vis-legend-bullet-size)',
+          height: 'var(--vis-legend-bullet-size)',
+          backgroundColor: Array.isArray(item.color) ? item.color[0] : item.color,
+          opacity: item.inactive ? 0.3 : 1
+        }"
+      />
+      <span class="text-muted-foreground" :style="{ opacity: item.inactive ? 0.3 : 1 }">{{ item.name }}</span>
+    </button>
   </div>
 </template>

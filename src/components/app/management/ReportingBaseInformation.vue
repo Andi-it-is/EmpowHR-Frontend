@@ -4,7 +4,7 @@ Item(variant="muted" class="flex flex-col justify-between gap-4 items-start")
   div(class="flex justify-between items-end w-full flex-wrap-reverse")
     p(class="text-sm text-muted-foreground leading-snug max-w-[70%]") {{ label }}
     Badge(:variant="isPositive ? 'positive' : 'destructive'") {{ trendFormatted }}
-  div(class="flex items-baseline gap-1.5")
+  div(class="flex items-baseline gap-1.5 flex-wrap")
     h3(class="text-5xl leading-none") {{ value }}
     span(class="text-sm text-muted-foreground") {{ unit }}
   div(class="flex items-center gap-2")

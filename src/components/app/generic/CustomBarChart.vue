@@ -7,14 +7,18 @@ import { ChartTooltip, ChartCrosshair, ChartLegend } from '@/components/ui/chart
 import { computed } from "vue"
 import Separator from "@/components/ui/separator/Separator.vue"
 
-// TODO propify
-const chartData = [
-  { label: 'Department Head', value: 7, color: '#9366c1' },
-  { label: 'HR Manager', value: 4, color: '#22c55e' },
-  { label: 'Accountant', value: 5, color: '#f59e0b' },
-  { label: 'IT Admin',   value: 4, color: '#3b82ff' },
-  { label: 'Executive',  value: 3, color: '#ff1157' },
-]
+interface BarChartDataObject {
+  label: string,
+  value: number,
+  color: string   // hex-code
+}
+
+const props = defineProps<{
+  data: BarChartDataObject[]
+  yDomain: number[]
+}>()
+
+const chartData = props.data
 
 type Data = typeof chartData[number]
 
@@ -25,28 +29,21 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-const formattedItems = computed(() => 
-  chartData.map(d => ({
-    name: d.label,
-    color: d.color,
-    value: d.value
-  }))
-)
-
 </script>
 
 <template>
-  <Card class="bg-muted/50 border-0">
+  <Card class="bg-muted/50 border-0 shadow-none rounded-md">
     <CardHeader>
       <CardTitle>Rollenverteilung</CardTitle>
       <CardDescription>Verteilung der speziellen Rollen</CardDescription>
     </CardHeader>
-    <CardContent>
-      <ChartContainer :config="chartConfig">
+    <CardContent class="p-1 sm:p-6">
+      <ChartContainer :config="chartConfig" class="max-h-100 w-full">
         <VisXYContainer
           :data="chartData"
           :margin="{ left: 25, right: 20, top: 20 }" 
-          :y-domain="[0, 8]"
+          :y-domain="props.yDomain"
+          :fit-height="true"
         >
 
           <VisGroupedBar
