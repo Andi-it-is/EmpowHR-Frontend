@@ -9,6 +9,7 @@ import {
   MoreVertical,
   Loader2,
   Plus,
+  ArrowUpDown
 } from "lucide-vue-next"
 import {
   FlexRender,
@@ -48,19 +49,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { getDepartmentColor } from "@/lib/enumTranslaters"
 
-interface TableData {
-  id: number
-  header: string
-  type: string
-  status: string
-  target: string
-  limit: string
-  reviewer: string
+
+interface FakeDepartmentData {
+  id: number,
+  name: string,
+  costCenter: string,
+  lead: string,
+  totalPeople: number,
+  currentPeople: number,
+  parent: string
+  color: string
 }
 
 const props = defineProps<{
-  data: TableData[]
+  data: FakeDepartmentData[]
 }>()
 
 // --- STATE ---
@@ -68,10 +72,12 @@ const sorting = ref<SortingState>([])
 const columnFilters = ref<ColumnFiltersState>([])
 const rowSelection = ref({})
 
-// --- COLUMNS DEFINITION ---
-const columns: ColumnDef<TableData>[] = [
+
+// Column Defintions
+const columns: ColumnDef<FakeDepartmentData>[] = [
   {
     id: "select",
+    size: 50,
     header: ({ table }) => h(Checkbox, {
       "modelValue": table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate"),
       "onUpdate:modelValue": value => table.toggleAllPageRowsSelected(!!value),
@@ -85,51 +91,118 @@ const columns: ColumnDef<TableData>[] = [
     enableSorting: false,
     enableHiding: false,
   },
+
   {
-    accessorKey: "header",
-    header: "Titel",
-    cell: ({ row }) => h("div", { class: "font-medium" }, String(row.getValue("header"))),
-  },
-  {
-    accessorKey: "type",
-    header: "Sektion",
+    accessorKey: 'id',
+    size: 70, 
+    header: ({ column }) => {
+      return h(Button, {
+        variant: 'ghost',
+        // 'justify-center' statt 'justify-start'
+        // '-ml-4' entfernt, da wir echte Zentrierung wollen
+        class: 'w-full justify-center px-0', 
+        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+      }, () => [
+        h('span', { class: 'pl-3' }, 'ID'), // Ausgleich für das Icon rechts
+        h(ArrowUpDown, { class: 'ml-2 h-3 w-3' })
+      ])
+    },
     cell: ({ row }) => {
-      const type = String(row.getValue("type"))
-      const displayType = type === "FürMich" ? "Persönlich" : type
-      return h(Badge, { variant: "outline" }, () => displayType)
+      return h('div', { 
+        // 'text-center' statt 'pl-4'
+        class: 'font-mono text-xs text-muted-foreground text-center w-full' 
+      }, row.getValue('id'))
     },
   },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const status = row.getValue("status") as string
-      const isDone = status === "Abgeschlossen"
-      const isWaiting = status === "Wartet auf Freigabe"
 
-      return h("div", { class: "flex items-center gap-2" }, [
-        isDone 
-          ? h(CircleCheckBig, { class: "h-4 w-4 text-emerald-500" }) 
-          : h(Loader2, { class: `h-4 w-4 animate-spin ${isWaiting ? 'text-[#dc2626]' : 'text-muted-foreground'}` }),
-        h("span", { class: isWaiting ? "text-[#dc2626] font-semibold" : "" }, status),
+  {
+    accessorKey: 'name',
+    header: ({ column }) => {
+      return h(Button, {
+        variant: 'ghost',
+        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+      }, () => ['Name', h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })]) // ml-2 für Abstand zum Icon
+    },
+    cell: ({ row }) => {
+      const name = row.getValue('name') as string;
+      const color = getDepartmentColor(name);
+      return h('div', { class: 'flex items-center gap-3 pl-4' }, [
+        // Der farbige Punkt
+        h('span', { 
+          class: `h-2 w-2 rounded-full`,
+          style: {
+            backgroundColor: color
+          } 
+        }),
+        h('span', { class: 'font-medium min-w-[180px]' }, row.getValue('name'))
       ])
     },
   },
+
   {
-    accessorKey: "target",
-    header: "Zielgruppe",
-    cell: ({ row }) => h("span", { class: "text-xs font-mono bg-muted px-1.5 py-0.5 rounded" }, String(row.getValue("target"))),
+    accessorKey: "costCenter",
+    header: "Kostenstelle",
+    cell: ({ row }) => h("div", { class: "font-mono min-w-[80px]" }, String(row.getValue("costCenter"))),
   },
+
   {
-    accessorKey: "limit",
-    header: "Frist",
-    cell: ({ row }) => h("span", { class: "text-muted-foreground" }, String(row.getValue("limit"))),
+    accessorKey: "lead",
+    header: "Leitung",
+    cell: ({ row }) => h("div", { class: "min-w-[140px]" }, String(row.getValue("lead"))),
   },
+
   {
-    accessorKey: "reviewer",
-    header: "Reviewer",
-    cell: ({ row }) => h("div", { class: "min-w-[120px]" }, String(row.getValue("reviewer"))),
+    accessorKey: "parent",
+    header: "Übergeordnete Abteilung",
+    cell: ({ row }) => {
+      const parentName = String(row.getValue("parent"));
+      
+      return h("div", { class: "min-w-[180px]" }, [
+        h(Badge, { variant: "secondary", class: "font-normal" }, () => parentName)
+      ]);
+    },
   },
+
+  {
+    accessorKey: "currentPeople",
+    header: () => h("div", { class: "text-center w-full" }, "MA Anwesend"),
+    cell: ({ row }) => {
+      const ist = Number(row.getValue("currentPeople"));
+      const soll = Number(row.original.totalPeople);
+      
+      // Logik: Ist weniger da als geplant?
+      const isUnderstaffed = ist < soll;
+
+      return h("div", { 
+        class: [
+          "text-center w-full font-bold",
+          isUnderstaffed ? "text-orange-400" : "text-emerald-400"
+        ]
+      }, ist);
+    },
+  },
+
+  {
+    accessorKey: "totalPeople",
+    header: ({ column }) => {
+      return h(Button, {
+        variant: "ghost",
+        // w-full und justify-center sorgen für die Zentrierung im Header
+        class: "w-full justify-center px-0",
+        onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+      }, () => [
+        // Ein kleiner Pl-3 oder Pr-3 hilft oft, das Icon optisch auszugleichen
+        h("span", { class: "pl-3" }, "MA Gesamt"),
+        h(ArrowUpDown, { class: "ml-2 h-3 w-3" })
+      ])
+    },
+    cell: ({ row }) => {
+      return h("div", { 
+        class: "text-center w-full text-muted-foreground" 
+      }, Number(row.getValue("totalPeople")))
+    },
+  },
+
   {
     id: "actions",
     cell: () => h(DropdownMenu, {}, {
@@ -150,6 +223,7 @@ const columns: ColumnDef<TableData>[] = [
       ],
     }),
   },
+
 ]
 
 const table = useVueTable({
@@ -175,22 +249,23 @@ const table = useVueTable({
     <div class="flex items-center justify-between px-1">
       <div class="flex flex-col gap-2">
         <h3 tabindex="0">Abteilungen</h3>
-        <p class="text-muted-foreground max-w-175" tabindex="0"> Übersicht über alle Abteilungen</p>
+        <p class="text-muted-foreground max-w-175" tabindex="0"> Übersicht über alle Abteilungen </p>
       </div>
-      <Button variant="brand-outline" size="sm">
+      <!-- <Button variant="brand-outline" size="sm">
         <Plus class="mr-2 h-4 w-4" />
         Neue Sektion
-      </Button>
+      </Button> -->
     </div>
 
     <div class="rounded-md border bg-card overflow-hidden shadow-sm">
       <Table>
-        <TableHeader class="bg-muted">
+        <TableHeader class="bg-muted dark:[&_th]:text-slate-100 [&_th]:text-slate-900">
           <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id" class="hover:bg-transparent border-none">
             <TableHead 
               v-for="header in headerGroup.headers" 
               :key="header.id" 
               class="text-white font-bold h-11"
+              :style="{ width: `${header.getSize()}px` }"
             >
               <FlexRender
                 v-if="!header.isPlaceholder"
@@ -206,7 +281,7 @@ const table = useVueTable({
               v-for="row in table.getRowModel().rows" 
               :key="row.id"
               :data-state="row.getIsSelected() && 'selected'"
-              class="transition-colors data-[state=selected]:bg-blue-50/80 data-[state=selected]:shadow-[inset_3px_0_0_0_#3b82f6]"
+              class="transition-colors data-[state=selected]:bg-muted data-[state=selected]:shadow-[inset_6px_0_0_0_#064e3b]"
             >
               <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
                 <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
@@ -223,7 +298,7 @@ const table = useVueTable({
     </div>
 
     <div class="flex items-center justify-between px-2">
-      <div class="text-sm text-muted-foreground italic">
+      <div class="text-sm text-muted-foreground">
         {{ table.getFilteredSelectedRowModel().rows.length }} von {{ table.getFilteredRowModel().rows.length }} ausgewählt
       </div>
 

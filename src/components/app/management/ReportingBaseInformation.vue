@@ -1,15 +1,16 @@
 <template lang="pug">
 
-Item(variant="muted" class="flex flex-col justify-between gap-4 items-start")
+div(class="flex flex-col justify-between gap-4 items-start bg-muted/50 p-5 rounded-md")
   div(class="flex justify-between items-end w-full flex-wrap-reverse")
     p(class="text-sm text-muted-foreground leading-snug max-w-[70%]") {{ label }}
     Badge(:variant="isPositive ? 'positive' : 'destructive'") {{ trendFormatted }}
   div(class="flex items-baseline gap-1.5 flex-wrap")
-    h3(class="text-5xl leading-none") {{ value }}
+    h3(class="text-5xl leading-none mr-2") {{ value }}
     span(class="text-sm text-muted-foreground") {{ unit }}
   div(class="flex items-center gap-2")
     div(class="w-6 h-1 rounded-full" :class="isPositive ? 'bg-positive/50' : 'bg-destructive/50'")
     p(class="text-xs text-muted-foreground") {{ subLabel }}
+    
 </template>
 
 <script setup lang="ts">

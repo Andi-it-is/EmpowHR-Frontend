@@ -40,7 +40,7 @@ import { computed } from 'vue';
 const router = useRouter();
 
 const limitedNavOptions = computed(() => {
-  return navigationData.filter(entry => entry.title === 'Für mich')
+  return navigationData.filter(entry => entry.title === 'Persönlich')
 })
 </script>
 

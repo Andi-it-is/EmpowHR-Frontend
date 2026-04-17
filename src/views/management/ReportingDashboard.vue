@@ -4,7 +4,7 @@ p(class="max-w-175 text-sm text-brand dark:text-emerald-200" tabindex="0") {{ to
 h1(tabindex="0") Reporting
 p(class="text-muted-foreground max-w-175" tabindex="0") Schaue dir hier die aktuellen relevanten Kennzahlen 
   | zu EmpowHR und dem Unternehmen an.
-Separator
+Separator(class="my-2")
 
 //- Grid Container for all the informations
 div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-4")
@@ -21,12 +21,13 @@ div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-4")
 
 //- Grid Container for the Bar Chart and Area Chart
 div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-4")
-  div(class="col-span-2 border-0 rounded-md")
+  div(class="col-span-2 rounded-md shadow-none")
     CustomBarChart(
       :data="roleDistributionData"
+      :yDomain="yAxisRange"
       class="h-full w-full pb-4"
     )
-  div(class="col-span-3 border-0 rounded-md bg-muted/50 shadow-none")
+  div(class="col-span-3 rounded-md bg-muted/50 shadow-none")
     CardHeader
       CardTitle Plattform Aktivität
       CardDescription Datenbanktransaktionen der letzten 30 Arbeitstage.
@@ -43,25 +44,16 @@ div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-4")
           :show-y-axis="true"
           :showXAxis="true"
           :x-axis-options="{ ticks: 6 }"
-          class="h-full w-full pb-4"
+          class="h-full w-full"
           :margin="{ top: 0, right: 0, bottom: 40, left: 40 }"
         )
 
-//- Grid Container for the Table 
-div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4")
-  div(class="col-span-5 border-0 rounded-md bg-muted/50 p-8")
+//- Grid Container for the Department Table 
+div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-4")
+  div(class="col-span-5 rounded-md bg-muted/50 p-8")
     DepartmentReportingTable(
-      :data="tableData"
+      :data="departmentTable"
     )
-
-//- Grid Container for the HR Numbers
-div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4")
-
-  div(class="col-span-2 border-0 rounded-md bg-muted/50")
-    Card(class="h-100 p-8") HR-Kennzahlen
-
-  div(class="col-span-3 border-0 rounded-md bg-muted/50")
-    Card(class="h-100 p-8") Offene Vorgägnge
 
 </template>
 
@@ -81,15 +73,16 @@ import { getFormattedTodayDate } from '@/lib/dateHelpers'
 import { BarChart } from '@/components/ui/chart-bar'
 import { AreaChart } from '@/components/ui/chart-area'
 import { RoleName } from '@/constants/enums/acessControl.enum'
-import { getRoleColor, translateRoleName } from '@/lib/enumTranslaters'
+import { getDepartmentColor, getRoleColor, translateRoleName } from '@/lib/enumTranslaters'
+import { DepartmentName } from '@/constants/enums/departmentColors.enum'
 
 const today = getFormattedTodayDate()
 
 // Base Informations
 const baseInformationArray = ref([
-  { label: "Mitarbeitende Gesamt", value: 67, unit: "Mitarbeitende", trend: 4.9, subLabel: "Wachstum zum Vorjahr" },
+  { label: "Mitarbeitende Gesamt", value: 114, unit: "Mitarbeitende", trend: 4.9, subLabel: "Wachstum zum Vorjahr" },
   { label: "Frauenquote", value: "42  %", unit: "in Führungsposition" ,trend: 3, subLabel: "Wachstum zum Vorjahr" },
-  { label: "Heute Anwesend", value: 59, unit: "Mitarbeitende", trend: 1.2, subLabel: "Vergleich zum Vorjahrestag" },
+  { label: "Heute Anwesend", value: 105, unit: "Mitarbeitende", trend: 1.2, subLabel: "Vergleich zum Vorjahrestag" },
   { label: "Krankheitsquote", value: "1.8%", unit: "über alle Abteilungen", trend: 0.3, subLabel: "Vergleich zum Vorjahrestag", invertTrend: true },
   { label: "Betriebszugehörigkeit", value: 5.6, unit: "Jahre ⌀", trend: -4, subLabel: "Wachstum zum Vorjahr", invertTrend: false },
 ])
@@ -122,6 +115,7 @@ const roleDistributionData = [
     color: getRoleColor(RoleName.EXECUTIVE)
   },
 ]
+const yAxisRange = [0, 8]
 
 // Activity Data Section
 const activityDataCategories = ['Persönlich', 'Organisation', 'Zeitverwaltung']
@@ -160,53 +154,114 @@ const generateActivityData = () => {
 const activityData = generateActivityData()
 
 
-// Departments Table
-const tableData = [
+// Fake Department Data
+const departmentTable = [
   {
     id: 1,
-    header: "Quartalsplanung Q2",
-    type: "Planung",
-    status: "In Bearbeitung",
-    target: "Abteilungsleiter",
-    limit: "15.05.2026",
-    reviewer: "Dr. Müller (Executive)"
+    name: "Geschäftsführung",
+    costCenter: "CX_0_000",
+    lead: "Der Chef",
+    totalPeople: 3,
+    currentPeople: 3,
+    parent: "-",
+    color: getDepartmentColor(DepartmentName.EXECUTIVE)
   },
   {
     id: 2,
-    header: "Jahresgespräch 2026",
-    type: "Persönlich",
-    status: "Abgeschlossen",
-    target: "Mitarbeiter",
-    limit: "01.04.2026",
-    reviewer: "Sarah Schmidt (HR)"
+    name: "Sales",
+    costCenter: "CX_1_B00",
+    lead: "Samira Salaire",
+    totalPeople: 25,
+    currentPeople: 25,
+    parent: "Geschäftsführung",
+    color: getDepartmentColor(DepartmentName.SALES)
   },
   {
     id: 3,
-    header: "IT-Sicherheitsaudit",
-    type: "Infrastruktur",
-    status: "Offen",
-    target: "IT-Administrator",
-    limit: "20.06.2026",
-    reviewer: "Technik-Vorstand"
+    name: "Human Ressources",
+    costCenter: "CX_1_A00",
+    lead: "Helene Human",
+    totalPeople: 6,
+    currentPeople: 5,
+    parent: "Geschäftsführung",
+    color: getDepartmentColor(DepartmentName.HR)
   },
   {
     id: 4,
-    header: "Budgetfreigabe Marketing",
-    type: "Finanzen",
-    status: "Wartet auf Freigabe",
-    target: "Buchhaltung",
-    limit: "30.04.2026",
-    reviewer: "CFO (Executive)"
+    name: "Marketing",
+    costCenter: "CX_1_C00",
+    lead: "Marlene Marki",
+    totalPeople: 6,
+    currentPeople: 5,
+    parent: "Geschäftsführung",
+    color: getDepartmentColor(DepartmentName.MARKETING)
   },
   {
     id: 5,
-    header: "Fortbildung React/Vue",
-    type: "Persönlich",
-    status: "Geplant",
-    target: "Mitarbeiter",
-    limit: "12.07.2026",
-    reviewer: "Teamlead Frontend"
-  }
+    name: "IT",
+    costCenter: "CX_1_D00",
+    lead: "Igor Informi",
+    totalPeople: 55,
+    currentPeople: 49,
+    parent: "Geschäftsführung",
+    color: getDepartmentColor(DepartmentName.IT)
+  },
+  // {
+  //   id: 6,
+  //   name: "Software Entwicklung",
+  //   costCenter: "CX_2_D00",
+  //   lead: "Sergej Software",
+  //   totalPeople: 80,
+  //   currentPeople: 77,
+  //   parent: "IT"
+  // },
+  // {
+  //   id: 7,
+  //   name: "Dev-Ops",
+  //   costCenter: "CX_2_D01",
+  //   lead: "Sergej Software",
+  //   totalPeople: 15,
+  //   currentPeople: 12,
+  //   parent: "IT"
+  // },
+  {
+    id: 8,
+    name: "Finance",
+    costCenter: "CX_1_E00",
+    lead: "Fiona Finanzi",
+    totalPeople: 12,
+    currentPeople: 12,
+    parent: "Geschäftsführung",
+    color: getDepartmentColor(DepartmentName.FINANCE)
+  },
+  // {
+  //   id: 9,
+  //   name: "Accountant",
+  //   costCenter: "CX_2_E00",
+  //   lead: "Andrea Accounti",
+  //   totalPeople: 7,
+  //   currentPeople: 7,
+  //   parent: "Geschäftsführung"
+  // },
+  // {
+  //   id: 10,
+  //   name: "Controlling",
+  //   costCenter: "CX_2_E01",
+  //   lead: "Constantin Controlli",
+  //   totalPeople: 5,
+  //   currentPeople: 4,
+  //   parent: "Geschäftsführung"
+  // },
+  {
+    id: 11,
+    name: "Rechtsabteilung",
+    costCenter: "CX_1_F00",
+    lead: "Jonas Juri",
+    totalPeople: 7,
+    currentPeople: 6,
+    parent: "Geschäftsführung",
+    color: getDepartmentColor(DepartmentName.LEGAL)
+  },
 ]
 
 onMounted(async () => {

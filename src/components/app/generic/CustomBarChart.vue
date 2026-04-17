@@ -32,12 +32,12 @@ const chartConfig = {
 </script>
 
 <template>
-  <Card class="bg-muted/50 border-0 shadow-none rounded-md">
+  <div class="col-span-2 rounded-md bg-muted/50 shadow-none">
     <CardHeader>
       <CardTitle>Rollenverteilung</CardTitle>
       <CardDescription>Verteilung der speziellen Rollen</CardDescription>
     </CardHeader>
-    <CardContent class="p-1 sm:p-6">
+    <CardContent class="p-2">
       <ChartContainer :config="chartConfig" class="max-h-100 w-full">
         <VisXYContainer
           :data="chartData"
@@ -88,5 +88,5 @@ const chartConfig = {
         </div>
       </div>
     </CardContent>
-  </Card>
+  </div>
 </template>
