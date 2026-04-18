@@ -72,6 +72,35 @@ const router = createRouter({
           ]
         },
         {
+          path: 'times',
+          component: PassThroughRouterview,
+          meta: { title: "Zeitverwaltung" },
+          children: [
+            {
+              path: '',
+              component: () => import('../views/times/TimesIndex.vue')
+            },
+            {
+              path: 'absences',
+              name: 'Abwesenheiten',
+              component: () => import('../views/times/TimesIndex.vue'), //TODO
+              meta: { title: 'Abwesenheiten'}
+            },
+            {
+              path: 'booking',
+              name: 'Buchung',
+              component: () => import('../views/times/TimeBookingOverview.vue'),
+              meta: { title: 'Zeitbuchung' }
+            },
+            {
+              path: 'remote',
+              name: 'Remote',
+              component: () => import('../views/times/TimesIndex.vue'), //TODO
+              meta: { title: 'Remote Tracker' } 
+            }
+          ]
+        },
+        {
           path: 'management',
           component: PassThroughRouterview,
           meta: { title: "Management" },
@@ -86,12 +115,12 @@ const router = createRouter({
               component: () => import('../views/management/ReportingDashboard.vue'),
               meta: { title: 'Report' }
             },
-            {
-              path: 'inspiration',
-              name: 'inspiration',
-              component: () => import('../views/management/inspirationBoard.vue'),
-              meta: { title: 'inspiration' }
-            }
+            // {
+            //   path: 'inspiration',
+            //   name: 'inspiration',
+            //   component: () => import('../views/management/inspirationBoard.vue'),
+            //   meta: { title: 'inspiration' }
+            // }
           ]
         }
       ]

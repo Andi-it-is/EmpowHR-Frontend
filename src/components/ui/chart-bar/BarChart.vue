@@ -7,7 +7,8 @@ import { VisAxis, VisGroupedBar, VisStackedBar, VisXYContainer } from "@unovis/v
 import { useMounted } from "@vueuse/core"
 import { computed, ref } from "vue"
 import { cn } from "@/lib/utils"
-import { ChartCrosshair, ChartLegend, defaultColors } from '@/components/ui/chart'
+import { ChartCrosshair, ChartLegend, defaultColors, type ChartConfig } from '@/components/ui/chart'
+import ChartContainer from "../chart/ChartContainer.vue"
 
 const props = withDefaults(defineProps<BaseChartProps<T> & {
   /**
@@ -55,14 +56,22 @@ const isMounted = useMounted()
 function handleLegendItemClick(d: BulletLegendItemInterface, i: number) {
   emits("legendItemClick", d, i)
 }
-
 const VisBarComponent = computed(() => props.type === "grouped" ? VisGroupedBar : VisStackedBar)
 const selectorsBar = computed(() => props.type === "grouped" ? GroupedBar.selectors.bar : StackedBar.selectors.bar)
+
+const chartConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "var(--chart-1)",
+  },
+} satisfies ChartConfig
 </script>
 
 <template>
-  <div :class="cn('w-full h-[400px] flex flex-col items-end', $attrs.class ?? '')">
-    <ChartLegend v-if="showLegend" v-model:items="legendItems" @legend-item-click="handleLegendItemClick" />
+  <div :class="cn('w-full h-100 flex flex-col items-end', $attrs.class ?? '')">
+    <ChartContainer :config="chartConfig">
+
+    <ChartLegend v-if="showLegend" v-model:items="legendItems" @legend-item-click="handleLegendItemClick" class="mb-4 ml-4"  />
 
     <VisXYContainer
       :data="data"
@@ -112,5 +121,6 @@ const selectorsBar = computed(() => props.type === "grouped" ? GroupedBar.select
 
       <slot />
     </VisXYContainer>
+    </ChartContainer>
   </div>
 </template>

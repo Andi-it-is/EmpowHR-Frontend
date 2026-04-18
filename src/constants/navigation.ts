@@ -59,9 +59,9 @@ export const navigationData = [
     icon: Timer,
     color: "group-amber",
     items: [
-      { title: "Abwesenheiten", url: "#", icon: UmbrellaOff, description: "Urlaub und Krankmeldungen", color: "amber" },
-      { title: "Zeitbuchung", url: "#", icon: Clock, description: "Stunden erfassen", color: "amber" },
-      { title: "Home Office Tracker", url: "#", icon: Home, description: "Remote Tracker", color: "amber" },
+      { title: "Abwesenheiten", url: "/times/absences", icon: UmbrellaOff, description: "Urlaub und Krankmeldungen", color: "amber" },
+      { title: "Zeitbuchung", url: "/times/booking", icon: Clock, description: "Stunden erfassen", color: "amber" },
+      { title: "Home Office Tracker", url: "/times/remote", icon: Home, description: "Remote Arbeit Übersicht", color: "amber" },
     ],
   },
   {

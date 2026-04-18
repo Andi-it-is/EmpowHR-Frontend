@@ -42,3 +42,28 @@ export function getFormattedTodayDate(): string {
 
   return `${weekday}, den ${day}.${month}.${year}`;
 }
+
+
+/**
+ * 
+ * @returns Aktuelle Kalenderwoche
+ */
+export function getCalendarWeek(): number {
+  const heute = new Date();
+  
+  // Ein neues Datumsobjekt erstellen, um das Original nicht zu verändern
+  const d = new Date(Date.UTC(heute.getFullYear(), heute.getMonth(), heute.getDate()));
+  
+  // Den Wochentag auf den nächsten Donnerstag setzen:
+  // (Donnerstag ist der Anker für die ISO-Wochenrechnung)
+  const tagNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - tagNum);
+  
+  // Start des Jahres finden
+  const jahrStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  
+  // Differenz in Tagen berechnen und durch 7 teilen
+  const woche = Math.ceil((((d.getTime() - jahrStart.getTime()) / 86400000) + 1) / 7);
+  
+  return woche;
+}
