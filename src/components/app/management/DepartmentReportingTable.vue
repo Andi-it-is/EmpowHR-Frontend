@@ -75,22 +75,22 @@ const rowSelection = ref({})
 
 // Column Defintions
 const columns: ColumnDef<FakeDepartmentData>[] = [
-  {
-    id: "select",
-    size: 50,
-    header: ({ table }) => h(Checkbox, {
-      "modelValue": table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate"),
-      "onUpdate:modelValue": value => table.toggleAllPageRowsSelected(!!value),
-      "aria-label": "Select all",
-    }),
-    cell: ({ row }) => h(Checkbox, {
-      "modelValue": row.getIsSelected(),
-      "onUpdate:modelValue": value => row.toggleSelected(!!value),
-      "aria-label": "Select row",
-    }),
-    enableSorting: false,
-    enableHiding: false,
-  },
+  // {
+  //   id: "select",
+  //   size: 50,
+  //   header: ({ table }) => h(Checkbox, {
+  //     "modelValue": table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate"),
+  //     "onUpdate:modelValue": value => table.toggleAllPageRowsSelected(!!value),
+  //     "aria-label": "Select all",
+  //   }),
+  //   cell: ({ row }) => h(Checkbox, {
+  //     "modelValue": row.getIsSelected(),
+  //     "onUpdate:modelValue": value => row.toggleSelected(!!value),
+  //     "aria-label": "Select row",
+  //   }),
+  //   enableSorting: false,
+  //   enableHiding: false,
+  // },
 
   {
     accessorKey: 'id',
@@ -198,7 +198,7 @@ const columns: ColumnDef<FakeDepartmentData>[] = [
     },
     cell: ({ row }) => {
       return h("div", { 
-        class: "text-center w-full text-muted-foreground" 
+        class: "text-center w-full" 
       }, Number(row.getValue("totalPeople")))
     },
   },

@@ -91,22 +91,22 @@ const baseInformationArray = ref([
 const roleDistributionData = [
   {
     label: translateRoleName(RoleName.DEPARTMENT_HEAD),
-    value: 7,
+    value: 11,
     color: getRoleColor(RoleName.DEPARTMENT_HEAD)
   },
   {
     label: translateRoleName(RoleName.HR_MANAGER),
-    value: 4,
+    value: 6,
     color: getRoleColor(RoleName.HR_MANAGER)
   },
   {
     label: translateRoleName(RoleName.ACCOUNTANT),
-    value: 5,
+    value: 8,
     color: getRoleColor(RoleName.ACCOUNTANT)
   },
   {
     label: translateRoleName(RoleName.IT_ADMINISTRATOR),
-    value: 4,
+    value: 5,
     color: getRoleColor(RoleName.IT_ADMINISTRATOR)
   },
   {
@@ -115,7 +115,7 @@ const roleDistributionData = [
     color: getRoleColor(RoleName.EXECUTIVE)
   },
 ]
-const yAxisRange = [0, 8]
+const yAxisRange = [0, 12]
 
 // Activity Data Section
 const activityDataCategories = ['Persönlich', 'Organisation', 'Zeitverwaltung']
