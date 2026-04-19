@@ -189,3 +189,7 @@
   box-shadow: none !important;
   padding: 0 !important;
 }
+
+.dark input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}

@@ -1,6 +1,6 @@
 <template lang="pug">
 
-div(class="grid items-center gap-2")
+div(class="grid items-center gap-3")
   Label(:for="id" class="ml-1 text-sm font-medium") {{ label }}
   div(
     class="flex h-9 w-full items-center rounded-md border border-input bg-transparent px-3 shadow-sm text-sm dark:bg-input/30"
@@ -27,8 +27,7 @@ div(class="grid items-center gap-2")
 </template>
 
 <script setup lang="ts">
-import { DateFormatter, getLocalTimeZone } from '@internationalized/date'
-import Button from '@/components/ui/button/Button.vue'
+import { DateFormatter, getLocalTimeZone, parseDate, type CalendarDate } from '@internationalized/date'
 import { Calendar as CalendarIcon, X } from 'lucide-vue-next'
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
@@ -45,12 +44,26 @@ const triggerRef = ref<HTMLElement | null>(null)
 const isOpen = ref(false)
 
 watch(isOpen, (val) => {
-  if (!val) {
-    nextTick(() => triggerRef.value?.focus())
-  }
+  if (!val) nextTick(() => triggerRef.value?.focus())
 })
 
-const date = defineModel<any>()
+// Außen: ISO-String "2026-04-18" | undefined
+const model = defineModel<string | undefined>()
+
+// Innen: CalendarDate für die Calendar-Komponente
+const date = ref<CalendarDate | undefined>(
+  model.value ? parseDate(model.value) : undefined
+)
+
+// String rein → CalendarDate
+watch(model, (val) => {
+  date.value = val ? parseDate(val) : undefined
+})
+
+// CalendarDate raus → ISO-String
+watch(date, (val) => {
+  model.value = val ? val.toString() : undefined
+})
 
 const df = new DateFormatter('de-DE', { dateStyle: 'medium' })
 

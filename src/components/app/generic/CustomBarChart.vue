@@ -32,7 +32,7 @@ const chartConfig = {
 </script>
 
 <template>
-  <div class="col-span-2 rounded-md bg-muted/50 shadow-none">
+  <div class="col-span-2">
     <CardHeader>
       <CardTitle>Rollenverteilung</CardTitle>
       <CardDescription>Verteilung der speziellen Rollen</CardDescription>

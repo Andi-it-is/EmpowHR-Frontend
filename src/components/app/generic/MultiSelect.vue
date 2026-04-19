@@ -1,6 +1,6 @@
 <template lang="pug">
 
-div(class="grid items-center gap-2")
+div(class="grid items-center gap-3")
   Label(:for="id" class="ml-1 text-sm font-medium") {{ label }}
   Popover
     PopoverTrigger(as-child)

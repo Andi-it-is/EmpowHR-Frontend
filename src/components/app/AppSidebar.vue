@@ -31,6 +31,7 @@ import { useRoute, useRouter } from "vue-router"
 import { ref, watch, type Ref } from 'vue'
 import { getIconColor, navigationData } from "@/constants/navigation"
 import Separator from "../ui/separator/Separator.vue"
+import ThemeToggle from "./ThemeToggle.vue"
 
 
 const props = defineProps<SidebarProps>()
@@ -146,6 +147,7 @@ function navToIndex() {
         </SidebarMenu>
       </SidebarGroup>
     </SidebarContent>
+    <ThemeToggle></ThemeToggle>
     <SidebarFooter>
       <NavUser />
     </SidebarFooter>

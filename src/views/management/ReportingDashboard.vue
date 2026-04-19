@@ -9,25 +9,26 @@ Separator(class="my-2")
 //- Grid Container for all the informations
 div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-4")
 
-  ReportingBaseInformation(
-    v-for="item in baseInformationArray"
-    :label="item.label"
-    :value="item.value"
-    :unit="item.unit"
-    :trend="item.trend"
-    :subLabel="item.subLabel"
-    :invertTrend="item.invertTrend"
-  )
+  Card(v-for="item in baseInformationArray")
+    ReportingBaseInformation(
+      :label="item.label"
+      :value="item.value"
+      :unit="item.unit"
+      :trend="item.trend"
+      :subLabel="item.subLabel"
+      :invertTrend="item.invertTrend"
+    )
 
 //- Grid Container for the Bar Chart and Area Chart
 div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-4")
-  div(class="col-span-2 rounded-md shadow-none")
-    CustomBarChart(
-      :data="roleDistributionData"
-      :yDomain="yAxisRange"
-      class="h-full w-full pb-4"
-    )
-  div(class="col-span-3 rounded-md bg-muted/50 shadow-none")
+  Card(class="col-span-2")
+    CardContent
+      CustomBarChart(
+        :data="roleDistributionData"
+        :yDomain="yAxisRange"
+        class="h-full w-full pb-4"
+      )
+  Card(class="col-span-3")
     CardHeader
       CardTitle Plattform Aktivität
       CardDescription Datenbanktransaktionen der letzten 30 Arbeitstage.
@@ -50,7 +51,7 @@ div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-4")
 
 //- Grid Container for the Department Table 
 div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-4")
-  div(class="col-span-5 rounded-md bg-muted/50 p-8")
+  Card(class="col-span-5 p-8")
     DepartmentReportingTable(
       :data="departmentTable"
     )

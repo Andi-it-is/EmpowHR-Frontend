@@ -1,6 +1,6 @@
 <template lang="pug">
 
-div(class="flex flex-col justify-between gap-4 items-start bg-muted/50 p-5 rounded-md")
+div(class="flex flex-col justify-between gap-4 items-start p-5")
   div(class="flex justify-between items-end w-full flex-wrap-reverse")
     p(class="text-sm text-muted-foreground leading-snug max-w-[70%]") {{ label }}
     Badge(:variant="isPositive ? 'positive' : 'destructive'") {{ trendFormatted }}

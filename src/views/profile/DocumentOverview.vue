@@ -193,7 +193,7 @@ import {
 } from '@/components/ui/item/';
 import { ShieldIcon, FileSearch2Icon, XIcon, CalendarIcon, Search, RotateCcw, Check, ChevronsUpDown, X, Upload, DownloadIcon, FileTextIcon } from 'lucide-vue-next';
 import Separator from '@/components/ui/separator/Separator.vue';
-import DocumentBrowserSidebar from '@/components/app/document/DocumentBrowserSidebar.vue';
+import DocumentBrowserSidebar from '@/components/app/profile/DocumentBrowserSidebar.vue';
 import Input from '@/components/ui/input/Input.vue';
 import {
   Select,
@@ -234,7 +234,6 @@ import { useWindowSize } from '@vueuse/core'
 import { documentService, type Document } from '@/services/document.service';
 import api from '@/lib/axios';
 import { DocumentType, DocumentSecurityLevel, DocumentTypeLabels, DocumentSecurityLevelLabels, DocumentSecurityLevelApiMap } from '@/constants/enums/document.enum'
-import { calendarToIsoDate } from '@/lib/dateHelpers';
 import { Skeleton } from '@/components/ui/skeleton'
 
 
@@ -401,8 +400,8 @@ async function applyFilterAndSearch() {
   const filters = {
     type: selectedTypes.value,
     security_level: selectedSecurityLevels.value.map(s => DocumentSecurityLevelApiMap[s]),
-    date_from: calendarToIsoDate(startdate.value)!,
-    date_to: calendarToIsoDate(enddate.value)!
+    date_from: startdate.value!,
+    date_to: enddate.value!
   }
 
   const docs = await documentService.getDocumentsByFilters(filters)

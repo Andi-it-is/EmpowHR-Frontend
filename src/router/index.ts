@@ -60,13 +60,13 @@ const router = createRouter({
             {
               path: 'documents',
               name: 'Dokumente',
-              component: () => import('../views/document/DocumentOverview.vue'),
+              component: () => import('../views/profile/DocumentOverview.vue'),
               meta: { title: 'Dokumente' }
             },
             {
               path: 'certificates',
               name: 'Zertifikate',
-              component: () => import('../views/certificate/CertificateOverview.vue'),
+              component: () => import('../views/profile/CertificateOverview.vue'),
               meta: { title: 'Zertifikate' }
             }
           ]
@@ -115,12 +115,6 @@ const router = createRouter({
               component: () => import('../views/management/ReportingDashboard.vue'),
               meta: { title: 'Report' }
             },
-            // {
-            //   path: 'inspiration',
-            //   name: 'inspiration',
-            //   component: () => import('../views/management/inspirationBoard.vue'),
-            //   meta: { title: 'inspiration' }
-            // }
           ]
         }
       ]

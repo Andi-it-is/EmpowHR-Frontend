@@ -141,19 +141,19 @@ const columns: ColumnDef<FakeDepartmentData>[] = [
 
   {
     accessorKey: "costCenter",
-    header: "Kostenstelle",
+    header: () => h('span', { class: 'text-foreground font-medium' }, 'Kostenstelle'),
     cell: ({ row }) => h("div", { class: "font-mono min-w-[80px]" }, String(row.getValue("costCenter"))),
   },
 
   {
     accessorKey: "lead",
-    header: "Leitung",
+    header: () => h('span', { class: 'text-foreground font-medium' }, 'Leitung'),
     cell: ({ row }) => h("div", { class: "min-w-[140px]" }, String(row.getValue("lead"))),
   },
 
   {
     accessorKey: "parent",
-    header: "Übergeordnete Abteilung",
+    header: () => h('span', { class: 'text-foreground font-medium' }, 'Übergeordnete Abteilung'),
     cell: ({ row }) => {
       const parentName = String(row.getValue("parent"));
       
@@ -165,7 +165,7 @@ const columns: ColumnDef<FakeDepartmentData>[] = [
 
   {
     accessorKey: "currentPeople",
-    header: () => h("div", { class: "text-center w-full" }, "MA Anwesend"),
+    header: () => h("div", { class: "text-center w-full text-foreground font-medium" }, "MA Anwesend"),
     cell: ({ row }) => {
       const ist = Number(row.getValue("currentPeople"));
       const soll = Number(row.original.totalPeople);
@@ -297,12 +297,9 @@ const table = useVueTable({
       </Table>
     </div>
 
-    <div class="flex items-center justify-between px-2">
-      <div class="text-sm text-muted-foreground">
-        {{ table.getFilteredSelectedRowModel().rows.length }} von {{ table.getFilteredRowModel().rows.length }} ausgewählt
-      </div>
+    <div class="flex flex-wrap items-center justify-end px-2">
 
-      <div class="flex items-center gap-6 lg:gap-8">
+      <div class="flex flex-wrap items-center gap-6 lg:gap-8">
         <div class="flex items-center gap-2">
           <p class="text-sm font-medium whitespace-nowrap text-muted-foreground">Zeilen</p>
           <Select
@@ -324,7 +321,7 @@ const table = useVueTable({
           Seite {{ table.getState().pagination.pageIndex + 1 }} von {{ table.getPageCount() }}
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2">
           <Button variant="outline" size="icon" class="h-8 w-8" :disabled="!table.getCanPreviousPage()" @click="table.setPageIndex(0)">
             <ChevronsLeft class="h-4 w-4" />
           </Button>
