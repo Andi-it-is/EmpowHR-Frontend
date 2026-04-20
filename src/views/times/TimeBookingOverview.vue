@@ -41,6 +41,7 @@ div(v-else)
           div(class="flex flex-col border border-primary p-4 rounded-md")
             p(class="text-2xl") {{ deltaHours }} Stunden
             p(class="text-muted-foreground") Delta auf dem Zeitkonto
+            p(class="text-xs text-muted-foreground") (Aktualisiert täglich um 23:59 Uhr)
       CardContent
         form(@submit.prevent="onSubmit" novalidate)
           FieldGroup(class="flex flex-col gap-2")
@@ -145,9 +146,10 @@ div(v-else)
       CardContent
         WorkTimeEntriesTable(
           :data="workTimeEntries"
+          @refresh="refreshData"
         )
 
-pre {{ workTimeEntries }}
+//- pre {{ workTimeEntries }}
 </template>
 
 
@@ -196,6 +198,15 @@ let shouldPerDay = 8
 const groupedByWeek = computed(() => {
   const weeks: Record<number, { day: string; Ist: number; Soll: number }[]> = {}
 
+  // Aktuelle Woche immer vorbelegen
+  const currentMonday = getMondayOfWeek(new Date())
+  weeks[currentWeek] = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag'].map((day, i) => {
+    const d = new Date(currentMonday)
+    d.setDate(currentMonday.getDate() + i)
+    return { day, Ist: 0, Soll: shouldPerDay }
+  })
+
+  // Einträge einsortieren
   workTimeEntries.value?.forEach(entry => {
     const week = getISOWeek(new Date(entry.start_date))
     if (!weeks[week]) {
@@ -208,7 +219,7 @@ const groupedByWeek = computed(() => {
     }
 
     const dayIndex = new Date(entry.start_date).getDay()
-    const isoIndex = dayIndex === 0 ? 6 : dayIndex - 1 // 0=Mo, 4=Fr
+    const isoIndex = dayIndex === 0 ? 6 : dayIndex - 1
     if (isoIndex < 5) {
       const weekData: any = weeks[week] as { day: string; Ist: number; Soll: number }[]
       weekData[isoIndex].Ist = Math.round(
@@ -306,10 +317,7 @@ const onSubmit = handleSubmit(async (values) => {
 
     const result = await timeEntryService.createWorkTimeEntry(reqObj)
 
-    // calling every WorkTimeEntry again, so the table updates
-    const response = await timeEntryService.listWorkTimeEntries()
-    deltaHours.value = response.timeAccount.delta_hours
-    workTimeEntries.value = response.entries
+    await refreshData()
 
     toast.success('Zeiteintrag erstellt', {
       description: `${isoToGermanDate(start_date)} · ${values.startTime} – ${values.endTime} Uhr`,
@@ -322,6 +330,13 @@ const onSubmit = handleSubmit(async (values) => {
     console.error(error)
   }
 })
+
+async function refreshData() {
+  // calling every WorkTimeEntry again, so the table updates
+  const response = await timeEntryService.listWorkTimeEntries()
+  deltaHours.value = response.timeAccount.delta_hours
+  workTimeEntries.value = response.entries
+} 
 
 
 const deltaHours = ref<number>()

@@ -71,8 +71,20 @@ async function createWorkTimeEntry(data: CreateTimeEntryRequest): Promise<TimeEn
   return result.data.data
 }
 
+async function updateTimeEntry(id: string, data: CreateTimeEntryRequest): Promise<TimeEntry> {
+
+  const result = await api.patch(`/timeEntry/my/${id}`, data)
+  return result.data.data
+}
+
+async function deleteTimeEntry(id: string): Promise<void> {
+  await api.delete(`/timeEntry/my/${id}`)
+}
+
 export const timeEntryService = {
   listWorkTimeEntries,
-  createWorkTimeEntry
+  createWorkTimeEntry,
+  updateTimeEntry,
+  deleteTimeEntry
 }
 

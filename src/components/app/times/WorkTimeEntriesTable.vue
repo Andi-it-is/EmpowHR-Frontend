@@ -68,11 +68,16 @@ import {
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field'
 
 
-import type { TimeEntry } from "@/services/timeEntry.service"
+import { timeEntryService, type CreateTimeEntryRequest, type TimeEntry } from "@/services/timeEntry.service"
 import { WorkingLocation, TimeEntryType } from "@/constants/enums/timeRecodring.enum"
 import CalendarInput from "../generic/CalendarInput.vue"
 import { Input } from '@/components/ui/input'
+import { toast } from "vue-sonner"
+import { isoToGermanDate } from "@/lib/dateHelpers"
 
+const emit = defineEmits<{
+  refresh: []
+}>()
 
 const props = defineProps<{
   data: TimeEntry[]
@@ -129,31 +134,45 @@ async function onEditEntry() {
   const start_date = new Date(`${editStartDate.value}T${editStartTime.value}:00`)
   const end_date = new Date(`${editEndDate.value}T${editEndTime.value}:00`)
 
+  const reqObj: CreateTimeEntryRequest = {
+    start_date: start_date,
+    end_date: end_date,
+    working_location: editWorkingLocation.value as WorkingLocation,
+  }
+
   try {
-    console.log("exectued editing")
-    // await timeEntryService.updateTimeEntry(editingEntry.value.id, {
-    //   start_date,
-    //   end_date,
-    //   working_location: editWorkingLocation.value,
-    // })
+    await timeEntryService.updateTimeEntry(editingEntry.value.id, reqObj)
 
-    // const response = await timeEntryService.listWorkTimeEntries()
-    // workTimeEntries.value = response.entries
-    // deltaHours.value = response.timeAccount.delta_hours
-
-    // toast.success('Zeiteintrag aktualisiert', {
-    //   description: `${isoToGermanDate(start_date)} · ${editStartTime.value} – ${editEndTime.value} Uhr`,
-    // })
-
-    // editingEntry.value = null
+    toast.success('Zeiteintrag aktualisiert', {
+      description: `${isoToGermanDate(start_date)} · ${editStartTime.value} – ${editEndTime.value} Uhr`,
+    })
+    
+    editingEntry.value = null
+    emit('refresh')
 
   } catch (error) {
     console.error(error)
   }
 }
 
-function onDeleteEntry() {
-  console.log("ich lösche den Eintrag")
+async function onDeleteEntry() {
+  if (!deletingEntry.value) return
+
+  const entry = { ...deletingEntry.value }
+
+  try {
+    await timeEntryService.deleteTimeEntry(entry.id)
+
+    deletingEntry.value = null
+    emit('refresh')
+
+    toast.success('Zeiteintrag gelöscht', {
+      description: `${isoToGermanDate(new Date(entry.start_date))} wurde erfolgreich gelöscht.`,
+    })
+
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 const editStartDate = ref('')
@@ -408,7 +427,7 @@ const table = useVueTable({
                 <p v-show="editEndDateError" class="text-xs text-destructive mt-1 h-4">{{ editEndDateError }}&nbsp;</p>
               </Field>
               <Field class="min-h-28">
-                <FieldLabel for="editEndTime">Endzeit</FieldLabel>
+                <FieldLabel for="editEndTime">Endzeit</FieldLabel>  
                 <Input
                   id="editEndTime"
                   type="time"
@@ -445,13 +464,19 @@ const table = useVueTable({
   </Dialog>
 
   <!-- Löschen Dialog -->
-  <AlertDialog :open="!!deletingEntry" @update:open="v => { if (!v) deletingEntry = null }">
+  <AlertDialog :open="!!deletingEntry">
     <AlertDialogContent>
       <AlertDialogHeader>
         <AlertDialogTitle class="mb-4">Zeiteintrag löschen</AlertDialogTitle>
         <AlertDialogDescription>Dieser Vorgang kann nicht rückgängig gemacht werden.</AlertDialogDescription>
       </AlertDialogHeader>
-      <pre> {{ deletingEntry }}</pre>
+      <div class="rounded-md border border-border bg-muted/50 p-4 text-sm space-y-1">
+        <p class="font-medium">{{ deletingEntry?.type ? timeEntryTypeLabels[deletingEntry.type] : '' }} · {{ deletingEntry?.working_location ? workingLocationLabels[deletingEntry.working_location] : 'Abwesenheit' }}</p>
+        <p class="text-muted-foreground">{{ deletingEntry ? formatDate(deletingEntry.start_date) : '' }} · {{ deletingEntry ? formatTime(deletingEntry.start_date) : '' }} Uhr</p>
+        <p class="text-muted-foreground">bis</p>
+        <p class="text-muted-foreground">{{ deletingEntry ? formatDate(deletingEntry.end_date) : '' }} · {{ deletingEntry ? formatTime(deletingEntry.end_date) : '' }} Uhr</p>
+        <p class="text-muted-foreground pt-1">{{ deletingEntry?.recorded_hours }} h erfasst</p>
+      </div>
       <AlertDialogFooter>
         <AlertDialogCancel @click="deletingEntry = null">Abbrechen</AlertDialogCancel>
         <AlertDialogAction class="bg-destructive text-white hover:bg-destructive/90" @click="onDeleteEntry()">Löschen</AlertDialogAction>
