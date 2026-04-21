@@ -1,8 +1,8 @@
 import {
   FileText, Database, Award, GitFork, Users,
-  CalendarDays, Armchair, UmbrellaOff, Clock, Home,
+  CalendarDays, Armchair, UmbrellaOff, Clock,
   CalendarCheck, UserRound, Building2, Timer, ShieldCheck,
-  UserRoundKey, UserRoundCog, Clipboard
+  UserRoundKey, UserRoundCog, Clipboard, MonitorCloud
 } from 'lucide-vue-next'
 
 export function getColorClasses(color: string) {
@@ -61,7 +61,7 @@ export const navigationData = [
     items: [
       { title: "Abwesenheiten", url: "/times/absences", icon: UmbrellaOff, description: "Urlaub und Krankmeldungen", color: "amber" },
       { title: "Zeitbuchung", url: "/times/booking", icon: Clock, description: "Stunden erfassen", color: "amber" },
-      { title: "Home Office Tracker", url: "/times/remote", icon: Home, description: "Remote Arbeit Übersicht", color: "amber" },
+      { title: "Zeiten Monitor", url: "/times/monitor", icon: MonitorCloud, description: "Remote Arbeit Übersicht", color: "amber" },
     ],
   },
   {

@@ -61,7 +61,19 @@ export function getDepartmentColor(deptName: string): string {
 
 //* TimeEntries
 
-import { TimeEntryType } from "@/constants/enums/timeRecodring.enum";
+import { TimeEntryType, WorkingLocation } from "@/constants/enums/timeRecodring.enum";
+
+export const workingLocationColorMap: Record<WorkingLocation, string> = {
+  [WorkingLocation.OFFICE]:        '#3b82f6',
+  [WorkingLocation.REMOTE]:        '#a855f7',
+  [WorkingLocation.FIELD_SERVICE]: '#f43f5e',
+}
+
+export const workingLocationLabels: Record<WorkingLocation, string> = {
+  [WorkingLocation.OFFICE]: 'Büro',
+  [WorkingLocation.REMOTE]: 'Remote',
+  [WorkingLocation.FIELD_SERVICE]: 'Dienstreise',
+}
 
 /**
  * Zentrales Mapping für alle Zeiteintrag-Typen.

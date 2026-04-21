@@ -251,13 +251,6 @@ const calendarWeek = computed(() => selectedWeek.value)
 const totalIst = computed(() => data.value.reduce((sum, d) => sum + d.Ist, 0))
 const totalSoll = computed(() => data.value.reduce((sum, d) => sum + d.Soll, 0))
 
-
-const workingLocationLabels: Record<Partial<WorkingLocation>, string> = {
-  [WorkingLocation.OFFICE]: 'Büro',
-  [WorkingLocation.REMOTE]: 'Remote',
-  [WorkingLocation.FIELD_SERVICE]: 'Dienstreise',
-}
-
 const endDateError = computed(() => {
   if (!startDate.value || !endDate.value) return null
   const start = new Date(startDate.value)

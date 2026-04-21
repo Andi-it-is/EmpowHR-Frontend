@@ -74,7 +74,11 @@ async function listWorkTimeEntries(): Promise<WorkTimeEntriesResponse> {
 async function listAbscenceTimeEntires(): Promise<AbscenceTimeEntriesResponse> {
 
   const result = (await api.post("/timeEntry/my/filter", {}))
-  return result.data.data
+  return {
+    entries: result.data.data,
+    timeAccount: result.data.timeAccount,
+    vacationDaysPerYear: result.data.vacation_days_per_year
+  }
 
 }
 

@@ -74,6 +74,7 @@ import CalendarInput from "../generic/CalendarInput.vue"
 import { Input } from '@/components/ui/input'
 import { toast } from "vue-sonner"
 import { isoToGermanDate } from "@/lib/dateHelpers"
+import { TimeEntryTypeLabels, workingLocationLabels } from "@/lib/enumTranslaters"
 
 const emit = defineEmits<{
   refresh: []
@@ -86,35 +87,6 @@ const props = defineProps<{
 const sorting = ref<SortingState>([])
 const columnFilters = ref<ColumnFiltersState>([])
 const rowSelection = ref({})
-
-// --- Label Maps ---
-const workingLocationLabels: Record<string, string> = {
-  [WorkingLocation.OFFICE]: 'Büro',
-  [WorkingLocation.REMOTE]: 'Remote',
-  [WorkingLocation.FIELD_SERVICE]: 'Dienstreise',
-}
-
-const timeEntryTypeLabels: Record<string, string> = {
-  [TimeEntryType.WORK]: 'Arbeit',
-  [TimeEntryType.VACATION]: 'Urlaub',
-  [TimeEntryType.SICK]: 'Krank',
-  [TimeEntryType.SICK_CHILD]: 'Kind krank',
-  [TimeEntryType.EDUCATION]: 'Fortbildung',
-  [TimeEntryType.PUBLIC_HOLIDAY]: 'Feiertag',
-  [TimeEntryType.COMPENSATORY_OFF]: 'Überstundenabbau',
-  [TimeEntryType.SPECIAL_LEAVE]: 'Sonderurlaub',
-  [TimeEntryType.PARENTAL_LEAVE]: 'Elternzeit',
-  [TimeEntryType.UNPAID_LEAVE]: 'Unbezahlter Urlaub',
-  // [TimeEntryType.ON_CALL]: 'Bereitschaft',
-}
-
-const typeVariants: Partial<Record<TimeEntryType, string>> = {
-  [TimeEntryType.WORK]: 'default',
-  [TimeEntryType.VACATION]: 'secondary',
-  [TimeEntryType.SICK]: 'destructive',
-  [TimeEntryType.SICK_CHILD]: 'destructive',
-  [TimeEntryType.PUBLIC_HOLIDAY]: 'secondary',
-}
 
 const formatDate = (date: Date) =>
   new Date(date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
@@ -471,7 +443,7 @@ const table = useVueTable({
         <AlertDialogDescription>Dieser Vorgang kann nicht rückgängig gemacht werden.</AlertDialogDescription>
       </AlertDialogHeader>
       <div class="rounded-md border border-border bg-muted/50 p-4 text-sm space-y-1">
-        <p class="font-medium">{{ deletingEntry?.type ? timeEntryTypeLabels[deletingEntry.type] : '' }} · {{ deletingEntry?.working_location ? workingLocationLabels[deletingEntry.working_location] : 'Abwesenheit' }}</p>
+        <p class="font-medium">{{ deletingEntry?.type ? TimeEntryTypeLabels[deletingEntry.type] : '' }} · {{ deletingEntry?.working_location ? workingLocationLabels[deletingEntry.working_location] : 'Abwesenheit' }}</p>
         <p class="text-muted-foreground">{{ deletingEntry ? formatDate(deletingEntry.start_date) : '' }} · {{ deletingEntry ? formatTime(deletingEntry.start_date) : '' }} Uhr</p>
         <p class="text-muted-foreground">bis</p>
         <p class="text-muted-foreground">{{ deletingEntry ? formatDate(deletingEntry.end_date) : '' }} · {{ deletingEntry ? formatTime(deletingEntry.end_date) : '' }} Uhr</p>

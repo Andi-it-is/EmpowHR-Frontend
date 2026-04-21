@@ -93,10 +93,10 @@ const router = createRouter({
               meta: { title: 'Zeitbuchung' }
             },
             {
-              path: 'remote',
-              name: 'Remote',
-              component: () => import('../views/times/HomeOfficeTrackerDashboard.vue'),
-              meta: { title: 'Remote Tracker' } 
+              path: 'monitor',
+              name: 'Monitor',
+              component: () => import('../views/times/TimMonitoringDashboard.vue'),
+              meta: { title: 'Zeiten Monitoring' } 
             }
           ]
         },

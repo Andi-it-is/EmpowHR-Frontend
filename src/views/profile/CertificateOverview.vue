@@ -44,7 +44,7 @@ div(v-else class="flex flex-col gap-6")
             span(class="text-4xl font-bold leading-none") {{ certificates.length }}
             span(class="text-[10px] text-muted-foreground uppercase font-medium tracking-wider") Gesamt
             
-
+  pre {{ statsData }}
   Separator(class="my-4")
 
   //- Filter & Suche
