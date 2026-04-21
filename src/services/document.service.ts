@@ -56,9 +56,30 @@ async function getDocumentFile(id: string): Promise<string> {
   return URL.createObjectURL(response.data)
 }
 
+async function uploadDocument(
+  file: File,
+  meta: {
+    title: string
+    type: DocumentType
+    security_level: DocumentSecurityLevel | number
+  }
+): Promise<any> {
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('title', meta.title)
+  formData.append('type', meta.type)
+  formData.append('security_level', String(meta.security_level))
+
+  const result = await api.post('/document/my/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
+  return result.data.data
+}
+
 export const documentService = {
   getDocuments,
   getDocumentsByFilters,
   getFileUrl,
-  getDocumentFile
+  getDocumentFile,
+  uploadDocument
 }

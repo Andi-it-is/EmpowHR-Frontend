@@ -45,8 +45,10 @@ div(v-else)
     div(class="flex min-h-svh mb-16 w-full overflow-hidden")
       
       div(class="flex-1 flex flex-col")
-        Button(variant="brand-outline" class="ml-auto flex justify-end max-w-50" disabled) Hochladen
-          Upload(class="w-4 h-4")
+        UploadDocumentDialog(@uploaded="searchAll")
+          Button(variant="brand-outline" class="ml-auto flex justify-end max-w-50")
+            Upload(class="w-4 h-4")
+            | Hochladen
 
         Separator(class="my-4")
 
@@ -235,7 +237,7 @@ import { documentService, type Document } from '@/services/document.service';
 import api from '@/lib/axios';
 import { DocumentType, DocumentSecurityLevel, DocumentTypeLabels, DocumentSecurityLevelLabels, DocumentSecurityLevelApiMap } from '@/constants/enums/document.enum'
 import { Skeleton } from '@/components/ui/skeleton'
-
+import UploadDocumentDialog from '@/components/app/profile/UploadDocumentDialog.vue'
 
 const { width } = useWindowSize()
 const sidebarStyle = computed(() => ({
