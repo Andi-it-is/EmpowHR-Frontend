@@ -95,7 +95,7 @@ const router = createRouter({
             {
               path: 'remote',
               name: 'Remote',
-              component: () => import('../views/times/TimesIndex.vue'), //TODO
+              component: () => import('../views/times/HomeOfficeTrackerDashboard.vue'),
               meta: { title: 'Remote Tracker' } 
             }
           ]
