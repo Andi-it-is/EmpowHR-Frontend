@@ -1,6 +1,8 @@
 import { RoleName } from "@/constants/enums/acessControl.enum";
 import { DepartmentName } from "@/constants/enums/departmentColors.enum";
 
+//* Roles
+
 
 /**
  * Übersetzt einen RoleName Enum-Wert in die deutsche Bezeichnung.
@@ -37,8 +39,7 @@ export function getRoleColor(role: RoleName): string {
 }
 
 
-
-
+//* Departments
 
 export const DepartmentColors: Record<DepartmentName, string> = {
   [DepartmentName.EXECUTIVE]: '#dc2626',  // Gefährliches Rot (Autorität)
@@ -55,4 +56,56 @@ export const DepartmentColors: Record<DepartmentName, string> = {
  */
 export function getDepartmentColor(deptName: string): string {
   return DepartmentColors[deptName as DepartmentName] || '#64748b';
+}
+
+
+//* TimeEntries
+
+import { TimeEntryType } from "@/constants/enums/timeRecodring.enum";
+
+/**
+ * Zentrales Mapping für alle Zeiteintrag-Typen.
+ * Alphabetisch nach Label sortiert.
+ */
+export const TimeEntryTypeMapping: Record<TimeEntryType, { label: string, color: string }> = {
+  [TimeEntryType.PARENTAL_LEAVE]: { label: 'Elternzeit', color: 'bg-sky-500' },
+  [TimeEntryType.PUBLIC_HOLIDAY]: { label: 'Feiertag', color: 'bg-fuchsia-500' },
+  [TimeEntryType.EDUCATION]: { label: 'Fortbildung', color: 'bg-slate-600' },
+  [TimeEntryType.SICK_CHILD]: { label: 'Kind krank', color: 'bg-amber-500' },
+  [TimeEntryType.SICK]: { label: 'Krankheit', color: 'bg-red-600' },
+  [TimeEntryType.WORK]: { label: 'Reguläre Arbeit', color: 'bg-slate-600' },
+  [TimeEntryType.SPECIAL_LEAVE]: { label: 'Sonderurlaub', color: 'bg-rose-400' },
+  [TimeEntryType.UNPAID_LEAVE]: { label: 'Unbezahlter Urlaub', color: 'bg-stone-400' },
+  [TimeEntryType.VACATION]: { label: 'Urlaub', color: 'bg-emerald-500' },
+  [TimeEntryType.COMPENSATORY_OFF]: { label: 'Überstundenabbau', color: 'bg-teal-400' },
+};
+
+/**
+ * Ein reines Mapping der Labels für Selects oder Tabellen-Anzeigen
+ */
+export const TimeEntryTypeLabels: Record<TimeEntryType, string> = Object.entries(TimeEntryTypeMapping).reduce(
+  (acc, [key, value]) => ({ ...acc, [key]: value.label }),
+  {} as Record<TimeEntryType, string>
+);
+
+/**
+ * Ein reines Mapping der Tailwind-Farbklassen
+ */
+export const TimeEntryTypeColors: Record<TimeEntryType, string> = Object.entries(TimeEntryTypeMapping).reduce(
+  (acc, [key, value]) => ({ ...acc, [key]: value.color }),
+  {} as Record<TimeEntryType, string>
+);
+
+/**
+ * Gibt das Label eines Typs zurück oder den Key selbst als Fallback
+ */
+export function getTimeEntryLabel(type: string): string {
+  return TimeEntryTypeLabels[type as TimeEntryType] || type;
+}
+
+/**
+ * Gibt die Farbe eines Typs zurück oder ein neutrales Slate als Fallback
+ */
+export function getTimeEntryColor(type: string): string {
+  return TimeEntryTypeColors[type as TimeEntryType] || 'bg-slate-400';
 }

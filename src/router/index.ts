@@ -83,7 +83,7 @@ const router = createRouter({
             {
               path: 'absences',
               name: 'Abwesenheiten',
-              component: () => import('../views/times/TimesIndex.vue'), //TODO
+              component: () => import('../views/times/AbscencesOverview.vue'),
               meta: { title: 'Abwesenheiten'}
             },
             {

@@ -1,8 +1,8 @@
 <template lang="pug">
 
 h1(tabindex="0") Zeitbuchung
-p(class="text-muted-foreground max-w-175" tabindex="0") Die Übersicht über deine Arbeitstag. Trage hier deine Arbeitszeiten ein. 
-  | Stempel dich aus und ein. Falls nötig, korrigiere vergangene Zeitbuchungen. 
+p(class="text-muted-foreground max-w-175" tabindex="0") Die Übersicht über deine Arbeitstage. Trage hier deine Arbeitszeiten ein. 
+  | Falls nötig, aktualisiere oder lösche vergangene Zeitbuchungen. 
 
 Separator(class="my-4")
 
@@ -41,7 +41,7 @@ div(v-else)
           div(class="flex flex-col border border-primary p-4 rounded-md")
             p(class="text-2xl") {{ deltaHours }} Stunden
             p(class="text-muted-foreground") Delta auf dem Zeitkonto
-            p(class="text-xs text-muted-foreground") (Aktualisiert täglich um 23:59 Uhr)
+            //- p(class="text-xs text-muted-foreground") (Aktualisiert täglich um 23:59 Uhr)
       CardContent
         form(@submit.prevent="onSubmit" novalidate)
           FieldGroup(class="flex flex-col gap-2")
@@ -252,7 +252,7 @@ const totalIst = computed(() => data.value.reduce((sum, d) => sum + d.Ist, 0))
 const totalSoll = computed(() => data.value.reduce((sum, d) => sum + d.Soll, 0))
 
 
-const workingLocationLabels: Record<WorkingLocation, string> = {
+const workingLocationLabels: Record<Partial<WorkingLocation>, string> = {
   [WorkingLocation.OFFICE]: 'Büro',
   [WorkingLocation.REMOTE]: 'Remote',
   [WorkingLocation.FIELD_SERVICE]: 'Dienstreise',
@@ -315,7 +315,7 @@ const onSubmit = handleSubmit(async (values) => {
       working_location: values.workingLocation as WorkingLocation,
     }
 
-    const result = await timeEntryService.createWorkTimeEntry(reqObj)
+    const result = await timeEntryService.createTimeEntry(reqObj)
 
     await refreshData()
 
@@ -334,18 +334,34 @@ const onSubmit = handleSubmit(async (values) => {
 async function refreshData() {
   // calling every WorkTimeEntry again, so the table updates
   const response = await timeEntryService.listWorkTimeEntries()
-  deltaHours.value = response.timeAccount.delta_hours
   workTimeEntries.value = response.entries
 } 
 
+// delta hours are calculated in the api. For UX reasons, an entry on the current day is calculated visually into the delta hours
+const deltaHours = computed(() => {
+  if (!workTimeEntries.value) return 0
 
-const deltaHours = ref<number>()
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const todaysEntry = workTimeEntries.value.find(entry => {
+    const entryDate = new Date(entry.start_date)
+    entryDate.setHours(0, 0, 0, 0)
+    return entryDate.getTime() === today.getTime()
+  })
+
+  if (!todaysEntry) return rawDeltaHours.value
+
+  return Math.round((rawDeltaHours.value + (todaysEntry.recorded_hours - shouldPerDay)) * 100) / 100
+})
+
 const workTimeEntries = ref<TimeEntry[]>();
 const isLoaded = ref(false)
+const rawDeltaHours = ref(0)
 
 onMounted(async () => {
   const response = await timeEntryService.listWorkTimeEntries()
-  deltaHours.value = response.timeAccount.delta_hours
+  rawDeltaHours.value = response.timeAccount.delta_hours
   workTimeEntries.value = response.entries
   shouldPerDay = response.shouldWorkHoursPerDay
 

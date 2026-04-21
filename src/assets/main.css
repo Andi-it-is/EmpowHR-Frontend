@@ -157,8 +157,8 @@
     color: var(--muted-foreground);
   }
 
-
 }
+
 /** Background for tooltips. Used afaik within charts */
 .unovis-tooltip {
   background: transparent !important;

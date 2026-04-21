@@ -105,7 +105,7 @@ const timeEntryTypeLabels: Record<string, string> = {
   [TimeEntryType.SPECIAL_LEAVE]: 'Sonderurlaub',
   [TimeEntryType.PARENTAL_LEAVE]: 'Elternzeit',
   [TimeEntryType.UNPAID_LEAVE]: 'Unbezahlter Urlaub',
-  [TimeEntryType.ON_CALL]: 'Bereitschaft',
+  // [TimeEntryType.ON_CALL]: 'Bereitschaft',
 }
 
 const typeVariants: Partial<Record<TimeEntryType, string>> = {

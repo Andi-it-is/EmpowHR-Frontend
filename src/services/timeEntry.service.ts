@@ -40,7 +40,7 @@ export interface TimeEntryFilter {
 export interface CreateTimeEntryRequest {
   start_date: Date
   end_date: Date
-  working_location: WorkingLocation
+  working_location: WorkingLocation | null
   type?: TimeEntryType
 }
 
@@ -48,6 +48,12 @@ export interface WorkTimeEntriesResponse {
   entries: TimeEntry[]
   timeAccount: UserTimeAccount
   shouldWorkHoursPerDay: number
+}
+
+export interface AbscenceTimeEntriesResponse {
+  entries: TimeEntry[]
+  timeAccount: UserTimeAccount
+  vacationDaysPerYear: number
 }
 
 async function listWorkTimeEntries(): Promise<WorkTimeEntriesResponse> {
@@ -65,7 +71,21 @@ async function listWorkTimeEntries(): Promise<WorkTimeEntriesResponse> {
   }
 }
 
-async function createWorkTimeEntry(data: CreateTimeEntryRequest): Promise<TimeEntry> {
+async function listAbscenceTimeEntires(): Promise<AbscenceTimeEntriesResponse> {
+  
+  const filter: TimeEntryFilter = {
+    working_location: [null]
+  }
+
+  const result = (await api.post("/timeEntry/my/filter", filter))
+  return {
+    entries: result.data.data,
+    timeAccount: result.data.timeAccount,
+    vacationDaysPerYear: result.data.vacationDaysPerYear,
+  }
+}
+
+async function createTimeEntry(data: CreateTimeEntryRequest): Promise<TimeEntry> {
   
   const result = await api.post('/timeEntry/my/create', data)
   return result.data.data
@@ -83,8 +103,9 @@ async function deleteTimeEntry(id: string): Promise<void> {
 
 export const timeEntryService = {
   listWorkTimeEntries,
-  createWorkTimeEntry,
+  createTimeEntry,
   updateTimeEntry,
-  deleteTimeEntry
+  deleteTimeEntry,
+  listAbscenceTimeEntires
 }
 
