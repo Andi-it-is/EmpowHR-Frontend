@@ -7,13 +7,13 @@ export enum DocumentType {
   COMPLIANCE = 'COMPLIANCE'         // Compliance
 }
 
-// Ein einzelnes Dokument hat ein Securitylevel
-export enum DocumentSecurityLevel {
-  RESTRICTED = 1,            // Dienstgebrauch — alle im Unternehmen
-  CONFIDENTIAL = 2,          // Vertraulich — nur Abteilung
-  SECRET = 3,                // Geheim — ich, HR, Chef
-  TOP_SECRET = 4             // Sehr Geheim — nur ich und HR
-}
+// // Ein einzelnes Dokument hat ein Securitylevel
+// export enum DocumentSecurityLevel {
+//   RESTRICTED = 1,            // Dienstgebrauch — alle im Unternehmen
+//   CONFIDENTIAL = 2,          // Vertraulich — nur Abteilung
+//   SECRET = 3,                // Geheim — ich, HR, Chef
+//   TOP_SECRET = 4             // Sehr Geheim — nur ich und HR
+// }
 
 // Permission Scope ist dafür da, um den Zugriff von Nicht-Besitzern auf Dokumente zu regulieren.
 // Kann

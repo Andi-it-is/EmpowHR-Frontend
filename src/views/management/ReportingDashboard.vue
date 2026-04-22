@@ -4,10 +4,10 @@ p(class="max-w-175 text-sm text-brand dark:text-emerald-200" tabindex="0") {{ to
 h1(tabindex="0") Reporting
 p(class="text-muted-foreground max-w-175" tabindex="0") Schaue dir hier die aktuellen relevanten Kennzahlen 
   | zu EmpowHR und dem Unternehmen an.
-Separator(class="my-2")
+Separator(class="my-4")
 
 //- Grid Container for all the informations
-div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-4")
+div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-4 mb-4")
 
   Card(v-for="item in baseInformationArray")
     ReportingBaseInformation(
@@ -20,7 +20,7 @@ div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-4")
     )
 
 //- Grid Container for the Bar Chart and Area Chart
-div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-4")
+div(class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-5 gap-4 mb-4")
   Card(class="col-span-2")
     CardContent
       CustomBarChart(
@@ -75,7 +75,7 @@ import { BarChart } from '@/components/ui/chart-bar'
 import { AreaChart } from '@/components/ui/chart-area'
 import { RoleName } from '@/constants/enums/acessControl.enum'
 import { getDepartmentColor, getRoleColor, translateRoleName } from '@/lib/enumTranslaters'
-import { DepartmentName } from '@/constants/enums/departmentColors.enum'
+import { DepartmentName } from '@/constants/enums/departmentNames.enum'
 
 const today = getFormattedTodayDate()
 
