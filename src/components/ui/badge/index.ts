@@ -19,6 +19,7 @@ export const badgeVariants = cva(
         positive:
           "border-transparent bg-positive/30 text-emerald-900 dark:text-emerald-100 hover:dark:text-white hover:text-black hover:bg-positive/50",
         outline: "text-foreground",
+        bordered: "border bg-muted data-[state=inactive]:text-muted data-[state=active]:text-muted-foreground",
       },
     },
     defaultVariants: {

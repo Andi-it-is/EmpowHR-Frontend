@@ -1,5 +1,5 @@
-import { RoleName } from "@/constants/enums/acessControl.enum";
-import { DepartmentName } from "@/constants/enums/departmentColors.enum";
+import { PermissionAction, PermissionScope, RoleName } from "@/constants/enums/acessControl.enum";
+import { DepartmentName } from "@/constants/enums/departmentNames.enum";
 
 //* Roles
 
@@ -13,7 +13,7 @@ export function translateRoleName(role: RoleName): string {
   const roleTranslations: Record<RoleName, string> = {
     [RoleName.EMPLOYEE]: 'Mitarbeiter',
     [RoleName.DEPARTMENT_HEAD]: 'Abteilungsleitung',
-    [RoleName.HR_MANAGER]: 'Personalreferent',
+    [RoleName.HR_MANAGER]: 'HR',
     [RoleName.ACCOUNTANT]: 'Buchhaltung',
     [RoleName.IT_ADMINISTRATOR]: 'IT-Admin',
     [RoleName.EXECUTIVE]: 'Geschäftsführung',
@@ -133,4 +133,49 @@ export function getTimeEntryLabel(type: string): string {
  */
 export function getTimeEntryColor(type: string): string {
   return TimeEntryTypeColors[type as TimeEntryType] || 'bg-slate-400';
+}
+
+//* Permissions
+// --- Permission Action ---
+export const PermissionActionLabels: Record<PermissionAction, string> = {
+  [PermissionAction.READ]:   'Lesen',
+  [PermissionAction.CREATE]: 'Erstellen',
+  [PermissionAction.UPDATE]: 'Bearbeiten',
+  [PermissionAction.DELETE]: 'Löschen',
+}
+
+export const PermissionActionColors: Record<PermissionAction, string> = {
+  [PermissionAction.READ]:   '#3b82f6', // blue-500
+  [PermissionAction.CREATE]: '#10b981', // emerald-500
+  [PermissionAction.UPDATE]: '#f59e0b', // amber-500
+  [PermissionAction.DELETE]: '#ef4444', // red-500
+}
+
+// --- Permission Scope ---
+export const PermissionScopeLabels: Record<PermissionScope, string> = {
+  [PermissionScope.ALL]:         'Alle',
+  [PermissionScope.DEPARTMENT]:  'Abteilung',
+  [PermissionScope.SUBORDINATE]: 'Untergebene',
+  [PermissionScope.SELF]:        'Eigene',
+}
+
+// export const PermissionScopeColors: Record<PermissionScope, string> = {
+//   [PermissionScope.ALL]:         '#ef4444', // red-500
+//   [PermissionScope.DEPARTMENT]:  '#f97316', // orange-500
+//   [PermissionScope.SUBORDINATE]: '#eab308', // yellow-500
+//   [PermissionScope.SELF]:        '#94a3b8', // slate-400
+// }
+
+export const PermissionScopeColors: Record<PermissionScope, string> = {
+  [PermissionScope.SELF]:        '#94a3b8', // slate-400
+  [PermissionScope.SUBORDINATE]: '#3b82f6', // blue-500
+  [PermissionScope.DEPARTMENT]:  '#8b5cf6', // violet-500
+  [PermissionScope.ALL]:         '#ec4899', // pink-500
+}
+
+export const PermissionActionClasses: Record<PermissionAction, string> = {
+  [PermissionAction.READ]:   'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 border-blue-300 dark:border-blue-700',
+  [PermissionAction.CREATE]: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-200 border-emerald-300 dark:border-emerald-700',
+  [PermissionAction.UPDATE]: 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700',
+  [PermissionAction.DELETE]: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 border-red-300 dark:border-red-700',
 }

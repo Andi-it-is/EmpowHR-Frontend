@@ -73,7 +73,7 @@ export const navigationData = [
       { title: "Urlaubsplanungen", url: "#", icon: CalendarCheck, description: "Abwesenheiten planen und genehmigen", color: "rose" },
       { title: "Reportings", url: "/management/reportings", icon: Clipboard, description: "Statusbericht über die Applikation EmpowHR", color: "rose" },
       { title: "Mitarbeiterverwaltung", url: "#", icon: UserRoundCog, description: "Mitarbeiter und deren Inhalte konfigurieren", color: "rose" },
-      { title: "Zugriff", url: "#", icon: UserRoundKey, description: "Rollen und Berechtigungen verwalten", color: "rose" },
+      { title: "Zugriffsverwaltung", url: "/management/access-control", icon: UserRoundKey, description: "Rollen und Berechtigungen verwalten", color: "rose" },
       // { title: "Sonstiges", url: "#", icon: Ellipsis, description: "Weitere Beschreibung", color: "rose" },
     ],
   },
