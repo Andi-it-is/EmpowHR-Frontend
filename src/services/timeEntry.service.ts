@@ -73,7 +73,10 @@ async function listWorkTimeEntries(): Promise<WorkTimeEntriesResponse> {
 
 async function listAbscenceTimeEntires(): Promise<AbscenceTimeEntriesResponse> {
 
-  const result = (await api.post("/timeEntry/my/filter", {}))
+  const filter: TimeEntryFilter = {
+    working_location: [null]
+  }
+  const result = (await api.post("/timeEntry/my/filter", filter ))
   return {
     entries: result.data.data,
     timeAccount: result.data.timeAccount,
@@ -87,6 +90,13 @@ async function listAllTimeEntriesAvailable(): Promise<TimeEntry[]> {
   const result = (await api.post("/timeEntry/my/filter", {}))
   return result.data.data
 }
+
+async function listAllTimeEntriesByFilter(filter: TimeEntryFilter): Promise<TimeEntry[]> {
+  
+  const result = (await api.post("/timeEntry/my/filter", filter))
+  return result.data.data
+}
+
 async function createTimeEntry(data: CreateTimeEntryRequest): Promise<TimeEntry> {
   
   const result = await api.post('/timeEntry/my/create', data)
@@ -109,6 +119,7 @@ export const timeEntryService = {
   updateTimeEntry,
   deleteTimeEntry,
   listAbscenceTimeEntires,
-  listAllTimeEntriesAvailable
+  listAllTimeEntriesAvailable,
+  listAllTimeEntriesByFilter
 }
 

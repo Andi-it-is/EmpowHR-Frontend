@@ -172,6 +172,7 @@ import WorkTimeEntriesTable from '@/components/app/times/WorkTimeEntriesTable.vu
 import { timeEntryService, type CreateTimeEntryRequest, type TimeEntry, type TimeEntryFilter } from '@/services/timeEntry.service';
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'vue-sonner';
+import { workingLocationLabels } from '@/lib/enumTranslaters';
 
 const barCategories = ['Ist', 'Soll']
 const barColors = ['#10b981', '#737373']

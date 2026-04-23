@@ -108,6 +108,19 @@ export const TimeEntryTypeColors: Record<TimeEntryType, string> = Object.entries
   {} as Record<TimeEntryType, string>
 );
 
+export const TimeEntryTypeColorMap: Record<TimeEntryType, string> = {
+  [TimeEntryType.PARENTAL_LEAVE]:   '#0ea5e9', // sky-500
+  [TimeEntryType.PUBLIC_HOLIDAY]:   '#d946ef', // fuchsia-500
+  [TimeEntryType.EDUCATION]:        '#475569', // slate-600
+  [TimeEntryType.SICK_CHILD]:       '#f59e0b', // amber-500
+  [TimeEntryType.SICK]:             '#dc2626', // red-600
+  [TimeEntryType.WORK]:             '#475569', // slate-600
+  [TimeEntryType.SPECIAL_LEAVE]:    '#fb7185', // rose-400
+  [TimeEntryType.UNPAID_LEAVE]:     '#a8a29e', // stone-400
+  [TimeEntryType.VACATION]:         '#10b981', // emerald-500
+  [TimeEntryType.COMPENSATORY_OFF]: '#2dd4bf', // teal-400
+}
+
 /**
  * Gibt das Label eines Typs zurück oder den Key selbst als Fallback
  */

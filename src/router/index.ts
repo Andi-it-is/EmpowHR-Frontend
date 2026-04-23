@@ -95,7 +95,7 @@ const router = createRouter({
             {
               path: 'monitor',
               name: 'Monitor',
-              component: () => import('../views/times/TimMonitoringDashboard.vue'),
+              component: () => import('../views/times/TimeMonitoringDashboard.vue'),
               meta: { title: 'Zeiten Monitoring' } 
             }
           ]
