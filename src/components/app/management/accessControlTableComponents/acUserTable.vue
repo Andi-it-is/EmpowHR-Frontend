@@ -244,14 +244,13 @@ const table = useVueTable({
 <template lang="pug">
 div(class="w-full space-y-4")
   div(class="flex items-center justify-end gap-4 mb-2")
-    //- Button(variant="brand") Benutzer erstellen
     Input(
       placeholder="Suchen..."
       class="max-w-sm"
       :model-value="globalFilter"
       @update:model-value="table.setGlobalFilter($event)"
     )
-  div(class="rounded-md border bg-card overflow-hidden shadow-sm mt-4")
+  div(class="rounded-md border bg-card overflow-hidden shadow-sm")
     Table
       TableHeader(class="bg-muted dark:[&_th]:text-slate-100 [&_th]:text-slate-900")
         TableRow(v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id" class="hover:bg-transparent border-none")

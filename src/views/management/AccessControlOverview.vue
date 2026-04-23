@@ -30,31 +30,94 @@ div(v-if="!isLoaded" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4
 
 div(v-else)
 
-Tabs(v-model="activeTab" class="w-full")
-  TabsList(variant="outline")
-    TabsTrigger(value="users") 
-      | Benutzer
-      Badge(class="ml-2 mr-1" variant="bordered") {{ mockUsers.length }}
-    TabsTrigger(value="roles")
-      | Rollen
-      Badge(class="ml-2 mr-1" variant="bordered") {{ mockRoles.length }}
-    TabsTrigger(value="permissions")
-      | Berechtigungen
-      Badge(class="ml-2 mr-1" variant="bordered") {{ mockPermissions.length }}
-  Card(class="w-full min-h-96 mt-4")
-    CardHeader
-      CardTitle {{ tabConfig[activeTab].title }}
-      CardDescription {{ tabConfig[activeTab].description }}
-    CardContent
-      component(:is="tabComponents[activeTab]" :data="tabData[activeTab]")
+  div(class="rounded-md border bg-muted/30 p-4 mb-4 space-y-2")
+    p(class="text-md font-medium") Sicherheitsstufen & Zugriffsbereiche
+    p(class="text-sm text-muted-foreground")
+      | Die maximale Sicherheitsstufe einer Rolle legt fest, bis zu welcher Vertraulichkeiststufe Dokumente von anderen Benutzern gesichtet werden dürfen.
+      | Je höher die Stufe, desto mehr Zugriff auf sensiblere Dokumente hat diese Rolle. Das betrifft nur Dokumente, welche in EmpowHR existieren.
+      | So dürfen nur wenige ausgewählte Rollen sensible Dokumente, wie Gehaltsabrechnungen, Mahnungen oder sonstiges sichten, um beispielsweise 
+      | die Buchhaltung zu pflegen oder einzelene Mitarbeiter zu informieren.
+
+  Tabs(v-model="activeTab" class="w-full")
+    TabsList(v-if="!selectedRole" variant="outline")
+      TabsTrigger(value="roles")
+        | Rollen
+        Badge(class="ml-2 mr-1" variant="bordered") {{ allRoles.length }}
+      TabsTrigger(value="users")
+        | Benutzer
+        Badge(class="ml-2 mr-1" variant="bordered") {{ allPermissions.length }}
+      TabsTrigger(value="permissions")
+        | Berechtigungen
+        Badge(class="ml-2 mr-1" variant="bordered") {{ allPermissions.length }}
+
+    Button(v-if="selectedRole" variant="brand-outline" @click="goBack()")
+      ArrowLeft
+      | Zurück zur Tabelle
+
+    Card(class="w-full min-h-fit mt-4")
+      CardHeader
+        CardTitle {{ tabConfig[activeTab].title }}
+        CardDescription {{ tabConfig[activeTab].description }}
+
+      CardContent(class="relative overflow-hidden py-4")
+        div(v-if="!selectedRole")
+          component(
+            :is="tabComponents[activeTab]"
+            :data="tabData[activeTab]"
+            @open-detail="handleOpenDetail"
+          )
+        div(v-else)
+
+  div(
+    v-if="selectedRole"
+    class="sticky top-2 z-10 border-2 rounded-md flex items-center justify-between bg-muted px-6 py-3 mt-4"
+  )
+    div(class="flex items-center gap-4 text-sm")
+      span {{ assignedIds.size }} ausgewählt
+      span(v-if="addedCount > 0" class="text-positive") +{{ addedCount }} hinzugefügt
+      span(v-if="removedCount > 0" class="text-destructive") -{{ removedCount }} entfernt
+    Button(variant="brand" @click="savePermissions()") Speichern
+  //- Detail Selection. Every Permission, both unselected and selected ones as grouped tables
+  div(v-if="selectedRole" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-8")
+    Card(v-for="(permissions, entity) in groupedPermissions" :key="entity")
+      CardHeader(class="pb-2")
+        CardTitle(class="text-md font-semibold mb-2") {{ entity }}
+      CardContent(class="p-0 px-4")
+        Table
+          TableHeader
+            TableRow(class="hover:bg-transparent")
+              TableHead(class="h-8 text-xs") Aktion
+              TableHead(class="h-8 text-xs") Scope
+              TableHead(class="h-8 text-xs w-1 text-center") Ausgewählt
+          TableBody
+            TableRow(
+              v-for="permission in permissions"
+              :key="permission.id"
+              class="h-10"
+            )
+              TableCell(class="py-1")
+                Badge(variant="outline" :class="PermissionActionClasses[permission.action]") 
+                  | {{ PermissionActionLabels[permission.action] }}
+              TableCell(class="py-1 text-sm text-muted-foreground")
+                div(class="flex items-center gap-2")
+                  span(class="h-2 w-2 rounded-full shrink-0" :style="{ backgroundColor: PermissionScopeColors[permission.scope] }")
+                  | {{ PermissionScopeLabels[permission.scope] }}
+              TableCell(class="py-1 text-center")
+                div(class="flex justify-center pr-4")
+                  Checkbox(:model-value="assignedIds.has(permission.id)" @update:model-value="togglePermission(permission.id)")
+          
 
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
+import Button from '@/components/ui/button/Button.vue';
+import { ArrowLeft } from 'lucide-vue-next';
 import Badge from '@/components/ui/badge/Badge.vue';
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
+import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
+import { Table, TableHeader, TableHead, TableRow, TableCell, TableBody } from '@/components/ui/table';
 import Separator from '@/components/ui/separator/Separator.vue';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import acPermissionTable from '@/components/app/management/accessControlTableComponents/acPermissionTable.vue';
@@ -63,112 +126,113 @@ import acUserTable from '@/components/app/management/accessControlTableComponent
 import { DepartmentName } from '@/constants/enums/departmentNames.enum';
 import { DocumentSecurityLevel } from '@/constants/enums/document.enum';
 import { PermissionAction, PermissionScope } from '@/constants/enums/acessControl.enum';
+import { type Permission, roleService, type Role } from '@/services/role.service';
+import { PermissionActionClasses, PermissionActionLabels, PermissionScopeLabels, PermissionScopeColors } from '@/lib/enumTranslaters';
+import { toast } from 'vue-sonner';
 
-const activeTab = ref<'users' | 'roles' | 'permissions'>('permissions')
+const activeTab = ref<'roles' | 'users' |'permissions'>('roles')
 const tabConfig = {
-  users: { title: 'Benutzer', description: 'Verwalte die Benutzer des Unternehmens.' },
   roles: { title: 'Rollen', description: 'Verwalte die Rollen und ihre Zuweisungen.' },
-  permissions: { title: 'Berechtigungen', description: 'Verwalte die verfügbaren Berechtigungen.' },
+  users: { title: 'Benutzer', description: 'Konfiguriere die Rollen der Nutzer.' },
+  permissions: { title: 'Berechtigungen', description: 'Schaue dir die verfügbaren Berechtigungen an.' },
 }
 const tabComponents = {
-  users: acUserTable,
   roles: acRoleTable,
+  users: acUserTable,
   permissions: acPermissionTable,
 }
 
-const mockUsers = [
-  {
-    id: 1,
-    firstname: 'Anna',
-    lastname: 'Müller',
-    email: 'anna.mueller@firma.de',
-    disabled: false,
-    supervisor: null,
-    department: { name: DepartmentName.IT },
-    roles: [{ name: 'Admin' }, { name: 'HR' }],
-  },
-  {
-    id: 2,
-    firstname: 'Max',
-    lastname: 'Schmidt',
-    email: 'max.schmidt@firma.de',
-    supervisor: { id: 1, firstname: 'Anna', lastname: 'Müller', email: 'anna.mueller@firma.de', disabled: false, supervisor: null, roles: [] },
-    disabled: false,
-    department: { name: DepartmentName.EXECUTIVE },    
-    roles: [{ name: 'Mitarbeiter' }],
-  },
-  {
-    id: 3,
-    firstname: 'Laura',
-    lastname: 'Weber',
-    email: 'laura.weber@firma.de',
-    disabled: true,
-    supervisor: { id: 1, firstname: 'Anna', lastname: 'Müller', email: 'anna.mueller@firma.de', disabled: false, supervisor: null, roles: [] },
-    roles: [{ name: 'Mitarbeiter' }, { name: 'Projektleiter' }, { name: 'IT-Admin' }, { name: 'Geschäftsführung' }],
-    department: { name: DepartmentName.HR },
-  },
-  {
-    id: 4,
-    firstname: 'Felix',
-    lastname: 'Bauer',
-    email: 'felix.bauer@firma.de',
-    disabled: false,
-    supervisor: null,
-    roles: [],
-    department: null,
-  },
-]
+const selectedRole = ref<Role | null>()
 
-const mockRoles = [
-  { id: 1, name: 'Admin', max_security_level: DocumentSecurityLevel.TOP_SECRET, permissions: [{id:1,name:'user.read'},{id:2,name:'user.write'}] },
-  { id: 2, name: 'Vorgesetzter', max_security_level: DocumentSecurityLevel.CONFIDENTIAL, permissions: [{id:1,name:'user.read'}] },
-  { id: 3, name: 'Mitarbeiter', max_security_level: DocumentSecurityLevel.BUSINESS, permissions: [{id:1,name:'user.read'}] },
-  { id: 4, name: 'HR', max_security_level: DocumentSecurityLevel.TOP_SECRET, permissions: [{id:1,name:'user.read'}] },
-  { id: 5, name: 'Gast (?)', max_security_level: DocumentSecurityLevel.RESTRICTED, permissions: [] },
-]
-const mockPermissions = [
-  { id: 1, entity: 'User', action: PermissionAction.READ, scope: PermissionScope.ALL },
-  { id: 2, entity: 'User', action: PermissionAction.UPDATE, scope: PermissionScope.SELF },
-  { id: 3, entity: 'User', action: PermissionAction.DELETE, scope: PermissionScope.SUBORDINATE },
-  { id: 4, entity: 'Document', action: PermissionAction.CREATE, scope: PermissionScope.DEPARTMENT },
-  { id: 5, entity: 'Document', action: PermissionAction.READ, scope: PermissionScope.ALL },
-  { id: 6, entity: 'Document', action: PermissionAction.DELETE, scope: PermissionScope.SELF },
-  { id: 7, entity: 'Role', action: PermissionAction.READ, scope: PermissionScope.ALL },
-  { id: 8, entity: 'Role', action: PermissionAction.UPDATE, scope: PermissionScope.DEPARTMENT },
-  // READ
-  { id: 13, entity: 'TimeEntry', action: PermissionAction.READ, scope: PermissionScope.ALL },
-  { id: 14, entity: 'TimeEntry', action: PermissionAction.READ, scope: PermissionScope.DEPARTMENT },
-  { id: 15, entity: 'TimeEntry', action: PermissionAction.READ, scope: PermissionScope.SUBORDINATE },
-  { id: 16, entity: 'TimeEntry', action: PermissionAction.READ, scope: PermissionScope.SELF },
-  // CREATE
-  { id: 17, entity: 'TimeEntry', action: PermissionAction.CREATE, scope: PermissionScope.ALL },
-  { id: 18, entity: 'TimeEntry', action: PermissionAction.CREATE, scope: PermissionScope.DEPARTMENT },
-  { id: 19, entity: 'TimeEntry', action: PermissionAction.CREATE, scope: PermissionScope.SUBORDINATE },
-  { id: 20, entity: 'TimeEntry', action: PermissionAction.CREATE, scope: PermissionScope.SELF },
-  // UPDATE
-  { id: 21, entity: 'TimeEntry', action: PermissionAction.UPDATE, scope: PermissionScope.ALL },
-  { id: 22, entity: 'TimeEntry', action: PermissionAction.UPDATE, scope: PermissionScope.DEPARTMENT },
-  { id: 23, entity: 'TimeEntry', action: PermissionAction.UPDATE, scope: PermissionScope.SUBORDINATE },
-  { id: 24, entity: 'TimeEntry', action: PermissionAction.UPDATE, scope: PermissionScope.SELF },
-  // DELETE
-  { id: 25, entity: 'TimeEntry', action: PermissionAction.DELETE, scope: PermissionScope.ALL },
-  { id: 26, entity: 'TimeEntry', action: PermissionAction.DELETE, scope: PermissionScope.DEPARTMENT },
-  { id: 27, entity: 'TimeEntry', action: PermissionAction.DELETE, scope: PermissionScope.SUBORDINATE },
-  { id: 28, entity: 'TimeEntry', action: PermissionAction.DELETE, scope: PermissionScope.SELF },
-]
-const tabData = {
-  users: mockUsers,
-  roles: mockRoles,
-  permissions: mockPermissions,
+const originalIds = ref(new Set<string>())
+const assignedIds = ref(new Set<string>())
+
+function handleOpenDetail(role: Role) {
+  selectedRole.value = role
+  const ids = new Set(role.permissions.map(p => p.id))
+  originalIds.value = ids
+  assignedIds.value = new Set(ids)
 }
 
+const addedCount = computed(() =>
+  [...assignedIds.value].filter(id => !originalIds.value.has(id)).length
+)
+
+const removedCount = computed(() =>
+  [...originalIds.value].filter(id => !assignedIds.value.has(id)).length
+)
+
+function goBack() {
+  selectedRole.value = null
+}
+
+watch(selectedRole, (role) => {
+  if (!role) assignedIds.value = new Set()
+})
+
+function togglePermission(id: string) {
+  const next = new Set(assignedIds.value)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  assignedIds.value = next
+}
+
+const actionOrder = [PermissionAction.READ, PermissionAction.CREATE, PermissionAction.UPDATE, PermissionAction.DELETE]
+const scopeOrder  = [PermissionScope.ALL, PermissionScope.DEPARTMENT, PermissionScope.SUBORDINATE, PermissionScope.SELF]
+
+const groupedPermissions = computed(() => {
+  const result = allPermissions.value.reduce<Record<string, typeof allPermissions.value>>((acc, p) => {
+    if (!acc[p.entity]) acc[p.entity] = []
+    acc[p.entity]!.push(p)
+    return acc
+  }, {})
+
+  Object.values(result).forEach(group => {
+    group.sort((a, b) => {
+      const actionDiff = actionOrder.indexOf(a.action) - actionOrder.indexOf(b.action)
+      if (actionDiff !== 0) return actionDiff
+      return scopeOrder.indexOf(a.scope) - scopeOrder.indexOf(b.scope)
+    })
+  })
+
+  return Object.fromEntries(
+    Object.entries(result).sort(([a], [b]) => a.localeCompare(b))
+  )
+})
 
 const isLoaded = ref(false)
+const allRoles = ref<Role[]>([])
+const allPermissions = ref<Permission[]>([])
+
+const tabData = computed(() => ({
+  roles: allRoles.value,
+  users: [],
+  permissions: allPermissions.value,
+}))
+
+async function savePermissions() {
+  if (!selectedRole.value) return
+  try {
+    await roleService.updateRolesPermissions(selectedRole.value.id, [...assignedIds.value])
+    originalIds.value = new Set(assignedIds.value)
+    toast.success('Berechtigungen gespeichert')
+  } catch (error) {
+    toast.error('Fehler beim Speichern')
+  }
+}
 
 onMounted(async () => {
-  
+
+  allRoles.value = await roleService.listRoles()
+  allPermissions.value = await roleService.listPermissions()
   isLoaded.value = true
 
+  // TODO load data for the user table. make roles configurable via a dialog
 })
 
 </script>
+
+
+<style lang="css" scoped>
+
+</style>

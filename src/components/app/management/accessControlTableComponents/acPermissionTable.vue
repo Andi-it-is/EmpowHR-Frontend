@@ -292,14 +292,13 @@ const table = useVueTable({
 
 <template lang="pug">
 div(class="w-full space-y-4")
-  div(class="flex items-center justify-between gap-4 mb-2")
+  div(class="flex items-center justify-end gap-4 mb-2")
     Input(
       placeholder="Suchen..."
       class="max-w-sm"
       :model-value="globalFilter"
       @update:model-value="table.setGlobalFilter($event)"
     )
-    Button Berechtigung erstellen
 
   div(class="rounded-md border bg-card overflow-hidden shadow-sm")
     Table
@@ -340,31 +339,4 @@ div(class="w-full space-y-4")
       Button(variant="outline" size="icon" class="h-8 w-8" :disabled="!table.getCanNextPage()" @click="table.nextPage()")
         ChevronRight(class="h-4 w-4")
 
-  //- Edit Dialog
-  Dialog(:open="!!editingPermission" @update:open="v => { if (!v) editingPermission = null }")
-    DialogContent
-      DialogHeader
-        DialogTitle Berechtigung bearbeiten
-        DialogDescription Bearbeite die Entität der Berechtigung.
-      form(@submit.prevent="onEditPermission()")
-        FieldGroup(class="flex flex-col gap-4 mt-2")
-          Field
-            FieldLabel Entität
-            Input(v-model="editEntity" placeholder="Entität")
-          DialogFooter(class="mt-4")
-            Button(type="button" variant="outline" @click="editingPermission = null") Abbrechen
-            Button(type="submit") Speichern
-
-  //- Delete AlertDialog
-  AlertDialog(:open="!!deletingPermission")
-    AlertDialogContent
-      AlertDialogHeader
-        AlertDialogTitle Berechtigung löschen?
-        AlertDialogDescription Diese Aktion kann nicht rückgängig gemacht werden.
-      div(v-if="deletingPermission" class="rounded-md border p-4 bg-muted/50 text-sm")
-        p(class="font-bold") {{ deletingPermission.entity }}
-        p(class="text-muted-foreground") {{ PermissionActionLabels[deletingPermission.action] }} · {{ PermissionScopeLabels[deletingPermission.scope] }}
-      AlertDialogFooter
-        AlertDialogCancel(@click="deletingPermission = null") Abbrechen
-        AlertDialogAction(class="bg-destructive hover:bg-destructive/90" @click="onDeletePermission") Löschen
 </template>

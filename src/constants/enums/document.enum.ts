@@ -25,9 +25,16 @@ export const DocumentTypeLabels: Record<DocumentType, string> = {
 
 export const DocumentSecurityLevelLabels: Record<DocumentSecurityLevel, string> = {
   [DocumentSecurityLevel.RESTRICTED]: 'Dienstgebrauch',
-  [DocumentSecurityLevel.BUSINESS]: 'Geschäftlich',
+  [DocumentSecurityLevel.BUSINESS]: 'Vertraulich',
   [DocumentSecurityLevel.CONFIDENTIAL]: 'Geheim',
   [DocumentSecurityLevel.TOP_SECRET]: 'Sehr Geheim',
+}
+
+export const DocumentSecurityLevelFromApi: Record<number, DocumentSecurityLevel> = {
+  1: DocumentSecurityLevel.RESTRICTED,
+  2: DocumentSecurityLevel.BUSINESS,
+  3: DocumentSecurityLevel.CONFIDENTIAL,
+  4: DocumentSecurityLevel.TOP_SECRET,
 }
 
 export const DocumentSecurityLevelApiMap: Record<DocumentSecurityLevel, number> = {

@@ -44,6 +44,7 @@ export enum RoleName {
   DEPARTMENT_HEAD = 'DEPARTMENT_HEAD',      // Abteilungsleiter (Ist auch direkter Supervisor eines Mitarbeiters)
   HR_MANAGER = 'HR_MANAGER',                // Personalreferent. Erstellt auch Mitarbeiter
   ACCOUNTANT = 'ACCOUNTANT',                // Buchhaltung
+  DEMO = 'DEMO',                            // Demo Account. Hat alle Permissions, aber nur read-only
 
   IT_ADMINISTRATOR = 'IT_ADMINISTRATOR',    // IT Admin
   EXECUTIVE = 'EXECUTIVE',                  // Geschäftsführung

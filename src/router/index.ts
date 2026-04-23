@@ -115,6 +115,18 @@ const router = createRouter({
               component: () => import('../views/management/ReportingDashboard.vue'),
               meta: { title: 'Report' }
             },
+            {
+              path: 'user-control',
+              name: 'Usercontrol',
+              component: () => import('../views/management/UserControlOverview.vue'),
+              meta : { title: 'Nutzerverwaltung' } 
+            },
+            {
+              path: 'access-control',
+              name: 'Accesscontrol',
+              component: () => import('../views/management/AccessControlOverview.vue'),
+              meta: { title: 'Zugriffsverwaltung' }
+            },
           ]
         }
       ]

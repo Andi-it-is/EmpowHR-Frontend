@@ -17,6 +17,7 @@ export function translateRoleName(role: RoleName): string {
     [RoleName.ACCOUNTANT]: 'Buchhaltung',
     [RoleName.IT_ADMINISTRATOR]: 'IT-Admin',
     [RoleName.EXECUTIVE]: 'Geschäftsführung',
+    [RoleName.DEMO]: 'Demo Rolle',
   };
 
   return roleTranslations[role] || role;
@@ -29,6 +30,7 @@ export const RoleColors: Record<RoleName, string> = {
   [RoleName.ACCOUNTANT]: '#f59e0b',        // Bernstein/Gelb (Finanzen/Achtung)
   [RoleName.IT_ADMINISTRATOR]: '#63f6f1',  // Türkis (Technik/Infrastruktur)
   [RoleName.EXECUTIVE]: '#dc2626',         // Gefährliches Rot (Autorität)
+  [RoleName.DEMO]: '#64748b',              // Grau
 };
 
 /**
@@ -153,10 +155,10 @@ export const PermissionActionColors: Record<PermissionAction, string> = {
 
 // --- Permission Scope ---
 export const PermissionScopeLabels: Record<PermissionScope, string> = {
-  [PermissionScope.ALL]:         'Alle',
-  [PermissionScope.DEPARTMENT]:  'Abteilung',
-  [PermissionScope.SUBORDINATE]: 'Untergebene',
-  [PermissionScope.SELF]:        'Eigene',
+  [PermissionScope.ALL]:         'Alle Nutzer',
+  [PermissionScope.DEPARTMENT]:  'Abteilungsweit',
+  [PermissionScope.SUBORDINATE]: 'Direkte Untergebene',
+  [PermissionScope.SELF]:        'Selbst',
 }
 
 // export const PermissionScopeColors: Record<PermissionScope, string> = {
