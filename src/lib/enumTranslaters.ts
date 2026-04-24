@@ -11,9 +11,9 @@ import { DepartmentName } from "@/constants/enums/departmentNames.enum";
  */
 export function translateRoleName(role: RoleName): string {
   const roleTranslations: Record<RoleName, string> = {
-    [RoleName.EMPLOYEE]: 'Mitarbeiter',
+    [RoleName.EMPLOYEE]: 'Mitarbeitende',
     [RoleName.DEPARTMENT_HEAD]: 'Abteilungsleitung',
-    [RoleName.HR_MANAGER]: 'HR',
+    [RoleName.HR_MANAGER]: 'Human Ressource',
     [RoleName.ACCOUNTANT]: 'Buchhaltung',
     [RoleName.IT_ADMINISTRATOR]: 'IT-Admin',
     [RoleName.EXECUTIVE]: 'Geschäftsführung',

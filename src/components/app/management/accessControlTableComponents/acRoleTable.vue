@@ -163,6 +163,21 @@ const columns: ColumnDef<Role>[] = [
   sortingFn: 'basic',
   },
   {
+    id: 'occurrences',
+    accessorFn: (row) => row.occurrences ?? 0,
+    header: ({ column }) => h(Button, {
+      variant: 'ghost',
+      class: 'hover:bg-transparent',
+      onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+    }, () => ['Vergeben an', h(ArrowUpDown, { class: 'ml-2 h-3 w-3' })]),
+    cell: ({ row }) => {
+      const count = row.original.occurrences ?? 0
+      if (!count) return h('div', { class: 'text-sm text-muted-foreground ml-4' }, '—')
+      return h(Badge, { variant: 'bordered', class: 'ml-4' }, () => `${count} Nutzer`)
+    },
+    sortingFn: 'basic',
+  },
+  {
     id: 'actions',
     size: 120,
     cell: ({ row }) => h(Button, {
@@ -171,7 +186,7 @@ const columns: ColumnDef<Role>[] = [
       class: 'gap-2',
       onClick: () => emit('open-detail', row.original),
     }, {
-      default: () => [h(Eye, { class: 'h-4 w-4' }), 'Details anzeigen'],
+      default: () => [h(Eye, { class: 'h-4 w-4' }), 'Berechtigungen anzeigen'],
     }),
   },
 ]
@@ -229,7 +244,7 @@ div(class="w-full space-y-4")
         SelectTrigger(class="h-8 w-17.5")
           SelectValue
         SelectContent(side="top")
-          SelectItem(v-for="size in [5, 10, 20]" :key="size" :value="`${size}`") {{ size }}
+          SelectItem(v-for="size in [5, 10, 20, 50, 100]" :key="size" :value="`${size}`") {{ size }}
     div(class="text-sm font-medium") Seite {{ table.getState().pagination.pageIndex + 1 }} von {{ table.getPageCount() }}
     div(class="flex items-center gap-2")
       Button(variant="outline" size="icon" class="h-8 w-8" :disabled="!table.getCanPreviousPage()" @click="table.previousPage()")

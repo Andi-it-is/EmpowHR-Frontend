@@ -76,13 +76,7 @@ import {
   PermissionScopeColors,
   PermissionActionClasses,
 } from "@/lib/enumTranslaters"
-
-export interface Permission {
-  id: number | string
-  entity: string
-  action: PermissionAction
-  scope: PermissionScope
-}
+import type { Permission } from "@/services/role.service"
 
 const props = defineProps<{
   data: Permission[]
@@ -148,22 +142,6 @@ const globalFilterFn: FilterFn<Permission> = (row, _columnId, filterValue) => {
 }
 
 const columns: ColumnDef<Permission>[] = [
-  {
-    id: "select",
-    size: 40,
-    header: ({ table }) => h(Checkbox, {
-      "modelValue": table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate"),
-      "onUpdate:modelValue": value => table.toggleAllPageRowsSelected(!!value),
-      "aria-label": "Select all",
-    }),
-    cell: ({ row }) => h(Checkbox, {
-      "modelValue": row.getIsSelected(),
-      "onUpdate:modelValue": value => row.toggleSelected(!!value),
-      "aria-label": "Select row",
-    }),
-    enableSorting: false,
-    enableHiding: false,
-  },
 
   {
     accessorKey: 'id',
@@ -331,7 +309,7 @@ div(class="w-full space-y-4")
         SelectTrigger(class="h-8 w-17.5")
           SelectValue
         SelectContent(side="top")
-          SelectItem(v-for="size in [5, 10, 20]" :key="size" :value="`${size}`") {{ size }}
+          SelectItem(v-for="size in [5, 10, 20, 50, 100]" :key="size" :value="`${size}`") {{ size }}
     div(class="text-sm font-medium") Seite {{ table.getState().pagination.pageIndex + 1 }} von {{ table.getPageCount() }}
     div(class="flex items-center gap-2")
       Button(variant="outline" size="icon" class="h-8 w-8" :disabled="!table.getCanPreviousPage()" @click="table.previousPage()")

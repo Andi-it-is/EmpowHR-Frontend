@@ -33,10 +33,10 @@ div(v-else)
   div(class="rounded-md border bg-muted/30 p-4 mb-4 space-y-2")
     p(class="text-md font-medium") Sicherheitsstufen & Zugriffsbereiche
     p(class="text-sm text-muted-foreground")
-      | Die maximale Sicherheitsstufe einer Rolle legt fest, bis zu welcher Vertraulichkeiststufe Dokumente von anderen Benutzern gesichtet werden dürfen.
+      | Die maximale Dokumenten Sichtenstufe einer Rolle legt fest, bis zu welcher Vertraulichkeiststufe Dokumente von anderen Benutzern gesichtet werden dürfen.
       | Je höher die Stufe, desto mehr Zugriff auf sensiblere Dokumente hat diese Rolle. Das betrifft nur Dokumente, welche in EmpowHR existieren.
       | So dürfen nur wenige ausgewählte Rollen sensible Dokumente, wie Gehaltsabrechnungen, Mahnungen oder sonstiges sichten, um beispielsweise 
-      | die Buchhaltung zu pflegen oder einzelene Mitarbeiter zu informieren.
+      | die Buchhaltung zu pflegen oder einzelene Mitarbeiter über Mahnungen o.ä. zu informieren.
 
   Tabs(v-model="activeTab" class="w-full")
     TabsList(v-if="!selectedRole" variant="outline")
@@ -54,19 +54,21 @@ div(v-else)
       ArrowLeft
       | Zurück zur Tabelle
 
-    Card(class="w-full min-h-fit mt-4")
-      CardHeader
-        CardTitle {{ tabConfig[activeTab].title }}
-        CardDescription {{ tabConfig[activeTab].description }}
+    //- Makes underlying table responsive
+    div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-4")
+      Card(class="col-span-5 mt-4")
+        CardHeader
+          CardTitle {{ tabConfig[activeTab].title }}
+          CardDescription {{ tabConfig[activeTab].description }}
 
-      CardContent(class="relative overflow-hidden py-4")
-        div(v-if="!selectedRole")
-          component(
-            :is="tabComponents[activeTab]"
-            :data="tabData[activeTab]"
-            @open-detail="handleOpenDetail"
-          )
-        div(v-else)
+        CardContent(class="relative py-4")
+          div(v-if="!selectedRole" class="overflow-x-auto")
+            component(
+              :is="tabComponents[activeTab]"
+              :data="tabData[activeTab]"
+              @open-detail="handleOpenDetail"
+            )
+          div(v-else)
 
   div(
     v-if="selectedRole"
@@ -77,8 +79,9 @@ div(v-else)
       span(v-if="addedCount > 0" class="text-positive") +{{ addedCount }} hinzugefügt
       span(v-if="removedCount > 0" class="text-destructive") -{{ removedCount }} entfernt
     Button(variant="brand" @click="savePermissions()") Speichern
-  //- Detail Selection. Every Permission, both unselected and selected ones as grouped tables
-  div(v-if="selectedRole" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-8")
+
+  //- Detail Selection in the role table. Every Permission, both unselected and selected ones as grouped tables
+  div(v-if="selectedRole" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mt-8")
     Card(v-for="(permissions, entity) in groupedPermissions" :key="entity")
       CardHeader(class="pb-2")
         CardTitle(class="text-md font-semibold mb-2") {{ entity }}
@@ -124,16 +127,16 @@ import acPermissionTable from '@/components/app/management/accessControlTableCom
 import acRoleTable from '@/components/app/management/accessControlTableComponents/acRoleTable.vue';
 import acUserTable from '@/components/app/management/accessControlTableComponents/acUserTable.vue';
 import { DepartmentName } from '@/constants/enums/departmentNames.enum';
-import { DocumentSecurityLevel } from '@/constants/enums/document.enum';
-import { PermissionAction, PermissionScope } from '@/constants/enums/acessControl.enum';
+import { DocumentSecurityLevel, DocumentSecurityLevelApiMap, DocumentSecurityLevelFromApi } from '@/constants/enums/document.enum';
+import { PermissionAction, PermissionScope, RoleName } from '@/constants/enums/acessControl.enum';
 import { type Permission, roleService, type Role } from '@/services/role.service';
 import { PermissionActionClasses, PermissionActionLabels, PermissionScopeLabels, PermissionScopeColors } from '@/lib/enumTranslaters';
 import { toast } from 'vue-sonner';
 
-const activeTab = ref<'roles' | 'users' |'permissions'>('roles')
+const activeTab = ref<'roles' | 'users' |'permissions'>('users')
 const tabConfig = {
   roles: { title: 'Rollen', description: 'Verwalte die Rollen und ihre Zuweisungen.' },
-  users: { title: 'Benutzer', description: 'Konfiguriere die Rollen der Nutzer.' },
+  users: { title: 'Benutzer', description: 'Konfiguriere die Nutzer und die Rollen der Nutzer.' },
   permissions: { title: 'Berechtigungen', description: 'Schaue dir die verfügbaren Berechtigungen an.' },
 }
 const tabComponents = {
@@ -205,9 +208,9 @@ const allRoles = ref<Role[]>([])
 const allPermissions = ref<Permission[]>([])
 
 const tabData = computed(() => ({
-  roles: allRoles.value,
-  users: [],
-  permissions: allPermissions.value,
+  roles: fakeRoles ,//allRoles.value,
+  users: fakeUsers,
+  permissions: [] //allPermissions.value,
 }))
 
 async function savePermissions() {
@@ -221,13 +224,117 @@ async function savePermissions() {
   }
 }
 
+const fakeUsers = [
+  {
+    firstname: "Andi",
+    lastname: "Arbeit",
+    email: "andi.arbeit@mail.de",
+    disabled: false ,
+    roles: [ 
+      { id: "uuid-2345", name: RoleName.EMPLOYEE },
+      { id: "uuid-1234", name: RoleName.IT_ADMINISTRATOR },
+      { id: "uuid-2345", name: RoleName.ACCOUNTANT },
+      { id: "uuid-1234", name: RoleName.DEPARTMENT_HEAD },
+      { id: "uuid-2345", name: RoleName.HR_MANAGER },
+      { id: "uuid-1234", name: RoleName.DEMO },
+      { id: "uuid-2345", name: RoleName.EXECUTIVE },
+    ],
+    department: { id: "dept-1234", name: DepartmentName.IT }
+  },
+  {
+    firstname: "Bettina",
+    lastname: "ZZZ",
+    email: "b.z@mail.de",
+    disabled: false ,
+    roles: [
+      { id: "uuid-2345", name: RoleName.EMPLOYEE },
+      { id: "uuid-2345", name: RoleName.EXECUTIVE },
+    ],
+    department: { id: "dept-1234", name: DepartmentName.EXECUTIVE }
+  },
+  {
+    firstname: "WWW",
+    lastname: "Demo",
+    email: "w.d@mail.de",
+    disabled: true,
+    roles: [
+      { id: "uuid-2345", name: RoleName.EMPLOYEE },
+      { id: "uuid-1234", name: RoleName.DEMO },
+    ],
+    department: { id: "dept-1234", name: DepartmentName.LEGAL }
+  },
+  {
+    firstname: "Norma",
+    lastname: "Normalo",
+    email: "n.n@mail.de",
+    disabled: false,
+    roles: [
+      { id: "uuid-2345", name: RoleName.EMPLOYEE },
+    ],
+    department: { id: "dept-1234", name: DepartmentName.SALES }
+  },
+]
+
+const roleOccurrences = computed(() => {
+  const map = new Map<string, number>()
+  for (const user of fakeUsers) {
+    for (const role of user.roles) {
+      map.set(role.name, (map.get(role.name) ?? 0) + 1)
+    }
+  }
+  return map
+})
+
+let fakeRoles: Role[] = [
+  {
+    id: 'role-1234',
+    name: RoleName.EMPLOYEE,
+    max_security_level: DocumentSecurityLevel.TOP_SECRET,
+    permissions: [],
+    occurrences: 4,
+    created_at: new Date('2024-01-01'),
+    updated_at: new Date('2024-01-01'),
+  },
+  {
+    id: 'role-2345',
+    name: RoleName.IT_ADMINISTRATOR,
+    max_security_level: DocumentSecurityLevel.BUSINESS,
+    permissions: [],
+    occurrences: 1,
+    created_at: new Date('2024-01-01'),
+    updated_at: new Date('2024-01-01'),
+  },
+  {
+    id: 'role-3456',
+    name: RoleName.HR_MANAGER,
+    max_security_level: DocumentSecurityLevel.CONFIDENTIAL,
+    permissions: [],
+    occurrences: 0,
+    created_at: new Date('2024-01-01'),
+    updated_at: new Date('2024-01-01'),
+  },
+]
+
 onMounted(async () => {
 
-  allRoles.value = await roleService.listRoles()
-  allPermissions.value = await roleService.listPermissions()
-  isLoaded.value = true
+  // allRoles.value = await roleService.listRoles()
+  // allPermissions.value = await roleService.listPermissions()
+  
+  
+  const occurrences = new Map<string, number>()
+  for (const user of fakeUsers) {
+    for (const role of user.roles) {
+      occurrences.set(role.name, (occurrences.get(role.name) ?? 0) + 1)
+    }
+  }
+  fakeRoles = fakeRoles.map(role => ({
+    ...role,
+    occurrences: occurrences.get(role.name) ?? 0,
+  }))
+  
 
-  // TODO load data for the user table. make roles configurable via a dialog
+  isLoaded.value = true
+  
 })
 
 </script>
