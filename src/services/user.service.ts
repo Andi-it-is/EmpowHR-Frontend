@@ -32,7 +32,15 @@ async function getUserById(userId: string): Promise<User> {
   return result.data.data
 }
 
+async function listAllUsers(): Promise<User[]> {
+
+  const result = await api.get('/user/all')
+  return result.data.data
+
+}
+
 export const userService = {
   getSimpleUserInfo,
-  getUserById
+  getUserById,
+  listAllUsers
 }

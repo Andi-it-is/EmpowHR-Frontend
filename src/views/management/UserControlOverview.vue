@@ -160,7 +160,7 @@ const mockUsers = [
   },
 ]
 
-const selectedUser = ref<User | any>(mockUsers[2])
+const selectedUser = ref<User | any>(null)
 
 const activeSection = ref<string | null>(null)
 

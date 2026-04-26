@@ -30,22 +30,20 @@ div(v-if="!isLoaded" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4
 
 div(v-else)
 
-  div(class="rounded-md border bg-muted/30 p-4 mb-4 space-y-2")
-    p(class="text-md font-medium") Sicherheitsstufen & Zugriffsbereiche
-    p(class="text-sm text-muted-foreground")
-      | Die maximale Dokumenten Sichtenstufe einer Rolle legt fest, bis zu welcher Vertraulichkeiststufe Dokumente von anderen Benutzern gesichtet werden dürfen.
-      | Je höher die Stufe, desto mehr Zugriff auf sensiblere Dokumente hat diese Rolle. Das betrifft nur Dokumente, welche in EmpowHR existieren.
-      | So dürfen nur wenige ausgewählte Rollen sensible Dokumente, wie Gehaltsabrechnungen, Mahnungen oder sonstiges sichten, um beispielsweise 
-      | die Buchhaltung zu pflegen oder einzelene Mitarbeiter über Mahnungen o.ä. zu informieren.
-
   Tabs(v-model="activeTab" class="w-full")
     TabsList(v-if="!selectedRole" variant="outline")
       TabsTrigger(value="roles")
         | Rollen
         Badge(class="ml-2 mr-1" variant="bordered") {{ allRoles.length }}
+
       TabsTrigger(value="users")
         | Benutzer
-        Badge(class="ml-2 mr-1" variant="bordered") {{ allPermissions.length }}
+        Badge(class="ml-2 mr-1" variant="bordered") {{ allUsers.length }}
+
+      TabsTrigger(value="departments")
+        | Abteilungen
+        Badge(class="ml-2 mr-1" variant="bordered") 7243
+
       TabsTrigger(value="permissions")
         | Berechtigungen
         Badge(class="ml-2 mr-1" variant="bordered") {{ allPermissions.length }}
@@ -53,6 +51,14 @@ div(v-else)
     Button(v-if="selectedRole" variant="brand-outline" @click="goBack()")
       ArrowLeft
       | Zurück zur Tabelle
+
+    div(v-if="activeTab==='roles'" class="rounded-md border bg-muted/30 p-4 my-4 space-y-2")
+      p(class="text-md font-medium") Sicherheitsstufen & Zugriffsbereiche
+      p(class="text-sm text-muted-foreground")
+        | Die maximale Dokumenten Sichtenstufe einer Rolle legt fest, bis zu welcher Vertraulichkeiststufe Dokumente von anderen Benutzern gesichtet werden dürfen.
+        | Je höher die Stufe, desto mehr Zugriff auf sensiblere Dokumente hat diese Rolle. Das betrifft nur Dokumente, welche in EmpowHR existieren.
+        | So dürfen nur wenige ausgewählte Rollen sensible Dokumente, wie Gehaltsabrechnungen, Mahnungen oder sonstiges sichten, um beispielsweise 
+        | die Buchhaltung zu pflegen oder einzelene Mitarbeiter über Mahnungen o.ä. zu informieren.
 
     //- Makes underlying table responsive
     div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-4")
@@ -81,7 +87,7 @@ div(v-else)
     Button(variant="brand" @click="savePermissions()") Speichern
 
   //- Detail Selection in the role table. Every Permission, both unselected and selected ones as grouped tables
-  div(v-if="selectedRole" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mt-8")
+  div(v-if="selectedRole" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-8")
     Card(v-for="(permissions, entity) in groupedPermissions" :key="entity")
       CardHeader(class="pb-2")
         CardTitle(class="text-md font-semibold mb-2") {{ entity }}
@@ -132,16 +138,20 @@ import { PermissionAction, PermissionScope, RoleName } from '@/constants/enums/a
 import { type Permission, roleService, type Role } from '@/services/role.service';
 import { PermissionActionClasses, PermissionActionLabels, PermissionScopeLabels, PermissionScopeColors } from '@/lib/enumTranslaters';
 import { toast } from 'vue-sonner';
+import { type User, userService } from '@/services/user.service';
+import AcDepartmentTable from '@/components/app/management/accessControlTableComponents/acDepartmentTable.vue';
 
-const activeTab = ref<'roles' | 'users' |'permissions'>('users')
+const activeTab = ref<'roles' | 'users' | 'departments' | 'permissions'>('roles')
 const tabConfig = {
   roles: { title: 'Rollen', description: 'Verwalte die Rollen und ihre Zuweisungen.' },
   users: { title: 'Benutzer', description: 'Konfiguriere die Nutzer und die Rollen der Nutzer.' },
+  departments: { title: 'Abteilungen', description: 'Erstelle und bearbeite vorhandene Abteilungen.' },
   permissions: { title: 'Berechtigungen', description: 'Schaue dir die verfügbaren Berechtigungen an.' },
 }
 const tabComponents = {
   roles: acRoleTable,
   users: acUserTable,
+  departments: AcDepartmentTable,
   permissions: acPermissionTable,
 }
 
@@ -204,13 +214,15 @@ const groupedPermissions = computed(() => {
 })
 
 const isLoaded = ref(false)
+
 const allRoles = ref<Role[]>([])
+const allUsers = ref<User[]>([])
 const allPermissions = ref<Permission[]>([])
 
 const tabData = computed(() => ({
-  roles: fakeRoles ,//allRoles.value,
-  users: fakeUsers,
-  permissions: [] //allPermissions.value,
+  roles: allRoles.value,
+  users: allUsers.value,
+  permissions: allPermissions.value,
 }))
 
 async function savePermissions() {
@@ -224,113 +236,30 @@ async function savePermissions() {
   }
 }
 
-const fakeUsers = [
-  {
-    firstname: "Andi",
-    lastname: "Arbeit",
-    email: "andi.arbeit@mail.de",
-    disabled: false ,
-    roles: [ 
-      { id: "uuid-2345", name: RoleName.EMPLOYEE },
-      { id: "uuid-1234", name: RoleName.IT_ADMINISTRATOR },
-      { id: "uuid-2345", name: RoleName.ACCOUNTANT },
-      { id: "uuid-1234", name: RoleName.DEPARTMENT_HEAD },
-      { id: "uuid-2345", name: RoleName.HR_MANAGER },
-      { id: "uuid-1234", name: RoleName.DEMO },
-      { id: "uuid-2345", name: RoleName.EXECUTIVE },
-    ],
-    department: { id: "dept-1234", name: DepartmentName.IT }
-  },
-  {
-    firstname: "Bettina",
-    lastname: "ZZZ",
-    email: "b.z@mail.de",
-    disabled: false ,
-    roles: [
-      { id: "uuid-2345", name: RoleName.EMPLOYEE },
-      { id: "uuid-2345", name: RoleName.EXECUTIVE },
-    ],
-    department: { id: "dept-1234", name: DepartmentName.EXECUTIVE }
-  },
-  {
-    firstname: "WWW",
-    lastname: "Demo",
-    email: "w.d@mail.de",
-    disabled: true,
-    roles: [
-      { id: "uuid-2345", name: RoleName.EMPLOYEE },
-      { id: "uuid-1234", name: RoleName.DEMO },
-    ],
-    department: { id: "dept-1234", name: DepartmentName.LEGAL }
-  },
-  {
-    firstname: "Norma",
-    lastname: "Normalo",
-    email: "n.n@mail.de",
-    disabled: false,
-    roles: [
-      { id: "uuid-2345", name: RoleName.EMPLOYEE },
-    ],
-    department: { id: "dept-1234", name: DepartmentName.SALES }
-  },
-]
-
-const roleOccurrences = computed(() => {
-  const map = new Map<string, number>()
-  for (const user of fakeUsers) {
-    for (const role of user.roles) {
-      map.set(role.name, (map.get(role.name) ?? 0) + 1)
-    }
-  }
-  return map
-})
-
-let fakeRoles: Role[] = [
-  {
-    id: 'role-1234',
-    name: RoleName.EMPLOYEE,
-    max_security_level: DocumentSecurityLevel.TOP_SECRET,
-    permissions: [],
-    occurrences: 4,
-    created_at: new Date('2024-01-01'),
-    updated_at: new Date('2024-01-01'),
-  },
-  {
-    id: 'role-2345',
-    name: RoleName.IT_ADMINISTRATOR,
-    max_security_level: DocumentSecurityLevel.BUSINESS,
-    permissions: [],
-    occurrences: 1,
-    created_at: new Date('2024-01-01'),
-    updated_at: new Date('2024-01-01'),
-  },
-  {
-    id: 'role-3456',
-    name: RoleName.HR_MANAGER,
-    max_security_level: DocumentSecurityLevel.CONFIDENTIAL,
-    permissions: [],
-    occurrences: 0,
-    created_at: new Date('2024-01-01'),
-    updated_at: new Date('2024-01-01'),
-  },
-]
 
 onMounted(async () => {
 
-  // allRoles.value = await roleService.listRoles()
-  // allPermissions.value = await roleService.listPermissions()
+  allRoles.value = await roleService.listRoles()
+  allPermissions.value = await roleService.listPermissions()
+  allUsers.value = await userService.listAllUsers()
   
-  
-  const occurrences = new Map<string, number>()
-  for (const user of fakeUsers) {
+  const roleCounts = Object.values(RoleName).reduce((acc, role) => {
+    acc[role] = 0;
+    return acc;
+  }, {} as Record<RoleName, number>);
+
+  for (const user of allUsers.value) {
     for (const role of user.roles) {
-      occurrences.set(role.name, (occurrences.get(role.name) ?? 0) + 1)
+      if (role.name in roleCounts) {
+        roleCounts[role.name as RoleName]++;
+      }
     }
   }
-  fakeRoles = fakeRoles.map(role => ({
+
+  allRoles.value = allRoles.value.map(role => ({
     ...role,
-    occurrences: occurrences.get(role.name) ?? 0,
-  }))
+    occurrences: roleCounts[role.name as RoleName] ?? 0,
+  }));
   
 
   isLoaded.value = true
