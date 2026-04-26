@@ -1,4 +1,4 @@
-<!-- <script setup lang="ts">
+<script setup lang="ts">
 import {
   BadgeCheck,
   Bell,
@@ -149,8 +149,4 @@ function getInitials(name: string | undefined | null): string {
       </DropdownMenu>
     </SidebarMenuItem>
   </SidebarMenu>
-</template> -->
-
-<template>
-  <p>hi</p>
 </template>
