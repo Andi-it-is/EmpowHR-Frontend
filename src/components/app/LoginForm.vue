@@ -25,7 +25,10 @@ const showLoginPassword = ref(false)
 const showRegisterPassword = ref(false)
 const showRegisterPasswordConfirm = ref(false)
 
-function navToIndex() { return router.push("/") }
+function navToIndex() { 
+  console.log("pusshinnng")
+  return router.push("/") 
+}
 
 async function registerUser() {
 

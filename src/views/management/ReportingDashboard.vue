@@ -84,7 +84,7 @@ const baseInformationArray = ref([
   { label: "Mitarbeitende Gesamt", value: 114, unit: "Mitarbeitende", trend: 4.9, subLabel: "Wachstum zum Vorjahr" },
   { label: "Frauenquote", value: "42  %", unit: "in Führungsposition" ,trend: 3, subLabel: "Wachstum zum Vorjahr" },
   { label: "Heute Anwesend", value: 105, unit: "Mitarbeitende", trend: 1.2, subLabel: "Vergleich zum Vorjahrestag" },
-  { label: "Krankheitsquote", value: "1.8%", unit: "über alle Abteilungen", trend: 0.3, subLabel: "Vergleich zum Vorjahrestag", invertTrend: true },
+  { label: "Krankheitsquote", value: "1.8%", unit: "gesamt", trend: 0.3, subLabel: "Vergleich zum Vorjahrestag", invertTrend: true },
   { label: "Betriebszugehörigkeit", value: 5.6, unit: "Jahre ⌀", trend: -4, subLabel: "Wachstum zum Vorjahr", invertTrend: false },
 ])
 

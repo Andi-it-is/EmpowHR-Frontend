@@ -16,6 +16,7 @@ export interface Role {
   name: RoleName
   max_security_level: DocumentSecurityLevel
   permissions: Permission[]
+  occurrences?: number
   created_at: Date
   updated_at: Date
 }

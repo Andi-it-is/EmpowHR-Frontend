@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, h, watch } from "vue"
-import { ArrowUpDown, ChevronLeft, ChevronRight, MoreVertical, Pencil, Trash2, Eye } from "lucide-vue-next"
+import { ArrowUpDown, ChevronLeft, ChevronRight, MoreVertical, Pencil, Trash2, Eye, Settings2, SlidersHorizontal } from "lucide-vue-next"
 import { FlexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useVueTable,
   type ColumnDef, type ColumnFiltersState, type SortingState, type FilterFn } from "@tanstack/vue-table"
 import { Badge } from "@/components/ui/badge"
@@ -13,26 +13,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { toast } from "vue-sonner"
-import { getDepartmentColor } from "@/lib/enumTranslaters"
+import { getDepartmentColor, translateRoleName } from "@/lib/enumTranslaters"
+import { RoleName } from "@/constants/enums/acessControl.enum"
+import MultiSelect from "../../generic/MultiSelect.vue"
+import Switch from "@/components/ui/switch/Switch.vue"
+import type { User } from "@/services/user.service"
 
-export interface Role {
-  name: string
-}
-
-export interface Department {
-  name: string
-}
-
-export interface User {
-  id: number | string
-  firstname: string
-  lastname: string
-  email: string
-  disabled: boolean
-  supervisor: User | null
-  roles: Role[] 
-  department: Department | null
-}
 
 const props = defineProps<{
   data: User[]
@@ -49,12 +35,14 @@ const deletingUser = ref<User | null>(null)
 const editFirstname = ref('')
 const editLastname = ref('')
 const editEmail = ref('')
+const editActive = ref(true)
 
 watch(editingUser, (user) => {
   if (!user) return
   editFirstname.value = user.firstname
   editLastname.value = user.lastname
   editEmail.value = user.email
+  editActive.value = !user.disabled
 })
 
 const globalFilter = ref('')
@@ -65,18 +53,26 @@ const globalFilterFn: FilterFn<User> = (row, _columnId, filterValue) => {
   return (
     fullname.includes(search) ||
     email.toLowerCase().includes(search) ||
-    roles.some(r => r.name.toLowerCase().includes(search)) ||
+    roles.some(r =>
+      r.name.toLowerCase().includes(search) ||
+      translateRoleName(r.name as RoleName).toLowerCase().includes(search)
+    ) ||
     !!supervisor && `${supervisor.firstname} ${supervisor.lastname}`.toLowerCase().includes(search) ||
     (department?.name ?? '').toLowerCase().includes(search)
   )
 }
 
-// --- Actions ---
 async function onEditUser() {
   if (!editingUser.value) return
   try {
-    // TODO: call userService.updateUser(editingUser.value.id, { firstname: editFirstname.value, lastname: editLastname.value, email: editEmail.value })
-    toast.success('Benutzer aktualisiert')
+    const reqObj = {
+      firstname: editFirstname.value,
+      lastname: editLastname.value,
+      email: editEmail.value,
+      disabled: !editActive.value,
+    }
+    // TODO: await userService.updateUser(editingUser.value.id, reqObj)
+    toast.success(`Benutzer aktualisiert ${JSON.stringify(reqObj)} `)
     editingUser.value = null
     emit('refresh')
   } catch (error) {
@@ -98,6 +94,43 @@ async function onDeleteUser() {
   }
 }
 
+const assigningUser = ref<User | null>(null)
+const assignRoles = ref<string[]>([])
+
+// Beim Öffnen aktuelle Rollen vorbelegen
+watch(assigningUser, (user) => {
+  assignRoles.value = user ? user.roles.map(r => r.name) : []
+})
+
+async function onSaveAssignments() {
+  if (!assigningUser.value) return
+  try {
+    const reqObj = {
+      roles: assignRoles.value,
+    }
+    // TODO: await userService.updateUserRoles(assigningUser.value.id, reqObj)
+    console.log("au ", assigningUser.value, "|||", "ar", assignRoles.value)
+    toast.success(`Zuweisungen gespeichert ${JSON.stringify(reqObj)} `)
+    assigningUser.value = null
+    emit('refresh')
+
+  } catch (error) {
+    console.error(error)
+    toast.error('Fehler beim Speichern der Zuweisungen')
+  }
+}
+
+// TODO Rollen api service call
+const allRoles = [ 
+  { id: "uuid-67", name: RoleName.EMPLOYEE },
+  { id: "uuid-12", name: RoleName.IT_ADMINISTRATOR },
+  { id: "uuid-34", name: RoleName.ACCOUNTANT },
+  { id: "uuid-5", name: RoleName.DEPARTMENT_HEAD },
+  { id: "uuid-7634", name: RoleName.HR_MANAGER },
+  { id: "uuid-324908", name: RoleName.DEMO },
+  { id: "uuid-29834782462", name: RoleName.EXECUTIVE },
+]
+
 // --- Table ---
 const sorting = ref<SortingState>([])
 const columnFilters = ref<ColumnFiltersState>([])
@@ -105,16 +138,25 @@ const rowSelection = ref({})
 
 const columns: ColumnDef<User>[] = [
   {
-    id: 'fullname',
-    accessorFn: (row) => `${row.firstname} ${row.lastname}`,
+    id: 'firstname',
+    accessorKey: 'firstname',
     header: ({ column }) => h(Button, {
       variant: 'ghost',
       class: 'hover:bg-transparent',
       onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
-    }, () => ['Name', h(ArrowUpDown, { class: 'ml-2 h-3 w-3' })]),
-    cell: ({ row }) => h('div', { class: 'ml-4 text-sm font-medium' },
-      `${row.original.firstname} ${row.original.lastname}`
-    ),
+    }, () => ['Vorname', h(ArrowUpDown, { class: 'ml-2 h-3 w-3' })]),
+    cell: ({ row }) => h('div', { class: 'ml-4 text-sm font-medium' }, row.original.firstname),
+    sortingFn: 'alphanumeric',
+  },
+  {
+    id: 'lastname',
+    accessorKey: 'lastname',
+    header: ({ column }) => h(Button, {
+      variant: 'ghost',
+      class: 'hover:bg-transparent',
+      onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+    }, () => ['Nachname', h(ArrowUpDown, { class: 'ml-2 h-3 w-3' })]),
+    cell: ({ row }) => h('div', { class: 'ml-4 text-sm font-medium' }, row.original.lastname),
     sortingFn: 'alphanumeric',
   },
   {
@@ -142,19 +184,6 @@ const columns: ColumnDef<User>[] = [
     },
     sortingFn: (a, b) => Number(a.original.disabled) - Number(b.original.disabled),
   },
-  {
-    id: 'supervisor',
-    accessorFn: (row) => row.supervisor ? `${row.supervisor.firstname} ${row.supervisor.lastname}` : '',
-    header: () => h('span', { class: 'text-foreground font-medium' }, 'Vorgesetzter'),
-    cell: ({ row }) => {
-      const supervisor = row.original.supervisor
-      if (!supervisor) return h('div', { class: 'text-sm text-muted-foreground' }, '—')
-      return h('a', {
-        class: 'text-sm underline underline-offset-4 hover:text-primary transition-colors cursor-pointer',
-      }, `${supervisor.firstname} ${supervisor.lastname}`)
-    },
-    sortingFn: 'alphanumeric',
-  },
 
   {
     id: 'department',
@@ -177,15 +206,23 @@ const columns: ColumnDef<User>[] = [
   },
   {
     id: 'roles',
-    size: 200,
+    size: 350,
     header: () => h('span', { class: 'text-foreground font-medium' }, 'Rollen'),
     cell: ({ row }) => {
       const roles = row.original.roles
       if (!roles?.length) return h('div', { class: 'text-sm text-muted-foreground' }, '—')
       return h('div', { class: 'flex flex-wrap gap-1' },
-        roles.map(role => h(Badge, { key: role.name, variant: 'bordered' }, () => role.name))
+        roles.map(role => h(Badge, { key: role.name, variant: 'bordered' }, () => translateRoleName(role.name as RoleName)))
       )
     },
+  },
+
+  {
+    id: 'assignments',
+    cell: ({ row }) => h(Button, {
+      variant: 'brand-outline',
+      onClick: () => { assigningUser.value = row.original },
+    }, () => [h(SlidersHorizontal, { class: 'h-4 w-4' }), 'Zuweisungen anpassen']),
   },
 
   {
@@ -200,10 +237,6 @@ const columns: ColumnDef<User>[] = [
         }),
         h(DropdownMenuContent, { align: 'end' }, {
           default: () => [
-            h(DropdownMenuItem, {
-              class: 'gap-2 cursor-pointer',
-              onClick: () => { /* TODO: navigate to user detail page */ },
-            }, () => [h(Eye, { class: 'h-4 w-4' }), 'Details anzeigen']),
             h(DropdownMenuItem, {
               class: 'gap-2 cursor-pointer',
               onClick: () => editingUser.value = row.original,
@@ -280,13 +313,31 @@ div(class="w-full space-y-4")
         SelectTrigger(class="h-8 w-17.5")
           SelectValue
         SelectContent(side="top")
-          SelectItem(v-for="size in [5, 10, 20]" :key="size" :value="`${size}`") {{ size }}
+          SelectItem(v-for="size in [5, 10, 20, 50, 100]" :key="size" :value="`${size}`") {{ size }}
     div(class="text-sm font-medium") Seite {{ table.getState().pagination.pageIndex + 1 }} von {{ table.getPageCount() }}
     div(class="flex items-center gap-2")
       Button(variant="outline" size="icon" class="h-8 w-8" :disabled="!table.getCanPreviousPage()" @click="table.previousPage()")
         ChevronLeft(class="h-4 w-4")
       Button(variant="outline" size="icon" class="h-8 w-8" :disabled="!table.getCanNextPage()" @click="table.nextPage()")
         ChevronRight(class="h-4 w-4")
+
+  //- Assignments Dialog
+  Dialog(:open="!!assigningUser" @update:open="v => { if (!v) assigningUser = null }")
+    DialogContent
+      DialogHeader
+        DialogTitle Zuweisungen anpassen – {{ assigningUser?.firstname }} {{ assigningUser?.lastname }}
+        DialogDescription Passe die Rollenzuweisungen des Benutzers an.
+      FieldGroup(class="flex flex-col gap-4 mt-2")
+        MultiSelect(
+          id="assignRoles"
+          label="Rollen"
+          placeholder="Rollen auswählen"
+          :options="allRoles.map(r => ({ value: r.name, label: translateRoleName(r.name) }))"
+          v-model="assignRoles"
+        )
+      DialogFooter(class="mt-4")
+        Button(type="button" variant="outline" @click="assigningUser = null") Abbrechen
+        Button(variant="brand" @click="onSaveAssignments()") Speichern
 
   //- Edit Dialog
   Dialog(:open="!!editingUser" @update:open="v => { if (!v) editingUser = null }")
@@ -306,6 +357,12 @@ div(class="w-full space-y-4")
           Field
             FieldLabel E-Mail
             Input(v-model="editEmail" type="email" placeholder="E-Mail")
+          Field
+            FieldLabel Status
+            div(class="flex items-center gap-2 mt-1")
+              Switch(v-model="editActive")
+              span(class="text-sm") {{ editActive ? 'Aktiv' : 'Deaktiviert / Gesperrt' }}
+
           DialogFooter(class="mt-4")
             Button(type="button" variant="outline" @click="editingUser = null") Abbrechen
             Button(type="submit" variant="brand") Speichern
@@ -321,5 +378,5 @@ div(class="w-full space-y-4")
         p(class="text-muted-foreground") {{ deletingUser.email }}
       AlertDialogFooter
         AlertDialogCancel(@click="deletingUser = null") Abbrechen
-        AlertDialogAction(class="bg-destructive hover:bg-destructive/90" @click="onDeleteUser") Löschen
+        AlertDialogAction(class="bg-destructive text-white hover:bg-destructive/90" @click="onDeleteUser") Löschen
 </template>
