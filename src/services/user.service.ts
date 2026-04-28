@@ -39,8 +39,22 @@ async function listAllUsers(): Promise<User[]> {
 
 }
 
+async function updateUserById(userId: string, data: Partial<User>): Promise<User> {
+
+  const result = await api.patch(`/user/${userId}`, data)
+  return result.data.data
+}
+
+async function deleteUserById(userId: string): Promise<boolean> {
+
+  const result = await api.delete(`/user/${userId}`)
+  return result.data.success
+}
+
 export const userService = {
   getSimpleUserInfo,
   getUserById,
-  listAllUsers
+  listAllUsers,
+  updateUserById,
+  deleteUserById
 }

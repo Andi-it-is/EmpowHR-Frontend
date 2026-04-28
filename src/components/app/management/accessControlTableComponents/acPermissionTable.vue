@@ -96,32 +96,6 @@ watch(editingPermission, (p) => {
   editEntity.value = p.entity
 })
 
-// --- Actions ---
-async function onEditPermission() {
-  if (!editingPermission.value) return
-  try {
-    // TODO: call permissionService.updatePermission(editingPermission.value.id, { entity: editEntity.value })
-    toast.success('Berechtigung aktualisiert')
-    editingPermission.value = null
-    emit('refresh')
-  } catch (error) {
-    console.error(error)
-    toast.error('Fehler beim Aktualisieren')
-  }
-}
-
-async function onDeletePermission() {
-  if (!deletingPermission.value) return
-  try {
-    // TODO: call permissionService.deletePermission(deletingPermission.value.id)
-    toast.success('Berechtigung gelöscht')
-    deletingPermission.value = null
-    emit('refresh')
-  } catch (error) {
-    console.error(error)
-    toast.error('Fehler beim Löschen')
-  }
-}
 
 // --- Table ---
 const sorting = ref<SortingState>([])
@@ -212,37 +186,6 @@ const columns: ColumnDef<Permission>[] = [
       ])
     },
     sortingFn: 'alphanumeric',
-  },
-  {
-    id: 'actions',
-    size: 50,
-    cell: ({ row }) => h(DropdownMenu, {}, {
-      default: () => [
-        h(DropdownMenuTrigger, { asChild: true }, {
-          default: () => h(Button, { variant: 'ghost', class: 'h-8 w-8 p-0' }, {
-            default: () => h(MoreVertical, { class: 'h-4 w-4' }),
-          }),
-        }),
-        h(DropdownMenuContent, { align: 'end' }, {
-          default: () => [
-            h(DropdownMenuItem, {
-              class: 'gap-2 cursor-pointer',
-              onClick: () => { /* TODO: navigate to permission detail */ },
-            }, () => [h(Eye, { class: 'h-4 w-4' }), 'Details anzeigen']),
-            h(DropdownMenuSeparator),
-            h(DropdownMenuItem, {
-              class: 'gap-2 cursor-pointer',
-              onClick: () => editingPermission.value = row.original,
-            }, () => [h(Pencil, { class: 'h-4 w-4' }), 'Bearbeiten']),
-            h(DropdownMenuSeparator),
-            h(DropdownMenuItem, {
-              class: 'gap-2 cursor-pointer text-destructive focus:text-destructive',
-              onClick: () => deletingPermission.value = row.original,
-            }, () => [h(Trash2, { class: 'h-4 w-4' }), 'Löschen']),
-          ],
-        }),
-      ],
-    }),
   },
 ]
 

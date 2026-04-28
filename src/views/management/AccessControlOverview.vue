@@ -68,11 +68,13 @@ div(v-else)
           CardDescription {{ tabConfig[activeTab].description }}
 
         CardContent(class="relative py-4")
-          div(v-if="!selectedRole" class="overflow-x-auto")
+          div(v-if="!selectedRole" class="overflow-x-auto py-4")
             component(
               :is="tabComponents[activeTab]"
               :data="tabData[activeTab]"
+              :users="activeTab === 'departments' ? allUsers : undefined"
               @open-detail="handleOpenDetail"
+              @refresh="loadData()"
             )
           div(v-else)
 
@@ -132,6 +134,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import acPermissionTable from '@/components/app/management/accessControlTableComponents/acPermissionTable.vue';
 import acRoleTable from '@/components/app/management/accessControlTableComponents/acRoleTable.vue';
 import acUserTable from '@/components/app/management/accessControlTableComponents/acUserTable.vue';
+import acDepartmentTable from '@/components/app/management/accessControlTableComponents/acDepartmentTable.vue';
 import { DepartmentName } from '@/constants/enums/departmentNames.enum';
 import { DocumentSecurityLevel, DocumentSecurityLevelApiMap, DocumentSecurityLevelFromApi } from '@/constants/enums/document.enum';
 import { PermissionAction, PermissionScope, RoleName } from '@/constants/enums/acessControl.enum';
@@ -139,9 +142,9 @@ import { type Permission, roleService, type Role } from '@/services/role.service
 import { PermissionActionClasses, PermissionActionLabels, PermissionScopeLabels, PermissionScopeColors } from '@/lib/enumTranslaters';
 import { toast } from 'vue-sonner';
 import { type User, userService } from '@/services/user.service';
-import AcDepartmentTable from '@/components/app/management/accessControlTableComponents/acDepartmentTable.vue';
+import { type Department, departmentService } from '@/services/department.service';
 
-const activeTab = ref<'roles' | 'users' | 'departments' | 'permissions'>('roles')
+const activeTab = ref<'roles' | 'users' | 'departments' | 'permissions'>('departments')
 const tabConfig = {
   roles: { title: 'Rollen', description: 'Verwalte die Rollen und ihre Zuweisungen.' },
   users: { title: 'Benutzer', description: 'Konfiguriere die Nutzer und die Rollen der Nutzer.' },
@@ -151,7 +154,7 @@ const tabConfig = {
 const tabComponents = {
   roles: acRoleTable,
   users: acUserTable,
-  departments: AcDepartmentTable,
+  departments: acDepartmentTable,
   permissions: acPermissionTable,
 }
 
@@ -218,10 +221,12 @@ const isLoaded = ref(false)
 const allRoles = ref<Role[]>([])
 const allUsers = ref<User[]>([])
 const allPermissions = ref<Permission[]>([])
+const allDepartments = ref<Department[]>([])
 
 const tabData = computed(() => ({
   roles: allRoles.value,
   users: allUsers.value,
+  departments: allDepartments.value,
   permissions: allPermissions.value,
 }))
 
@@ -236,12 +241,12 @@ async function savePermissions() {
   }
 }
 
-
-onMounted(async () => {
+async function loadData() {
 
   allRoles.value = await roleService.listRoles()
   allPermissions.value = await roleService.listPermissions()
   allUsers.value = await userService.listAllUsers()
+  allDepartments.value = await departmentService.listAllDepartments()
   
   const roleCounts = Object.values(RoleName).reduce((acc, role) => {
     acc[role] = 0;
@@ -261,6 +266,11 @@ onMounted(async () => {
     occurrences: roleCounts[role.name as RoleName] ?? 0,
   }));
   
+}
+
+onMounted(async () => {
+
+  await loadData()  
 
   isLoaded.value = true
   

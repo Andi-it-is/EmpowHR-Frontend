@@ -17,7 +17,7 @@ import { getDepartmentColor, translateRoleName } from "@/lib/enumTranslaters"
 import { RoleName } from "@/constants/enums/acessControl.enum"
 import MultiSelect from "../../generic/MultiSelect.vue"
 import Switch from "@/components/ui/switch/Switch.vue"
-import type { User } from "@/services/user.service"
+import { userService, type User } from "@/services/user.service"
 
 
 const props = defineProps<{
@@ -71,8 +71,8 @@ async function onEditUser() {
       email: editEmail.value,
       disabled: !editActive.value,
     }
-    // TODO: await userService.updateUser(editingUser.value.id, reqObj)
-    toast.success(`Benutzer aktualisiert ${JSON.stringify(reqObj)} `)
+    await userService.updateUserById(editingUser.value.id, reqObj)
+    toast.success(`Benutzer aktualisiert`)
     editingUser.value = null
     emit('refresh')
   } catch (error) {
@@ -84,7 +84,7 @@ async function onEditUser() {
 async function onDeleteUser() {
   if (!deletingUser.value) return
   try {
-    // TODO: call userService.deleteUser(deletingUser.value.id)
+    await userService.deleteUserById(deletingUser.value.id)
     toast.success('Benutzer gelöscht')
     deletingUser.value = null
     emit('refresh')
@@ -206,7 +206,7 @@ const columns: ColumnDef<User>[] = [
   },
   {
     id: 'roles',
-    size: 350,
+    size: 250,
     header: () => h('span', { class: 'text-foreground font-medium' }, 'Rollen'),
     cell: ({ row }) => {
       const roles = row.original.roles
@@ -344,7 +344,7 @@ div(class="w-full space-y-4")
     DialogContent
       DialogHeader
         DialogTitle Benutzer bearbeiten
-        DialogDescription Bearbeite die Stammdaten des Benutzers.
+        DialogDescription Bearbeite die Basisinformationen des Benutzers.
       form(@submit.prevent="onEditUser()")
         FieldGroup(class="flex flex-col gap-4 mt-2")
           div(class="grid grid-cols-2 gap-4")
