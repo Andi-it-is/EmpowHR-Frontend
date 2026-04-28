@@ -42,7 +42,7 @@ div(v-else)
 
       TabsTrigger(value="departments")
         | Abteilungen
-        Badge(class="ml-2 mr-1" variant="bordered") 7243
+        Badge(class="ml-2 mr-1" variant="bordered") {{ allDepartments.length }}
 
       TabsTrigger(value="permissions")
         | Berechtigungen
@@ -144,7 +144,7 @@ import { toast } from 'vue-sonner';
 import { type User, userService } from '@/services/user.service';
 import { type Department, departmentService } from '@/services/department.service';
 
-const activeTab = ref<'roles' | 'users' | 'departments' | 'permissions'>('departments')
+const activeTab = ref<'roles' | 'users' | 'departments' | 'permissions'>('roles')
 const tabConfig = {
   roles: { title: 'Rollen', description: 'Verwalte die Rollen und ihre Zuweisungen.' },
   users: { title: 'Benutzer', description: 'Konfiguriere die Nutzer und die Rollen der Nutzer.' },
@@ -235,6 +235,7 @@ async function savePermissions() {
   try {
     await roleService.updateRolesPermissions(selectedRole.value.id, [...assignedIds.value])
     originalIds.value = new Set(assignedIds.value)
+    await loadData()
     toast.success('Berechtigungen gespeichert')
   } catch (error) {
     toast.error('Fehler beim Speichern')

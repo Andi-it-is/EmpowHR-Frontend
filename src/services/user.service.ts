@@ -1,7 +1,11 @@
 import api from "@/lib/axios";
 import type { Role } from "./role.service";
 import type { Department } from "./department.service";
+import type { RoleName } from "@/constants/enums/acessControl.enum";
 
+interface RoleNameObject {
+  roles: RoleName[]
+}
 interface SimpleUserObject {
   id: string,
   firstname: string,
@@ -51,10 +55,17 @@ async function deleteUserById(userId: string): Promise<boolean> {
   return result.data.success
 }
 
+async function updateUserRolesByUserId(userId: string, roles: RoleNameObject): Promise<void> {
+  
+  const result = await api.patch(`/user/${userId}/roles`, roles)
+  return result.data.data
+}
+
 export const userService = {
   getSimpleUserInfo,
   getUserById,
   listAllUsers,
   updateUserById,
-  deleteUserById
+  deleteUserById,
+  updateUserRolesByUserId
 }

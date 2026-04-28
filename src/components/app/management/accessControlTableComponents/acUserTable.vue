@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, h, watch } from "vue"
+import { ref, h, watch, onMounted } from "vue"
 import { ArrowUpDown, ChevronLeft, ChevronRight, MoreVertical, Pencil, Trash2, Eye, Settings2, SlidersHorizontal } from "lucide-vue-next"
 import { FlexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useVueTable,
   type ColumnDef, type ColumnFiltersState, type SortingState, type FilterFn } from "@tanstack/vue-table"
@@ -18,6 +18,7 @@ import { RoleName } from "@/constants/enums/acessControl.enum"
 import MultiSelect from "../../generic/MultiSelect.vue"
 import Switch from "@/components/ui/switch/Switch.vue"
 import { userService, type User } from "@/services/user.service"
+import { roleService, type Role } from "@/services/role.service"
 
 
 const props = defineProps<{
@@ -95,7 +96,7 @@ async function onDeleteUser() {
 }
 
 const assigningUser = ref<User | null>(null)
-const assignRoles = ref<string[]>([])
+const assignRoles = ref<RoleName[]>([])
 
 // Beim Öffnen aktuelle Rollen vorbelegen
 watch(assigningUser, (user) => {
@@ -105,12 +106,9 @@ watch(assigningUser, (user) => {
 async function onSaveAssignments() {
   if (!assigningUser.value) return
   try {
-    const reqObj = {
-      roles: assignRoles.value,
-    }
-    // TODO: await userService.updateUserRoles(assigningUser.value.id, reqObj)
-    console.log("au ", assigningUser.value, "|||", "ar", assignRoles.value)
-    toast.success(`Zuweisungen gespeichert ${JSON.stringify(reqObj)} `)
+    const reqObj = assignRoles.value
+    await userService.updateUserRolesByUserId(assigningUser.value.id, { roles: assignRoles.value })
+    toast.success('Zuweisungen gespeichert')
     assigningUser.value = null
     emit('refresh')
 
@@ -120,16 +118,11 @@ async function onSaveAssignments() {
   }
 }
 
-// TODO Rollen api service call
-const allRoles = [ 
-  { id: "uuid-67", name: RoleName.EMPLOYEE },
-  { id: "uuid-12", name: RoleName.IT_ADMINISTRATOR },
-  { id: "uuid-34", name: RoleName.ACCOUNTANT },
-  { id: "uuid-5", name: RoleName.DEPARTMENT_HEAD },
-  { id: "uuid-7634", name: RoleName.HR_MANAGER },
-  { id: "uuid-324908", name: RoleName.DEMO },
-  { id: "uuid-29834782462", name: RoleName.EXECUTIVE },
-]
+const allRoles = ref<Role[]>([])
+
+onMounted(async () => {
+  allRoles.value = await roleService.listRoles()
+})
 
 // --- Table ---
 const sorting = ref<SortingState>([])
