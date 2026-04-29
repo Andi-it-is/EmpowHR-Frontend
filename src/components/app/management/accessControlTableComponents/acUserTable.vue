@@ -18,11 +18,14 @@ import { RoleName } from "@/constants/enums/acessControl.enum"
 import MultiSelect from "../../generic/MultiSelect.vue"
 import Switch from "@/components/ui/switch/Switch.vue"
 import { userService, type User } from "@/services/user.service"
-import { roleService, type Role } from "@/services/role.service"
+import type { Role } from "@/services/role.service"
+import type { Department } from "@/services/department.service"
 
 
 const props = defineProps<{
   data: User[]
+  departments: Department[]
+  roles: Role[]
 }>()
 
 const emit = defineEmits<{
@@ -37,6 +40,7 @@ const editFirstname = ref('')
 const editLastname = ref('')
 const editEmail = ref('')
 const editActive = ref(true)
+const editDepartmentId = ref<string | null>(null)
 
 watch(editingUser, (user) => {
   if (!user) return
@@ -44,6 +48,7 @@ watch(editingUser, (user) => {
   editLastname.value = user.lastname
   editEmail.value = user.email
   editActive.value = !user.disabled
+  editDepartmentId.value = user.department?.id ?? null
 })
 
 const globalFilter = ref('')
@@ -71,6 +76,7 @@ async function onEditUser() {
       lastname: editLastname.value,
       email: editEmail.value,
       disabled: !editActive.value,
+      departmentId: editDepartmentId.value,
     }
     await userService.updateUserById(editingUser.value.id, reqObj)
     toast.success(`Benutzer aktualisiert`)
@@ -117,12 +123,6 @@ async function onSaveAssignments() {
     toast.error('Fehler beim Speichern der Zuweisungen')
   }
 }
-
-const allRoles = ref<Role[]>([])
-
-onMounted(async () => {
-  allRoles.value = await roleService.listRoles()
-})
 
 // --- Table ---
 const sorting = ref<SortingState>([])
@@ -355,6 +355,17 @@ div(class="w-full space-y-4")
             div(class="flex items-center gap-2 mt-1")
               Switch(v-model="editActive")
               span(class="text-sm") {{ editActive ? 'Aktiv' : 'Deaktiviert / Gesperrt' }}
+          Field
+            FieldLabel Abteilung
+            Select(v-model="editDepartmentId")
+              SelectTrigger
+                SelectValue(placeholder="Abteilung wählen...")
+              SelectContent
+                SelectItem(
+                  v-for="department in props.departments"
+                  :key="department.id"
+                  :value="department.id"
+                ) {{ department.name }}
 
           DialogFooter(class="mt-4")
             Button(type="button" variant="outline" @click="editingUser = null") Abbrechen

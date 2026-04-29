@@ -73,6 +73,8 @@ div(v-else)
               :is="tabComponents[activeTab]"
               :data="tabData[activeTab]"
               :users="activeTab === 'departments' ? allUsers : undefined"
+              :departments="activeTab === 'users' ? allDepartments: undefined"
+              :roles="activeTab === 'users' ? allRoles: undefined"
               @open-detail="handleOpenDetail"
               @refresh="loadData()"
             )
