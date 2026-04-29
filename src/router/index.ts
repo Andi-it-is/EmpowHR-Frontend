@@ -72,6 +72,23 @@ const router = createRouter({
           ]
         },
         {
+          path: 'organisation',
+          component: PassThroughRouterview,
+          meta: { title: "Organisation" },
+          children: [
+            {
+              path: '',
+              component: () => import('../views/organisation/OrgansiationIndex.vue')
+            },
+            {
+              path: 'orga-chart',
+              name: 'Organigramm',
+              component: () => import('../views/organisation/Organigramm.vue'),
+              meta:  { title: 'Organigramm' }
+            }
+          ]
+        },
+        {
           path: 'times',
           component: PassThroughRouterview,
           meta: { title: "Zeitverwaltung" },
