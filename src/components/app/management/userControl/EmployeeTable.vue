@@ -17,15 +17,56 @@ import { getDepartmentColor, translateRoleName } from "@/lib/enumTranslaters"
 import { RoleName } from "@/constants/enums/acessControl.enum"
 import MultiSelect from "../../generic/MultiSelect.vue"
 import Switch from "@/components/ui/switch/Switch.vue"
-import type { User } from "@/services/user.service"
+import { userService, type User } from "@/services/user.service"
+import type { Department } from "@/services/department.service"
 
 const props = defineProps<{
   data: User[]
+  departments: Department[]
 }>()
 
 const emit = defineEmits<{
   'select-user': [user: User]
 }>()
+
+
+// --- Dialog state ---
+const editingUser = ref<User | null>(null)
+
+const editFirstname = ref('')
+const editLastname = ref('')
+const editEmail = ref('')
+const editActive = ref(true)
+const editDepartmentId = ref<string | null>(null)
+
+watch(editingUser, (user) => {
+  if (!user) return
+  editFirstname.value = user.firstname
+  editLastname.value = user.lastname
+  editEmail.value = user.email
+  editActive.value = !user.disabled
+  editDepartmentId.value = user.department?.id ?? null
+})
+
+async function onEditUser() {
+  if (!editingUser.value) return
+  try {
+    const reqObj = {
+      firstname: editFirstname.value,
+      lastname: editLastname.value,
+      email: editEmail.value,
+      disabled: !editActive.value,
+      departmentId: editDepartmentId.value,
+    }
+    await userService.updateUserById(editingUser.value.id, reqObj)
+    toast.success(`Benutzer aktualisiert`)
+    editingUser.value = null
+
+  } catch (error) {
+    console.error(error)
+    toast.error('Fehler beim Aktualisieren')
+  }
+}
 
 const globalFilter = ref('')
 const globalFilterFn: FilterFn<User> = (row, _columnId, filterValue) => {
@@ -128,13 +169,26 @@ const columns: ColumnDef<User>[] = [
       )
     },
   },
-
+  {
+    id: 'actions',
+    cell: ({ row }) => h('div', { class: 'flex items-center min-w-10' }, [
+      h(Button, {
+        variant: 'ghost',
+        class: 'h-8 w-8 p-0',
+        onClick: () => editingUser.value = row.original,
+      }, {
+        default: () => h(Pencil, { class: 'h-4 w-4' }),
+      }),
+    ]),
+  },
   {
     id: 'assignments',
-    cell: ({ row }) => h(Button, {
-      variant: 'brand-outline',
-      onClick: () => emit('select-user', row.original),
-    }, () => ['Auswählen', h(ChevronRight, { class: 'h-4 w-4 min-w-4' })])
+    cell: ({ row }) => h('div', { class: 'flex items-center min-w-30' }, [
+      h(Button, {
+        variant: 'brand-outline',
+        onClick: () => emit('select-user', row.original),
+      }, () => ['Auswählen', h(ChevronRight, { class: 'h-4 w-4' })]),
+    ]),
   },
 
 ]
@@ -207,5 +261,34 @@ div(class="w-full space-y-4 min-w-0")
       Button(variant="outline" size="icon" class="h-8 w-8" :disabled="!table.getCanNextPage()" @click="table.nextPage()")
         ChevronRight(class="h-4 w-4")
 
+  //- Edit Dialog
+  Dialog(:open="!!editingUser" @update:open="v => { if (!v) editingUser = null }")
+    DialogContent
+      DialogHeader
+        DialogTitle Benutzer bearbeiten
+        DialogDescription Bearbeite die Basisinformationen des Benutzers.
+      form(@submit.prevent="onEditUser()")
+        FieldGroup(class="flex flex-col gap-4 mt-2")
+          div(class="grid grid-cols-2 gap-4")
+            Field
+              FieldLabel Vorname
+              Input(v-model="editFirstname" placeholder="Vorname")
+            Field
+              FieldLabel Nachname
+              Input(v-model="editLastname" placeholder="Nachname")
+          Field
+            FieldLabel Abteilung
+            Select(v-model="editDepartmentId")
+              SelectTrigger
+                SelectValue(placeholder="Abteilung wählen...")
+              SelectContent
+                SelectItem(
+                  v-for="department in props.departments"
+                  :key="department.id"
+                  :value="department.id"
+                ) {{ department.name }}
 
+          DialogFooter(class="mt-4")
+            Button(type="button" variant="outline" @click="editingUser = null") Abbrechen
+            Button(type="submit" variant="brand") Speichern
 </template>

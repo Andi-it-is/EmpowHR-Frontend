@@ -28,7 +28,7 @@ div(v-if="!isLoaded" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4
 div(v-else)
 
   //- Breadcrumb navigation
-  div(class="sticky top-2 z-10 flex items-center gap-2 bg-muted/50 border rounded-md px-4 py-2 mb-4 text-sm backdrop-blur-sm w-fit")
+  div(class="sticky top-2 z-10 flex items-center gap-2 bg-muted/50 border border-brand/50 rounded-md px-4 py-2 mb-4 text-sm backdrop-blur-sm w-fit")
     Breadcrumb
       BreadcrumbList
         BreadcrumbItem
@@ -62,17 +62,21 @@ div(v-else)
   div(v-if="!selectedUser" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-4")
     Card(class="col-span-5")
       CardHeader
-        CardTitle Benutzer
-        CardDescription Wähle zunächst einen Benutzer aus, für wem den du Anpassungen machen möchtest
-      CardContent
+        CardTitle Mitarbeitende
+        CardDescription Wähle zunächst einen Mitarbeitenden aus, für wem den du Anpassungen machen möchtest
+      CardContent(class="flex flex-col items-end gap-4")
+        Button(variant="brand" class="w-fit")
+          Plus
+          | Neuen Mitarbeitenden anlegen
         EmployeeTable(
-          :data="mockUsers"
+          :data="allUsers"
+          :departments="allDepartments"
           @select-user="selectedUser = $event"
         )
 
   //- Section Selection Menu
   div(v-else-if="selectedUser && !activeSection")
-    h2(tabindex="0") {{ sections.length }} Optionen
+    h2(tabindex="0" class="mt-2" ) {{ sections.length }} Optionen
     ItemGroup(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-4")
       Item(
         v-for="section in sections"
@@ -105,6 +109,7 @@ div(v-else)
 <script setup lang="ts">
 import { ref, computed, onMounted, defineAsyncComponent } from 'vue';
 import Badge from '@/components/ui/badge/Badge.vue';
+import Button from '@/components/ui/button/Button.vue';
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import Separator from '@/components/ui/separator/Separator.vue';
@@ -112,53 +117,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import EmployeeTable from '@/components/app/management/userControl/EmployeeTable.vue';
 import { DepartmentName } from '@/constants/enums/departmentNames.enum';
-import { TableProperties, UserIcon, UserRound, FileText, CalendarOff, Clock, CalendarCheck, ShieldCheck, BarChart2, ChevronRight, Database, Award, UmbrellaOff } from 'lucide-vue-next'
+import { Plus, TableProperties, UserIcon, UserRound, FileText, CalendarOff, Clock, CalendarCheck, ShieldCheck, BarChart2, ChevronRight, Database, Award, UmbrellaOff } from 'lucide-vue-next'
 import { Item, ItemGroup, ItemMedia, ItemContent, ItemTitle, ItemDescription, ItemActions } from '@/components/ui/item'
-import { type User } from '@/services/user.service';
+import { userService, type User } from '@/services/user.service';
+import { departmentService, type Department } from '@/services/department.service';
 
-
-const mockUsers = [
-  {
-    id: 1,
-    firstname: 'Anna',
-    lastname: 'Müller',
-    email: 'anna.mueller@firma.de',
-    disabled: false,
-    supervisor: null,
-    department: { name: DepartmentName.IT },
-    roles: [{ name: 'Admin' }, { name: 'HR' }],
-  },
-  {
-    id: 2,
-    firstname: 'Max',
-    lastname: 'Schmidt',
-    email: 'max.schmidt@firma.de',
-    supervisor: { id: 1, firstname: 'Anna', lastname: 'Müller', email: 'anna.mueller@firma.de', disabled: false, supervisor: null, roles: [] },
-    disabled: false,
-    department: { name: DepartmentName.EXECUTIVE },    
-    roles: [{ name: 'Mitarbeiter' }],
-  },
-  {
-    id: 3,
-    firstname: 'Laura',
-    lastname: 'Weber',
-    email: 'laura.weber@firma.de',
-    disabled: true,
-    supervisor: { id: 1, firstname: 'Anna', lastname: 'Müller', email: 'anna.mueller@firma.de', disabled: false, supervisor: null, roles: [] },
-    roles: [{ name: 'Mitarbeiter' }, { name: 'Projektleiter' }, { name: 'IT-Admin' }, { name: 'Geschäftsführung' }],
-    department: { name: DepartmentName.HR },
-  },
-  {
-    id: 4,
-    firstname: 'Felix',
-    lastname: 'Bauer',
-    email: 'felix.bauer@firma.de',
-    disabled: false,
-    supervisor: null,
-    roles: [],
-    department: null,
-  },
-]
+const allUsers = ref<User[]>([])
+const allDepartments = ref<Department[]>([])
 
 const selectedUser = ref<User | any>(null)
 
@@ -182,10 +147,9 @@ const sectionComponentMap: Record<string, ReturnType<typeof defineAsyncComponent
 const isLoaded = ref(false)
 
 onMounted(async () => {
-  
-  // setInterval(() => {
-  //   console.log(selectedUser.value)
-  // }, 2000);
+
+  allUsers.value = await userService.listAllUsers()
+  allDepartments.value = await departmentService.listAllDepartments()
 
   isLoaded.value = true
 
