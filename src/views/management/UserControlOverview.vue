@@ -134,14 +134,12 @@ const sections = [
   { key: 'documents', title: 'Dokumente', description: 'Dienstliche und persönliche Dokumente', icon: FileText },
   { key: 'certificates', title: 'Zertifikate', description: 'Schulungsnachweise und Zertifikate', icon: Award },
   { key: 'absences', title: 'Abwesenheiten', description: 'Urlaub, Krankheit und sonstige Abwesenheiten', icon: UmbrellaOff },
-  { key: 'vacation', title: 'Urlaubsplanung', description: 'Urlaubsplanung zum Genehmigen und Übersicht', icon: CalendarCheck },
 ]
 const sectionComponentMap: Record<string, ReturnType<typeof defineAsyncComponent>> = {
   'master-data':    defineAsyncComponent(() => import('@/components/app/management/userControl/ucMasterData.vue')),
   'documents':      defineAsyncComponent(() => import('@/components/app/management/userControl/ucDocuments.vue')),
   'certificates':   defineAsyncComponent(() => import('@/components/app/management/userControl/ucCertificates.vue')),
   'absences':       defineAsyncComponent(() => import('@/components/app/management/userControl/ucAbsences.vue')),
-  'vacation':       defineAsyncComponent(() => import('@/components/app/management/userControl/ucVacationPlanner.vue')),
 }
 
 const router = useRouter()
