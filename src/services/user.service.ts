@@ -63,7 +63,7 @@ async function updateUserRolesByUserId(userId: string, roles: RoleNameObject): P
 }
 
 
-interface CreateEmployeeForm {
+export interface CreateEmployeeForm {
   // Step 1 – Basis Daten
   firstname:    string
   lastname:     string

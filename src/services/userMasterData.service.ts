@@ -1,6 +1,6 @@
 import api from "@/lib/axios"
 
-interface UserMasterData {
+export interface UserMasterData {
   id: string,
   company_alias: string,
   street: string,
@@ -33,14 +33,29 @@ async function getMasterData(): Promise<UserMasterData> {
   return result
 }
 
+async function getMasterDataById(userId: string): Promise<UserMasterData> {
+
+  const result = await api.get(`/userMasterData/${userId}`)
+  return result.data.data
+}
+
 async function updateMasterData(data: Partial<UserMasterData>): Promise<Partial<UserMasterData>> {
 
   const result = (await api.patch('/userMasterData', data)).data.data
   return result
 }
 
+async function updateMasterDataById(userId: string, data: Partial<UserMasterData>): Promise<UserMasterData> {
+
+  const result = await api.patch(`/userMasterData/${userId}`, data)
+  return result.data.data
+}
+
+
 
 export const userMasterDataService = {
   getMasterData,
-  updateMasterData
+  updateMasterData,
+  getMasterDataById,
+  updateMasterDataById
 }

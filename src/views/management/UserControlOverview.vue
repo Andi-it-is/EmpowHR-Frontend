@@ -98,7 +98,6 @@ div(v-else)
 
   //- Detail of a section
   div(v-else-if="selectedUser && activeSection")
-    pre {{ activeSection }}
     component(
       :is="sectionComponentMap[activeSection]"
       :user="selectedUser"
