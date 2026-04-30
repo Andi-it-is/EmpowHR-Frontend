@@ -65,7 +65,7 @@ div(v-else)
         CardTitle Mitarbeitende
         CardDescription Wähle zunächst einen Mitarbeitenden aus, für wem den du Anpassungen machen möchtest
       CardContent(class="flex flex-col items-end gap-4")
-        Button(variant="brand" class="w-fit")
+        Button(variant="brand" class="w-fit" @click="navToCreateEmployee()")
           Plus
           | Neuen Mitarbeitenden anlegen
         EmployeeTable(
@@ -121,6 +121,7 @@ import { Plus, TableProperties, UserIcon, UserRound, FileText, CalendarOff, Cloc
 import { Item, ItemGroup, ItemMedia, ItemContent, ItemTitle, ItemDescription, ItemActions } from '@/components/ui/item'
 import { userService, type User } from '@/services/user.service';
 import { departmentService, type Department } from '@/services/department.service';
+import { useRouter } from 'vue-router';
 
 const allUsers = ref<User[]>([])
 const allDepartments = ref<Department[]>([])
@@ -144,7 +145,12 @@ const sectionComponentMap: Record<string, ReturnType<typeof defineAsyncComponent
   'vacation':       defineAsyncComponent(() => import('@/components/app/management/userControl/ucVacationPlanner.vue')),
 }
 
+const router = useRouter()
 const isLoaded = ref(false)
+
+function navToCreateEmployee() {
+  router.push('/management/user-control/new')
+}
 
 onMounted(async () => {
 

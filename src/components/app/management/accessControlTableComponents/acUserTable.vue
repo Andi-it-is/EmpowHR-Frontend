@@ -325,7 +325,7 @@ div(class="w-full space-y-4")
           id="assignRoles"
           label="Rollen"
           placeholder="Rollen auswählen"
-          :options="allRoles.map(r => ({ value: r.name, label: translateRoleName(r.name) }))"
+          :options="props.roles.map(r => ({ value: r.name, label: translateRoleName(r.name) }))"
           v-model="assignRoles"
         )
       DialogFooter(class="mt-4")

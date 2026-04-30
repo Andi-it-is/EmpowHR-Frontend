@@ -139,6 +139,12 @@ const router = createRouter({
               meta : { title: 'Nutzerverwaltung' } 
             },
             {
+              path: 'user-control/new',
+              name: 'NewEmployee',
+              component: () => import('../views/management/CreateEmployee.vue'),
+              meta: { title: 'Mitarbeitende erstellen' }
+            },
+            {
               path: 'access-control',
               name: 'Accesscontrol',
               component: () => import('../views/management/AccessControlOverview.vue'),
