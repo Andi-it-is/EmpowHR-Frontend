@@ -132,7 +132,7 @@ const columns: ColumnDef<User>[] = [
     }, () => ['Status', h(ArrowUpDown, { class: 'ml-2 h-3 w-3' })]),
     cell: ({ row }) => {
       const disabled = row.getValue('disabled') as boolean
-      return h('div', { class: 'ml-0 min-w-25' }, [
+      return h('div', { class: 'ml-0 min-w-15' }, [
         h(Badge, { variant: disabled ? 'destructive' : 'positive' }, () => disabled ? 'Deaktiviert' : 'Aktiv')
       ])
     },
@@ -149,9 +149,9 @@ const columns: ColumnDef<User>[] = [
     }, () => ['Abteilung', h(ArrowUpDown, { class: 'ml-2 h-3 w-3' })]),
     cell: ({ row }) => {
       const dept = row.original.department
-      if (!dept) return h('div', { class: 'text-sm text-muted-foreground ml-4 min-w-35' }, '—')
+      if (!dept) return h('div', { class: 'text-sm text-muted-foreground ml-4 min-w-25' }, '—')
       const color = getDepartmentColor(dept.name)
-      return h('div', { class: 'flex items-center gap-2 ml-4 min-w-35' }, [
+      return h('div', { class: 'flex items-center gap-2 ml-4 min-w-25' }, [
         h('span', { class: 'h-2 w-2 rounded-full flex-shrink-0', style: { backgroundColor: color } }),
         h('span', { class: 'text-sm' }, dept.name),
       ])
@@ -163,8 +163,8 @@ const columns: ColumnDef<User>[] = [
     header: () => h('span', { class: 'text-foreground font-medium' }, 'Rollen'),
     cell: ({ row }) => {
       const roles = row.original.roles
-      if (!roles?.length) return h('div', { class: 'text-sm text-muted-foreground min-w-75' }, '—')
-      return h('div', { class: 'flex flex-wrap gap-1 min-w-75' },
+      if (!roles?.length) return h('div', { class: 'text-sm text-muted-foreground min-w-25' }, '—')
+      return h('div', { class: 'flex flex-wrap gap-1 min-w-25' },
         roles.map(role => h(Badge, { key: role.name, variant: 'bordered' }, () => translateRoleName(role.name as RoleName)))
       )
     },
@@ -173,11 +173,10 @@ const columns: ColumnDef<User>[] = [
     id: 'actions',
     cell: ({ row }) => h('div', { class: 'flex items-center min-w-10' }, [
       h(Button, {
-        variant: 'ghost',
-        class: 'h-8 w-8 p-0',
+        variant: 'outline',
         onClick: () => editingUser.value = row.original,
       }, {
-        default: () => h(Pencil, { class: 'h-4 w-4' }),
+        default: () => ['Bearbeiten' ,h(Pencil, { class: 'h-4 w-4' })],
       }),
     ]),
   },
