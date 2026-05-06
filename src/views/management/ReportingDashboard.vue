@@ -82,10 +82,15 @@ const today = getFormattedTodayDate()
 // Base Informations
 const baseInformationArray = ref([
   { label: "Mitarbeitende Gesamt", value: 114, unit: "Mitarbeitende", trend: 4.9, subLabel: "Wachstum zum Vorjahr" },
-  { label: "Frauenquote", value: "42  %", unit: "in Führungsposition" ,trend: 3, subLabel: "Wachstum zum Vorjahr" },
   { label: "Heute Anwesend", value: 105, unit: "Mitarbeitende", trend: 1.2, subLabel: "Vergleich zum Vorjahrestag" },
+  { label: "Frauenquote", value: "42  %", unit: "in Führungsposition" ,trend: 3, subLabel: "Wachstum zum Vorjahr" },
   { label: "Krankheitsquote", value: "1.8%", unit: "gesamt", trend: 0.3, subLabel: "Vergleich zum Vorjahrestag", invertTrend: true },
-  { label: "Betriebszugehörigkeit", value: 5.6, unit: "Jahre ⌀", trend: -4, subLabel: "Wachstum zum Vorjahr", invertTrend: false },
+  { label: "Betriebszugehörigkeit", value: 5.6, unit: "Jahre ⌀", trend: -6, subLabel: "Wachstum zum Vorjahr", invertTrend: false },
+  { label: "Abwesenheitsanträge", value: 27, unit: "ausstehend", trend: -10, subLabel: "Vergleich zum Vorjahrestag", invertTrend: true },
+  { label: "⌀ Überstunden", value: 2.5, unit: "je Mitarbeitende", trend: 8.2, subLabel: "Vergleich zum Vorjahrestag", invertTrend: true },
+  { label: "Durchschnittsalter", value: 48.3, unit: "Jahre alt ⌀", trend: 3, subLabel: "Vergleich zum Vorjahrestag", invertTrend: true },
+  { label: "Fluktuationsrate", value: "1.4%", unit: "gesamt", trend: -15, subLabel: "Vergleich zum Vorjahrestag", invertTrend: true },
+  { label: "Urlaubsrückstellung", value: "164.870", unit: "€ gesamt", trend: 8.3, subLabel: "Wachstum zum Vorjahr", invertTrend: true }
 ])
 
 // Role Distribution
@@ -124,8 +129,8 @@ const activityDataColors = ['#22c55e', '#3b82f6', '#f59e0b']
 
 const generateActivityData = () => {
   const data = []
-  // Wir starten exakt heute: Donnerstag, 16.04.2026
-  const today = new Date('2026-04-16') 
+  
+  const today = new Date('2026-05-12') 
   let daysCount = 0
   let offset = 0
 
