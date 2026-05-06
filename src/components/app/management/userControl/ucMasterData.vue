@@ -1,5 +1,13 @@
 <template lang="pug">
 
+//- Header mit User Info
+div(class="flex items-center justify-between mb-8")
+  div
+    h2(class="text-xl font-semibold") Stammdaten verwalten
+    p(class="text-sm text-muted-foreground mt-0.5") 
+      | Stammdaten von 
+      span(class="font-medium text-foreground") {{ affectedUser?.firstname }} {{ affectedUser?.lastname }}
+
 div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-4")
   Card(class="col-span-2")
     CardContent(class="flex flex-col gap-8 pt-4")

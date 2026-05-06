@@ -72,6 +72,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 const props = defineProps<{
   data: TimeEntry[]
   sollProTag: number
+  affectedUserId?: string  // wenn gesetzt → HR-Modus
 }>()
 
 const emit = defineEmits<{
@@ -163,7 +164,13 @@ async function onEditEntry() {
   }
 
   try {
-    await timeEntryService.updateTimeEntry(editingEntry.value.id, reqObj)
+    if (props.affectedUserId) {
+
+      await timeEntryService.updateTimeEntryByUserId(props.affectedUserId, editingEntry.value.id, reqObj)
+
+    } else {
+      await timeEntryService.updateTimeEntry(editingEntry.value.id, reqObj)
+    }
     toast.success('Abwesenheit aktualisiert')
     editingEntry.value = null
     emit('refresh')
@@ -175,7 +182,13 @@ async function onEditEntry() {
 async function onDeleteEntry() {
   if (!deletingEntry.value) return
   try {
-    await timeEntryService.deleteTimeEntry(deletingEntry.value.id)
+    if (props.affectedUserId) {
+
+      await timeEntryService.deleteTimeEntryByUserId(props.affectedUserId, deletingEntry.value.id)
+
+    } else {
+      await timeEntryService.deleteTimeEntry(deletingEntry.value.id)
+    }
     toast.success('Abwesenheit gelöscht')
     deletingEntry.value = null
     emit('refresh')
@@ -414,7 +427,7 @@ div(class="w-full space-y-4")
           Field(class="min-h-25")
             FieldLabel Abwesenheitsart
             Select(v-model="editType")
-              SelectTrigger(:class="editTypeError ? 'border-destructive focus-visible:ring-destructive' : ''")
+              SelectTrigger(:class="editTypeError ? 'border-destructive focus-visible:ring-destructive' : ''" disabled)
                 SelectValue(placeholder="Typ wählen")
                   template(v-if="editType" #default)
                     div(class="flex items-center gap-2")

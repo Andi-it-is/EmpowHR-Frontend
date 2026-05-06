@@ -42,6 +42,7 @@ export interface CreateTimeEntryRequest {
   end_date: Date
   working_location: WorkingLocation | null
   type?: TimeEntryType
+  is_confirmed?: boolean
 }
 
 export interface WorkTimeEntriesResponse {
@@ -113,6 +114,36 @@ async function deleteTimeEntry(id: string): Promise<void> {
   await api.delete(`/timeEntry/my/${id}`)
 }
 
+async function listAbscenceTimeEntiresByUserId(userId: string): Promise<AbscenceTimeEntriesResponse> {
+
+  const filter: TimeEntryFilter = {
+    working_location: [null]
+  }
+  const result = await api.post(`/timeEntry/other/${userId}/filter`, filter)
+  return {
+    entries: result.data.data,
+    timeAccount: result.data.timeAccount,
+    vacationDaysPerYear: result.data.vacation_days_per_year
+  }
+}
+
+async function createTimeEntryForUserByUserId(userId: string, data: CreateTimeEntryRequest): Promise<TimeEntry> {
+
+  const result = await api.post(`/timeEntry/other/${userId}/create`, data)
+  return result.data.data
+}
+
+async function updateTimeEntryByUserId(userId: string, entryId: string, data: CreateTimeEntryRequest): Promise<TimeEntry> {
+  
+  const result = await api.patch(`/timeEntry/other/${userId}/${entryId}`, data)
+  return result.data.data
+}
+
+async function deleteTimeEntryByUserId(userId: string, entryId: string): Promise<void> {
+  await api.delete(`/timeEntry/other/${userId}/${entryId}`)
+}
+
+
 export const timeEntryService = {
   listWorkTimeEntries,
   createTimeEntry,
@@ -120,6 +151,10 @@ export const timeEntryService = {
   deleteTimeEntry,
   listAbscenceTimeEntires,
   listAllTimeEntriesAvailable,
-  listAllTimeEntriesByFilter
+  listAllTimeEntriesByFilter,
+  listAbscenceTimeEntiresByUserId,
+  createTimeEntryForUserByUserId,
+  updateTimeEntryByUserId,
+  deleteTimeEntryByUserId
 }
 
