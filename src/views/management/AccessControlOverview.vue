@@ -48,6 +48,10 @@ div(v-else)
         | Berechtigungen
         Badge(class="ml-2 mr-1" variant="bordered") {{ allPermissions.length }}
 
+      TabsTrigger(value="passwordResets")
+        | Zugang verwalten
+
+
     Button(v-if="selectedRole" variant="brand-outline" @click="goBack()")
       ArrowLeft
       | Zurück zur Tabelle
@@ -137,6 +141,7 @@ import acPermissionTable from '@/components/app/management/accessControlTableCom
 import acRoleTable from '@/components/app/management/accessControlTableComponents/acRoleTable.vue';
 import acUserTable from '@/components/app/management/accessControlTableComponents/acUserTable.vue';
 import acDepartmentTable from '@/components/app/management/accessControlTableComponents/acDepartmentTable.vue';
+import acPasswordResets from '@/components/app/management/accessControlTableComponents/acPasswordResets.vue';
 import { DepartmentName } from '@/constants/enums/departmentNames.enum';
 import { DocumentSecurityLevel, DocumentSecurityLevelApiMap, DocumentSecurityLevelFromApi } from '@/constants/enums/document.enum';
 import { PermissionAction, PermissionScope, RoleName } from '@/constants/enums/acessControl.enum';
@@ -146,18 +151,20 @@ import { toast } from 'vue-sonner';
 import { type User, userService } from '@/services/user.service';
 import { type Department, departmentService } from '@/services/department.service';
 
-const activeTab = ref<'roles' | 'users' | 'departments' | 'permissions'>('roles')
+const activeTab = ref<'roles' | 'users' | 'departments' | 'permissions' | 'passwordResets'>('roles')
 const tabConfig = {
   roles: { title: 'Rollen', description: 'Verwalte die Rollen und ihre Zuweisungen.' },
   users: { title: 'Benutzer', description: 'Konfiguriere die Nutzer und die Rollen der Nutzer.' },
   departments: { title: 'Abteilungen', description: 'Erstelle und bearbeite vorhandene Abteilungen.' },
   permissions: { title: 'Berechtigungen', description: 'Schaue dir die verfügbaren Berechtigungen an.' },
+  passwordResets: { title: 'Passwort zurücksetzen', description: 'Setze hier das Passwort eines Nutzers zurück. '}
 }
 const tabComponents = {
   roles: acRoleTable,
   users: acUserTable,
   departments: acDepartmentTable,
   permissions: acPermissionTable,
+  passwordResets: acPasswordResets
 }
 
 const selectedRole = ref<Role | null>()
@@ -230,6 +237,7 @@ const tabData = computed(() => ({
   users: allUsers.value,
   departments: allDepartments.value,
   permissions: allPermissions.value,
+  passwordResets: allUsers.value
 }))
 
 async function savePermissions() {

@@ -100,6 +100,15 @@ async function createFullNewUser(data: CreateEmployeeForm): Promise<boolean> {
   return result.data.success
 }
 
+
+async function resetUserPassword(id: string, new_password: string, new_password_confirm: string): Promise<boolean> {
+  const result = await api.patch(`/user/${id}/reset-password`, {
+    new_password,
+    new_password_confirm,
+  })
+  return result.data.success
+}
+
 export const userService = {
   getSimpleUserInfo,
   getUserById,
@@ -107,5 +116,6 @@ export const userService = {
   updateUserById,
   deleteUserById,
   updateUserRolesByUserId,
-  createFullNewUser
+  createFullNewUser,
+  resetUserPassword
 }
