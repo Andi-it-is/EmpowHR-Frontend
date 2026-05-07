@@ -77,7 +77,7 @@ div(class="w-full space-y-6")
     Card(class="col-span-5")
       CardHeader(class="pb-4")
         CardTitle Aktuelle Gültigkeit der Zertifikate
-      CardContent(class="p-6")
+      CardContent(class="p-6 pb-16")
         div(v-if="certificates.length === 0" class="text-center text-muted-foreground py-8")
           p Keine Zertifikate vorhanden.
         div(v-else class="flex justify-center")
@@ -420,7 +420,7 @@ function downloadPdf() {
 // --- Data ---
 async function refreshData() {
 
-  certificates.value = await certificateService.listCertificatesByUserId(affectedUser.value?.id!)
+  certificates.value = await certificateService.listCertificatesByUserId(affectedUser.value!.id)
 
 }
 

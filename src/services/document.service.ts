@@ -76,10 +76,62 @@ async function uploadDocument(
   return result.data.data
 }
 
+async function listDocumentsByUserId(userId: string): Promise<Document[]> {
+  
+  const result = await api.get(`/document/other/${userId}`)
+  return result.data.data
+}
+
+async function uploadDocumentByUserId(
+  userId: string,
+  file: File,
+  meta: {
+    title: string
+    type: DocumentType
+    security_level: DocumentSecurityLevel | number
+  }
+): Promise<any> {
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('title', meta.title)
+  formData.append('type', meta.type)
+  formData.append('security_level', String(meta.security_level))
+
+  const result = await api.post(`/document/other/${userId}/upload`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
+  return result.data.data
+}
+
+async function updateDocumentByUserId(
+  userId: string,
+  documentId: string,
+  meta: {
+    title?: string
+    type?: DocumentType
+    security_level?: DocumentSecurityLevel | number
+  }
+): Promise<any> {
+  const result = await api.patch(`/document/other/${userId}/${documentId}`, meta)
+  return result.data.data
+}
+
+async function deleteDocumentByUserId(
+  userId: string,
+  documentId: string
+): Promise<any> {
+  const result = await api.delete(`/document/other/${userId}/${documentId}`)
+  return result.data
+}
+
 export const documentService = {
   getDocuments,
   getDocumentsByFilters,
   getFileUrl,
   getDocumentFile,
-  uploadDocument
+  uploadDocument,
+  listDocumentsByUserId,
+  uploadDocumentByUserId,
+  updateDocumentByUserId,
+  deleteDocumentByUserId
 }
