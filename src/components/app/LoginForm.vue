@@ -15,6 +15,7 @@ import { authService, type LoginObject, type RegisterObject } from "@/services/a
 import { useUserStore } from "@/stores/user.store"
 import Cookies from "js-cookie"
 import api from "@/lib/axios"
+import { userService } from "@/services/user.service"
 
 const props = defineProps<{ class?: HTMLAttributes["class"] }>()
 
@@ -105,6 +106,23 @@ watch(isLoginCard, () => {
   showRegisterPassword.value = false
   showRegisterPasswordConfirm.value = false
 })
+
+async function loginDemoAccount() {
+
+  const authResponse = await authService.loginDemoAccount()
+  const access_token = authResponse.access_token;
+
+  Cookies.set("access_token", access_token, {
+    expires: 7, // 7 Tage
+    path: "/",
+    sameSite: "Lax",
+  });
+
+  await nextTick()
+  await userStore.fetchUser()
+  await nextTick()
+  router.push("/")
+}
 </script>
 
 <template>
@@ -167,7 +185,7 @@ watch(isLoginCard, () => {
             <Field class="mt-auto">
               <FieldSeparator class="*:data-[slot=field-separator-content]:bg-card my-2"/>
               <Button variant="brand" type="submit">Login</Button>
-              <Button variant="brand-outline" type="button" @click="navToIndex()">Demo</Button>
+              <Button variant="brand-outline" type="button" @click="loginDemoAccount()">Demo</Button>
               <FieldDescription class="text-center">
                 Zugang gesperrt? Kontaktiere den Administrator
               </FieldDescription>
@@ -256,7 +274,7 @@ watch(isLoginCard, () => {
             <Field class="mt-auto">
               <FieldSeparator class="*:data-[slot=field-separator-content]:bg-card my-2"/>
               <Button variant="brand" type="submit">Konto erstellen</Button>
-              <Button variant="brand-outline" type="button" @click="navToIndex()">Demo</Button>
+              <Button variant="brand-outline" type="button" @click="loginDemoAccount()">Demo</Button>
               <FieldDescription class="text-center">
                 Du besitzt ein Konto? Jetzt
                 <a class="cursor-pointer underline-offset-4 hover:underline" tabindex="0" @click="isLoginCard = true">

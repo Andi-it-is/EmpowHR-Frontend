@@ -17,9 +17,9 @@ interface LoginResponse {
   expires_in: number
 }
 
-async function loginDemoAccount(data: LoginObject): Promise<LoginResponse> {
+async function loginDemoAccount(): Promise<LoginResponse> {
 
-  const response = (await api.post("/public/login", data)).data
+  const response = (await api.post("/public/login/demo")).data.data
   return response
 }
 
