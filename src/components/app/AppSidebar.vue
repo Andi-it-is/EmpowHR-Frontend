@@ -64,6 +64,14 @@ function getNavState(states: Ref<boolean>[], index: number): Ref<boolean> {
 function navToIndex() {
   return router.push("/")
 }
+
+function navToAbscence() {
+  return router.push('/times/absences')
+}
+
+function navToBooking() {
+  return router.push('/times/booking')
+}
 </script>
 
 <template>
@@ -96,13 +104,13 @@ function navToIndex() {
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton>
+          <SidebarMenuButton @click="navToAbscence()">
             <UmbrellaOff class="size-4 text-muted-foreground" />
             <span> Neue Abwesenheit einreichen</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton>
+          <SidebarMenuButton @click="navToBooking()">
             <Clock class="size-4 text-muted-foreground" />
             <span> Aktuellen Arbeitstag erfassen</span>
           </SidebarMenuButton>
@@ -147,7 +155,9 @@ function navToIndex() {
         </SidebarMenu>
       </SidebarGroup>
     </SidebarContent>
-    <ThemeToggle></ThemeToggle>
+
+    <!-- TEMPORARY THEME TOGGLE -->
+    <!-- <ThemeToggle></ThemeToggle> -->
     <SidebarFooter>
       <NavUser />
     </SidebarFooter>

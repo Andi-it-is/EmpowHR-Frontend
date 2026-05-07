@@ -85,7 +85,7 @@ function getInitials(name: string | undefined | null): string {
 
 <template>
   <SidebarMenu>
-    <SidebarMenuItem>
+    <SidebarMenuItem class="border rounded-md p-1">
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
           <SidebarMenuButton
