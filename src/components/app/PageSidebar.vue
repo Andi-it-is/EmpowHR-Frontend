@@ -22,6 +22,7 @@ import {
 
 import { useRoute } from 'vue-router'
 import { computed, ref, onMounted, watch } from 'vue'
+import FooterComponent from "./FooterComponent.vue"
 
 const route = useRoute()
 
@@ -83,6 +84,7 @@ watch(isDocSidebarOpen, (newVal) => {
       <main class="flex flex-1 flex-col gap-2 p-4 md:p-8 h-fit">
         <RouterView /> 
       </main>
+      <FooterComponent />
     </SidebarInset>
   </SidebarProvider>
 </template>

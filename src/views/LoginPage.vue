@@ -21,7 +21,7 @@ import ThemeToggle from '@/components/app/ThemeToggle.vue';
 </script>
 
 <template>
-  <div class="bg-muted flex min-h-svh items-center justify-center p-4 md:p-10">
+  <div class="bg-muted flex h-full items-center justify-center p-4 md:p-10">
     <div class="flex w-full max-w-5xl justify-center">
 
       <div class="flex flex-col-reverse md:flex-row items-start justify-center gap-2 md:gap-10 w-full">

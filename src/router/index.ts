@@ -2,12 +2,24 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import IndexPage from '@/views/IndexPage.vue'
 import PassThroughRouterview from '@/components/app/PassThroughRouterview.vue'
+import ImpressumPage from '@/views/ImpressumPage.vue'
+import DatenschutzPage from '@/views/DatenschutzPage.vue'
 import { useUserStore } from '@/stores/user.store'
 
 //! Very Important to NOT lazy-load the PassThroug Component
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/impressum',
+      component: ImpressumPage,
+      meta: { publicPage: true }
+    },
+    {
+      path: '/datenschutz',
+      component: DatenschutzPage,
+      meta: { publicPage: true }
+    },
     {
       path: '/',
       component: PassThroughRouterview,
@@ -180,7 +192,7 @@ router.beforeEach(async (to) => {
   }
 
   const isLoggedIn = !!userStore.user
-  const requiresAuth = to.meta.layout !== 'GuestLayout'
+  const requiresAuth = to.meta.layout !== 'GuestLayout' && !to.meta.publicPage
 
   // 2. Logik per Return-Values (statt next)
   
