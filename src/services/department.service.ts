@@ -33,6 +33,25 @@ async function listAllDepartments(): Promise<Department[]>{
   return result.data.data
 }
 
+export interface DepartmentTimeEntriesRequest {
+  month: number
+  year: number
+}
+
+// used for management layer
+async function listDepartmentCalendarWithUsers(deptId: string, data: DepartmentTimeEntriesRequest): Promise<any> {
+
+  const result = await api.post(`/department/list/teamcalendar/${deptId}`, data)
+  return result.data.data
+}
+
+// used for user layer
+async function listDepartmentCalendarAnonymized(departmentId: string, data: DepartmentTimeEntriesRequest): Promise<any> {
+  
+  const result = await api.post(`/department/list/teamcalendar/${departmentId}/anonymized`, data)
+  return result.data.data
+}
+
 async function createDepartment(data: CreateDepartment): Promise<Department> {
 
   const result = await api.post('/department/create', data)
@@ -55,5 +74,7 @@ export const departmentService = {
   listAllDepartments,
   createDepartment,
   updateDepartmentById,
-  deleteDepartmentById
+  deleteDepartmentById,
+  listDepartmentCalendarWithUsers,
+  listDepartmentCalendarAnonymized
 }

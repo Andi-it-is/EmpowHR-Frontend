@@ -93,6 +93,12 @@ const router = createRouter({
               component: () => import('../views/organisation/OrgansiationIndex.vue')
             },
             {
+              path: 'calendar',
+              name: 'Teamkalendar',
+              component: () => import('../views/organisation/DepartmentCalendarOverview.vue'),
+              meta: { title: 'Teamkalendar' }
+            },
+            {
               path: 'orga-chart',
               name: 'Organigramm',
               component: () => import('../views/organisation/Organigramm.vue'),
@@ -137,6 +143,12 @@ const router = createRouter({
             {
               path: '',
               component: () => import('../views/management/ManagementIndex.vue')
+            },
+            {
+              path: 'planner',
+              name: 'Abwesenheitsplaner',
+              component: () => import('../views/management/AbsenceManagerOverview.vue'),
+              meta: { title: 'Abwesenheitsplaner' }
             },
             {
               path: 'reportings',

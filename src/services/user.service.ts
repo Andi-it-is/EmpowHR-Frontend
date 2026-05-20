@@ -12,6 +12,7 @@ interface SimpleUserObject {
   firstname: string,
   lastname: string,
   email: string,
+  department: Department
 }
 
 export interface User {

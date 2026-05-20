@@ -49,7 +49,7 @@ export const navigationData = [
     items: [
       { title: "Organigramm", url: "/organisation/orga-chart", icon: GitFork, description: "Unternehmensstruktur", color: "blue" },
       { title: "Personenregister", url: "#", icon: Users, description: "Mitarbeiter finden", color: "blue" },
-      { title: "Teamkalender", url: "#", icon: CalendarDays, description: "Geteilter Kalender deiner Abteilung", color: "blue" },
+      { title: "Teamkalender", url: "/organisation/calendar", icon: CalendarDays, description: "Geteilter Kalender deiner Abteilung", color: "blue" },
       { title: "Desk Sharing", url: "#", icon: Armchair, description: "Sitzplatz buchen", color: "blue" },
     ],
   },
@@ -70,7 +70,7 @@ export const navigationData = [
     icon: ShieldCheck,
     color: "group-rose",
     items: [
-      { title: "Abwesenheitsplaner", url: "#", icon: CalendarCheck, description: "Abwesenheiten planen und genehmigen", color: "rose" },
+      { title: "Abwesenheitsplaner", url: "/management/planner", icon: CalendarCheck, description: "Abwesenheiten planen und genehmigen", color: "rose" },
       { title: "Reportings", url: "/management/reportings", icon: Clipboard, description: "Statusbericht über die Applikation EmpowHR", color: "rose" },
       { title: "Mitarbeiterverwaltung", url: "/management/user-control", icon: UserRoundCog, description: "Mitarbeiter und deren Inhalte konfigurieren", color: "rose" },
       { title: "Zugriffsverwaltung", url: "/management/access-control", icon: UserRoundKey, description: "Rollen und Berechtigungen verwalten", color: "rose" },
