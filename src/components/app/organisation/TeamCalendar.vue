@@ -185,7 +185,7 @@ onMounted(async () => {
     } else {
       selectedDepartment.value = ''
       toast.error('Keine Berechtigung', {
-        description: 'Du bist kein Abteilungsleiter und hast keinen Zugriff auf diese Ansicht.',
+        description: 'Du bist kein Abteilungsleiter und hast keinen Zugriff auf diese Ansicht. Demo Account sieht trotzdem die leere Ansicht.',
       })
     }
   }
