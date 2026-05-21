@@ -28,6 +28,7 @@ div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-4")
         v-model:month="selectedMonth"
         v-model:year="selectedYear"
         v-model:calendarData="calendarData"
+        v-model:departmentId="selectedDepartmentId"
         :anonymized="true"
         :viewingUser="viewingUser.id"
       )
@@ -57,6 +58,7 @@ const viewingUser = ref()
 const now = new Date()
 const selectedMonth = ref(now.getMonth() + 1)
 const selectedYear = ref(now.getFullYear())
+const selectedDepartmentId = ref<string>()
 const calendarData = ref<any>()
 
 onMounted(async () => {

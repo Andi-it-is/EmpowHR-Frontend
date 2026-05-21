@@ -98,6 +98,16 @@ async function listAllTimeEntriesByFilter(filter: TimeEntryFilter): Promise<Time
   return result.data.data
 }
 
+async function listUnconfirmedTimeEntriesByDepartment(deptId: string): Promise<any> {
+
+  const result = await api.get(`/timeEntry/unconfirmed/${deptId}`)
+  return result.data.data
+}
+
+async function changeTimeEntryConfirmation(id: string, is_confirmed: boolean): Promise<void> {
+  await api.patch(`/timeEntry/${id}/confirmation`, { is_confirmed })
+}
+
 async function createTimeEntry(data: CreateTimeEntryRequest): Promise<TimeEntry> {
   
   const result = await api.post('/timeEntry/my/create', data)
@@ -155,6 +165,8 @@ export const timeEntryService = {
   listAbscenceTimeEntiresByUserId,
   createTimeEntryForUserByUserId,
   updateTimeEntryByUserId,
-  deleteTimeEntryByUserId
+  deleteTimeEntryByUserId,
+  listUnconfirmedTimeEntriesByDepartment,
+  changeTimeEntryConfirmation
 }
 

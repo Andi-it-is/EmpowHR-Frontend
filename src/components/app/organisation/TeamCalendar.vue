@@ -78,10 +78,11 @@ import { userService } from '@/services/user.service';
 import DepartmentCalendar from './DepartmentCalendar.vue';
 import { ChevronRight, ChevronLeft, CalendarCheck  } from 'lucide-vue-next';
 import Button from '@/components/ui/button/Button.vue';
+import { toast } from 'vue-sonner'
 
 
 const allDepartments = ref<Department[]>([])
-const selectedDepartment = ref<string>()
+const selectedDepartment = defineModel<string>('departmentId')
 
 const isLoaded = ref(false)
 
@@ -147,6 +148,8 @@ function onYearChange(val: string) {
   selectedYear.value = parseInt(val)
 }
 
+defineExpose({ loadData })
+
 async function loadData() {
 
   allDepartments.value = await departmentService.listAllDepartments()
@@ -172,7 +175,20 @@ async function loadData() {
 onMounted(async () => {
 
   const userInfo = await userService.getSimpleUserInfo()
-  selectedDepartment.value = userInfo.department.id
+
+  if (props.anonymized) {
+    selectedDepartment.value = userInfo.department.id
+  } else {
+    
+    if (userInfo.department.head?.id === userInfo.id) {
+      selectedDepartment.value = userInfo.department.id
+    } else {
+      selectedDepartment.value = ''
+      toast.error('Keine Berechtigung', {
+        description: 'Du bist kein Abteilungsleiter und hast keinen Zugriff auf diese Ansicht.',
+      })
+    }
+  }
 
   await loadData()
   
