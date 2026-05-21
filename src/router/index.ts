@@ -99,6 +99,12 @@ const router = createRouter({
               meta: { title: 'Teamkalendar' }
             },
             {
+              path: 'people',
+              name: 'Personenregister',
+              component: () => import('../views/organisation/PeopleFinder.vue'),
+              meta: { title: 'Personenregister' }
+            },
+            {
               path: 'orga-chart',
               name: 'Organigramm',
               component: () => import('../views/organisation/Organigramm.vue'),

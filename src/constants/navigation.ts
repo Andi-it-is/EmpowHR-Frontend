@@ -48,9 +48,9 @@ export const navigationData = [
     color: "group-blue",
     items: [
       { title: "Organigramm", url: "/organisation/orga-chart", icon: GitFork, description: "Unternehmensstruktur", color: "blue" },
-      { title: "Personenregister", url: "#", icon: Users, description: "Mitarbeiter finden", color: "blue" },
+      { title: "Personenregister", url: "/organisation/people", icon: Users, description: "Mitarbeiter finden", color: "blue" },
       { title: "Teamkalender", url: "/organisation/calendar", icon: CalendarDays, description: "Geteilter Kalender deiner Abteilung", color: "blue" },
-      { title: "Desk Sharing", url: "#", icon: Armchair, description: "Sitzplatz buchen", color: "blue" },
+      { title: "Desk Sharing", url: "#", icon: Armchair, description: "Sitzplatz buchen", color: "blue", disabled: true },
     ],
   },
   {

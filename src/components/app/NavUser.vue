@@ -135,7 +135,7 @@ function getInitials(name: string | undefined | null): string {
               <Settings />
                 Einstellungen
             </DropdownMenuItem>
-            <DropdownMenuItem @click="navToHelp">
+            <DropdownMenuItem @click="navToHelp" disabled class="cursor-not-allowed">
               <Info />
               Hilfe
             </DropdownMenuItem>

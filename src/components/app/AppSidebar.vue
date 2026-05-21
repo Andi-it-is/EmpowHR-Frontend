@@ -98,9 +98,9 @@ function navToBooking() {
     <SidebarGroup class="mt-2">
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton>
+          <SidebarMenuButton disabled class="opacity-50 cursor-not-allowed pointer-events-none">
             <Armchair class="size-4 text-muted-foreground" />
-            <span> Jetzt Sitzplatz buchen</span>
+            <span>Jetzt Sitzplatz buchen</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
@@ -141,7 +141,21 @@ function navToBooking() {
               <CollapsibleContent v-if="item.items.length">
                 <SidebarMenuSub>
                   <SidebarMenuSubItem v-for="childItem in item.items" :key="childItem.title">
-                    <SidebarMenuSubButton as-child :is-active="route.path === childItem.url">
+                    <!-- Disabled Item -->
+                    <SidebarMenuSubButton
+                      v-if="childItem.disabled"
+                      class="opacity-50 cursor-not-allowed pointer-events-none"
+                    >
+                      <component :is="childItem.icon" class="size-4 shrink-0" />
+                      <span>{{ childItem.title }}</span>
+                    </SidebarMenuSubButton>
+
+                    <!-- Normal Item -->
+                    <SidebarMenuSubButton
+                      v-else
+                      as-child
+                      :is-active="route.path === childItem.url"
+                    >
                       <RouterLink :to="childItem.url">
                         <component :is="childItem.icon" class="size-4 shrink-0" />
                         <span>{{ childItem.title }}</span>

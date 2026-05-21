@@ -110,6 +110,12 @@ async function resetUserPassword(id: string, new_password: string, new_password_
   return result.data.success
 }
 
+async function listPeopleFinderInformations(): Promise<any> {
+  
+  const result = await api.get('/user/peopleFinder')
+  return result.data
+}
+
 export const userService = {
   getSimpleUserInfo,
   getUserById,
@@ -118,5 +124,6 @@ export const userService = {
   deleteUserById,
   updateUserRolesByUserId,
   createFullNewUser,
-  resetUserPassword
+  resetUserPassword,
+  listPeopleFinderInformations
 }

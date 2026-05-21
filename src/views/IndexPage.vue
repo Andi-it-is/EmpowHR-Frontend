@@ -11,15 +11,23 @@ div(class="flex flex-col gap-8 mt-8")
       Card(
         v-for="item in group.items"
         :key="item.title"
-        class="cursor-pointer hover:border-primary transition-colors"
-        @click="navToGivenPage(item.url)"
-        tabindex="0"
+        :class="[\
+          'transition-colors',\
+          item.disabled\
+            ? 'opacity-60 cursor-not-allowed'\
+            : 'cursor-pointer hover:border-primary'\
+        ]"
+        @click="!item.disabled && navToGivenPage(item.url)"
+        :tabindex="item.disabled ? -1 : 0"
       )
         CardContent(class="flex flex-col items-center justify-center gap-3 pt-6 pb-6 text-center")
           div(:class="[getColorClasses(item.color), 'p-3 rounded-lg']")
             component(:is="item.icon" :size="22")
           span(class="text-md font-medium") {{ item.title }}
-          span(class="text-sm text-muted-foreground") {{ item.description }}
+          span(v-if="!item.disabled" class="text-sm text-muted-foreground") {{ item.description }}
+          Badge(v-else variant="positive" class="text-xs text-muted-foreground")
+            | Demnächst verfügbar
+
 </template>
 
 <script setup lang="ts">
@@ -34,6 +42,7 @@ import {
 } from 'lucide-vue-next'
 import { Card, CardContent } from '@/components/ui/card'
 import { getColorClasses, navigationData } from '@/constants/navigation';
+import Badge from '@/components/ui/badge/Badge.vue';
 
 const router = useRouter();
 
