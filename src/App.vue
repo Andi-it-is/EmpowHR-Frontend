@@ -2,11 +2,16 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user.store'
+import { usePresenceStore } from '@/stores/presence.store'
 import AppLayout from '@/layouts/AppLayout.vue'
 import GuestLayout from '@/layouts/GuestLayout.vue'
 
 const route = useRoute()
 const userStore = useUserStore()
+
+// Online-Status app-weit anlegen: Der Store verbindet sich selbst, sobald ein User eingeloggt ist.
+// Ohne diesen Aufruf entstünde er erst im Reporting-Dashboard - dann zählte nur, wer das Dashboard offen hat.
+usePresenceStore()
 
 // Das Layout reagiert jetzt einfach nur noch auf die Route.
 // Da der Router-Guard (beforeEach) garantiert, dass die Route erst 

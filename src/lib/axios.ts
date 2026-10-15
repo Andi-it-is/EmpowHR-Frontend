@@ -2,6 +2,7 @@ import axios from 'axios'
 import router from '@/router'
 import { toast } from 'vue-sonner'
 import Cookies from 'js-cookie'
+import { useUserStore } from '@/stores/user.store'
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api/v1',
@@ -33,9 +34,11 @@ api.interceptors.response.use(
     const status = error.response?.status
     const message = error.response?.data?.message
 
-    // Wenn ein 401 auftritt, löschen wir den ungültigen Cookie direkt
+    // Wenn ein 401 auftritt, ist die Sitzung ungültig: User aus dem Store werfen (löscht auch den Cookie).
+    // Nur den Cookie zu löschen reicht nicht - der User bliebe im Store, der Router-Guard würde
+    // /login wieder auf / umleiten und die WebSocket-Verbindung (presence.store) bliebe offen.
     if (status === 401) {
-      Cookies.remove('access_token')
+      useUserStore().clearUser()
       router.push('/login')
     }
 

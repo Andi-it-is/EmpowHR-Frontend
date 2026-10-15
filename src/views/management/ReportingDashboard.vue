@@ -6,6 +6,23 @@ p(class="text-muted-foreground max-w-175" tabindex="0") Schaue dir hier die aktu
   | zu EmpowHR und dem Unternehmen an.
 Separator(class="my-4")
 
+//- Concurrent users (live via websocket) + locked users
+div(class="grid grid-cols-1 xl:grid-cols-5 gap-4 mb-4")
+  Card(class="xl:col-span-3")
+    ConcurrentUsersCard(
+      :online="onlineUsers"
+      :total="totalUsers"
+      :status="socketStatus"
+      :lastUpdated="lastUpdated"
+      :loadFailed="totalUsersLoadFailed"
+    )
+  Card(class="xl:col-span-2")
+    LockedUsersCard(
+      :locked="lockedUsers"
+      :total="totalUsers"
+      :loadFailed="totalUsersLoadFailed"
+    )
+
 //- Grid Container for all the informations
 div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-4 mb-4")
 
@@ -66,10 +83,14 @@ import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle }
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import ReportingBaseInformation from '@/components/app/management/ReportingBaseInformation.vue'
+import ConcurrentUsersCard, { type SocketStatus } from '@/components/app/management/ConcurrentUsersCard.vue'
+import LockedUsersCard from '@/components/app/management/LockedUsersCard.vue'
+import { userService } from '@/services/user.service'
+import { usePresenceStore } from '@/stores/presence.store'
 import CustomBarChart from '@/components/app/generic/CustomBarChart.vue'
 import DepartmentReportingTable from '@/components/app/management/DepartmentReportingTable.vue'
 import Separator from '@/components/ui/separator/Separator.vue';
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue';
 import { getFormattedTodayDate } from '@/lib/dateHelpers'
 import { BarChart } from '@/components/ui/chart-bar'
 import { AreaChart } from '@/components/ui/chart-area'
@@ -78,6 +99,32 @@ import { getDepartmentColor, getRoleColor, translateRoleName } from '@/lib/enumT
 import { DepartmentName } from '@/constants/enums/departmentNames.enum'
 
 const today = getFormattedTodayDate()
+
+// Concurrent Users (live über den WebSocket, siehe stores/presence.store.ts)
+const presenceStore = usePresenceStore()
+const onlineUsers = computed(() => presenceStore.online)
+const lastUpdated = computed(() => presenceStore.lastUpdated)
+const socketStatus = computed<SocketStatus>(() => {
+  switch (presenceStore.status) {
+    case 'OPEN': return 'connected'
+    case 'CONNECTING': return 'connecting'
+    default: return 'disconnected'
+  }
+})
+
+const totalUsers = ref<number | null>(null)
+const lockedUsers = ref<number | null>(null)
+const totalUsersLoadFailed = ref(false)
+
+async function loadTotalUsers() {
+  try {
+    const infos = await userService.listPeopleFinderInformations()
+    totalUsers.value = infos.users.length
+    lockedUsers.value = infos.users.filter((user: { disabled: boolean }) => user.disabled).length
+  } catch {
+    totalUsersLoadFailed.value = true
+  }
+}
 
 // Base Informations
 const baseInformationArray = ref([
@@ -271,7 +318,7 @@ const departmentTable = [
 ]
 
 onMounted(async () => {
-  
+  await loadTotalUsers()
 })
 
 </script>

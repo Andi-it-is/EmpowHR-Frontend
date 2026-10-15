@@ -1,7 +1,8 @@
 <template lang="pug">
 
 h1(tabindex="0") Willkommen bei EmpowHR
-p(class="text-muted-foreground max-w-175" tabindex="0") EmpowHR ist deine zentrale Anlaufstelle für alle personalrelevanten Themen.
+p(class="text-muted-foreground max-w-175" tabindex="0") EmpowHR ist deine zentrale Anlaufstelle 
+  |  für alle personalrelevanten Themen.
   |  Alles was dein Arbeitsleben benötigt, an einem Ort.
 
 div(class="flex flex-col gap-8 mt-8")
@@ -31,15 +32,7 @@ div(class="flex flex-col gap-8 mt-8")
 </template>
 
 <script setup lang="ts">
-import Button from '@/components/ui/button/Button.vue';
-import ThemeToggle from '@/components/app/ThemeToggle.vue';
-import { ArrowUpIcon } from 'lucide-vue-next'
 import { useRouter } from 'vue-router';
-import {
-  FileText, Database, Award, GitFork, Users,
-  CalendarDays, Armchair, UmbrellaOff, Clock, Home,
-  CalendarCheck, Ellipsis, UserRound, Building2, Timer, ShieldCheck
-} from 'lucide-vue-next'
 import { Card, CardContent } from '@/components/ui/card'
 import { getColorClasses, navigationData } from '@/constants/navigation';
 import Badge from '@/components/ui/badge/Badge.vue';
