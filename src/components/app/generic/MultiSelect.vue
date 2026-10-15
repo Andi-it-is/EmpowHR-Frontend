@@ -36,22 +36,19 @@ interface Option {
   label: string
 }
 
-const props = defineProps<{
+defineProps<{
   id: string
   label: string
   placeholder?: string
   options: Option[]
 }>()
 
-const selected = defineModel<string[]>({ default: [] })
+const selected = defineModel<string[]>({ default: () => [] })
 
 function toggle(value: string) {
-  const idx = selected.value.indexOf(value)
-  if (idx === -1) {
-    selected.value = [...selected.value, value]
-  } else {
-    selected.value = selected.value.filter(v => v !== value)
-  }
+  selected.value = selected.value.includes(value)
+    ? selected.value.filter(v => v !== value)
+    : [...selected.value, value]
 }
 
 </script>
